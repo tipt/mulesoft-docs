@@ -1,0 +1,1532 @@
+= DataWeave Language Introduction
+:keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
+
+The DataWeave Language is a powerful template engine that allows you to transform data to and from any kind of format (XML, CSV, JSON, Pojos, Maps, etc).
+
+== Getting Started
+
+In order to show the power of DataWeave, here are a few examples to get started.
+
+=== Basic Example
+
+This example shows a simple mapping form JSON to XML
+
+.Input
+[source,json,linenums]
+----
+{
+  "title": "Java 8 in Action: Lambdas, Streams, and functional-style programming",
+  "author": "Mario Fusco",
+  "year": 2014
+}
+----
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/xml
+---
+{
+  order: {
+    type: "Book",
+    title: payload.title,
+    details: "By $(payload.author) ($(payload.year))"
+  }
+}
+----
+
+.Output
+[source,xml,linenums]
+----
+<?xml version='1.0' encoding='UTF-8'?>
+<order>
+  <type>Book</type>
+  <title>Java 8 in Action: Lambdas, Streams, and functional-style programming</title>
+  <details>By Mario Fusco (2014)</details>
+</order>
+----
+
+[TIP]
+In Anypoint Studio, inputs are implicitly known based on the metadata that runs through the flow components. If using DW outside of Mule, you should declare an input directive '%input payload application/json'
+
+=== String manipulation
+
+This example shows how easy it is to work with strings in DataWeave.
+
+.Input
+[source,xml,linenums]
+----
+<users>
+  <user>
+    <name>Mariano Achaval</name>
+    <phone>152235465654</phone>
+    <street>Laprida 924</street>
+  </user>
+  <user>
+    <name>Martin Alejandro Cousido</name>
+    <phone>15332255555</phone>
+    <street>Acassuso 2280</street>
+  </user>
+</users>
+----
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+%function words(name) name splitBy " "
+---
+contacts: payload.users.*user map using (parts =  words($.name)){
+  firstName: parts[0],
+  (secondName: parts[1]) when (sizeOf parts) > 2,
+  lastName: parts[-1],
+  email:((lower $.name) replace " " with ".") ++ "@acme.com",
+  address: $.street
+}
+----
+
+.Output
+[source,json,linenums]
+----
+{
+  "contacts": [
+    {
+      "firstName": "Mariano",
+      "lastName": "Achaval",
+      "email": "mariano.achaval@acme.com.ar",
+      "address": "Laprida 924"
+    },
+    {
+      "firstName": "Martin",
+      "secondName": "Alejandro",
+      "lastName": "Cousido",
+      "email": "martin.alejandro.cousido@acme.com.ar",
+      "address": "Acassuso 2280"
+    }
+  ]
+}
+----
+
+[TIP]
+In Anypoint Studio, inputs are implicitly known based on the metadata that runs through the flow components. If using DW outside of Mule, you should declare an input directive '%input payload application/xml'
+
+=== Group by ...
+
+This example shows how easy it is to group by a given criteria and then transform that result to match the expected output.
+
+.Input
+[source,json,linenums]
+----
+{
+  "items": [
+      {
+        "type" : "book",
+        "label" : "Java Curiosities",
+        "author" : "Luis Miguel",
+        "image": "http://www.gravatar.com/avatar/a133c7d8d9245d063b136732272ea77e",
+        "url": "http://javacuriosities.blogspot.com.ar/"
+      },
+      {
+        "type" : "CD",
+        "label" : "No culpes a la noche",
+        "author" : "Luis Miguel",
+        "image": "http://www.gravatar.com/avatar/a133c7d8d9245d063b136732272ea77e"
+      },
+      {
+        "type" : "book",
+        "label" : "Mule in Action",
+        "author" : "Victor Romero"
+      },
+      {
+        "type" : "CD",
+        "label" : "Yesterday",
+        "author" : "The Beatles"
+      }
+    ]
+}
+----
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+---
+patents : payload.items groupBy $.author pluck {
+  owner: $$,
+  categories: $.type
+}
+----
+
+.Output
+[source,json,linenums]
+----
+{
+  "patents": [
+    {
+      "owner": "Victor Romero",
+      "categories": [
+        "book"
+      ]
+    },
+    {
+      "owner": "The Beatles",
+      "categories": [
+        "CD"
+      ]
+    },
+    {
+      "owner": "Luis Miguel",
+      "categories": [
+        "book",
+        "CD"
+      ]
+    }
+  ]
+}
+----
+
+[TIP]
+In Anypoint Studio, inputs are implicitly known based on the metadata that runs through the flow components. If using DW outside of Mule, you should declare an input directive '%input payload application/json'
+
+== Dataweave File Structure
+
+DataWeave files are divided into two main sections:
+
+. The Header, which defines directives (optional)
+. The Body, which describes the output structure
+
+The two sections are delimited by a separator, which is not required if no header is present. The separator consists of three dashes: "---"
+
+Below is a taste of what a `.dwl` file looks like. This code describes a conversion from a JSON input to an XML output:
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+{
+  user: {
+    name: payload.user_name,
+    lastName: payload.user_lastName
+  }
+}
+---------------------------------------------------------------------
+
+Note that the two initial lines of code compose the header, the separator then delimits it from the rest of the file, the body, where the output structure is defined.
+
+This DataWeave example expects to receive a JSON input that is structured like the JSON example below:
+
+[source,json,linenums]
+---------------------------------------------------------------------
+ {
+  "user_name": "Annie",
+  "user_lastName": "Point"
+ }
+---------------------------------------------------------------------
+
+Upon receiving that as an input, DataWeave produces the XML output shown below:
+
+[source,xml,linenums]
+---------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+ <name>Annie</name>
+ <lastName>Point</lastName>
+</user>
+---------------------------------------------------------------------
+
+=== Header
+
+The DataWeave header contains the directives, which define high level information about your transformation. The structure of the Header is a sequence of lines, each with its own Directives. The Header is terminated with '---'.
+
+Through directives you can define:
+
+* DataWeave *version*
+* *Input* types and sources
+* *Output* type
+* *Namespaces* to import into your transform
+* *Constants* that can be referenced throughout the body
+* *Functions* that can be called throughout the body
+
+All directives are declared on the header section of your DataWeave document and act upon the entire scope of it. Directives are a mechanism to declare variables and constants and namespace aliases which need to be referenced in the Document.
+They are also needed to declare the type of the output of your transform. In Anypoint Studio, you can optionally use them to declare additional inputs. You rarely need them for this as any data arriving in the incoming Mule Message is already implicitly recognized as an input.
+
+==== Version Directive
+
+Through this directive, you specify the version of the DataWeave syntax that is used to interpret the transformation.
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%dw 1.0
+---------------------------------------------------------------------
+
+==== Namespace Directive
+
+This directive associates an alias with its subsequent URI. The directive is relevant only when either the input or the output is of type XML.
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%namespace mes http://www.mulesoft.com/anypoint/SOA/message/v1.0
+---------------------------------------------------------------------
+
+==== Input Directive
+
+[WARNING]
+When using DataWeave in Anypoint Studio, it's not necessary to declare input directives for any of the components of the Mule Message that arrive at the DataWeave transformer (Payload, flow variables, and input/outbound properties) nor for any system variables. These are already implicitly recognized as inputs and can be referenced anywhere in the DataWeave body without a need to include them in the header because their type is known from the Mule metadata.
+
+Inputs are declared by assigning a name and a content type. You may define as many input directives as you want. You can then refer to them (or their child elements) in any part of the DataWeave body through the names defined in the directive.
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%input payload application/xml
+---------------------------------------------------------------------
+
+Valid types are:
+
+* `application/json`
+* `application/xml`
+* `application/java`
+* `application/csv`
+* `application/dw`
+* `text/json`
+* `text/xml`
+* `text/csv`
+
+===== CSV Input Parsing
+
+[WARNING]
+When using DataWeave in Anypoint Studio, it's not necessary to declare any input directives for any of the components of the Mule Message that arrive at the DataWeave transformer (Payload, flow variables, and input/outbound properties) nor for any system variables. These are already implicitly recognized as inputs and can be referenced anywhere in the DataWeave body without a need to include them in the header as their type is known from the Mule metadata.
+
+When defining an input of type CSV, there are a few optional parameters you can  add to the input directive to customize how the data is parsed. These are not defined in the DataWeave script but on the Mule XML code, in the Transform Message XML element.
+
+In Anypoint Studio there are two ways to achieve this. You can either manually add the attributes to the project's XML, or do it through the graphical interface, by selecting the element from the tree view in the input section and clicking the gear icon. See link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#parsing-csv-inputs[Using DataWeave in Studio] for more details.
+
+==== Output Directive
+
+The Output Directive specifies what the output type is in a transformation, which is specified using content/type.
+Only one output can be specified, the structure of this output is then defined in the DataWeave body.
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%output application/xml
+---------------------------------------------------------------------
+
+Valid types are:
+
+* `application/json`
+* `application/xml`
+* `application/java`
+* `application/csv`
+* `application/dw`
+* `text/json`
+* `text/xml`
+* `text/csv`
+* `text/plain`
+
+===== Skip Null On
+
+Whenever the output is of XML or JSON type and it has null values in its elements or attributes, you can specify whether this generates an outbound message that contains fields with "null" values, or if these fields are ignored entirely. This can be set through an attribute in the output directive named *skipNullOn*, which can be set to three different values: *elements*, *attributes*, or *everywhere*.
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%output application/xml skipNullOn="everywhere"
+---------------------------------------------------------------------
+
+When set to:
+
+* *elements*: A key:value pair with a null value is ignored.
+* *attributes*: An XML attribute with a null value is skipped.
+* *everywhere*: Apply this rule to both elements and attributes.
+
+[NOTE]
+This attribute is only available when the output is of XML or JSON type.
+
+===== CSV Output Formatting
+
+When defining an output of type CSV, there are a few optional parameters you can add to the output directive to customize how the data is parsed:
+
+[options="header"]
+|=======================
+|Parameter |Type |Default|Description
+|separator |char |, |Character that separates one field from another
+|encoding |string | |The character set to be used for the output
+|quote |char |" |Character that delimits the field values
+|escape |char | \ |Character used to escape occurrences of the separator or quote character within field values
+|bufferSize |number | |
+|ignoreEmptyLine |bool | |
+|header |bool |true |Indicates if the first line of the output shall contain field names
+|quoteValues |bool |false |Indicates if every value should be quoted whether or not it contains special characters within
+|=======================
+
+===== Flat File Schemas
+
+When defining an output of type flat file (which includes fixed width, EDI and Copybook but not CSV) there are a few optional parameters you can add to the output directive to customize how the data is parsed:
+
+[options="header"]
+|=======================
+|Parameter |Type |Default|Description
+|schemaPath |string | |Path where the schema file to be used is located
+|structureIdent |string | |In case the schema file defines multiple formats, indicates which of them to use
+|=======================
+
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output text/plain schemaPath="src/main/resources/test-data/QBReqRsp.esl", structureIdent=“QBResponse"
+---
+payload
+----
+
+[TIP]
+See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas] for instructions and examples on how to create the required schema file.
+
+
+==== Define Constant Directive
+
+You can define a constant in the header, you can then reference it (or its child elements, if any exist) in the DataWeave body.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%var conversionRate=13.15
+%output application/json
+---
+{
+ price_dollars: payload.price,
+ price_localCurrency: payload.price * conversionRate
+}
+---------------------------------------------------------------------
+
+==== Define Function Directive
+
+You can define a function in the header, you can then call it in any part of the DataWeave body, including arguments.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%var toUser = (user) -> {name: user.name, lastName: user.lastName}
+%output application/json
+---
+{
+ user: toUser(payload)
+}
+---------------------------------------------------------------------
+
+=== Body
+
+The body contains the *expression* that generates the output structure. Regardless of the types of the input and output, the data model for the output is always described in the standard DataWeave language, and this model that the transform executes.
+
+The data model of the produced output can consist of three different types of data:
+
+. Objects: Represented as collection of key value pairs
+. Arrays: Represented as a sequence of comma separated values
+. Simple literals
+
+When you write your DataWeave file, you define an expression that generates one of the data types listed above.
+
+=== Simple Literal Types
+
+Literals can be of the following types:
+
+. String : Double quoted ("Hello") or Single quoted ('Hello')
+. Boolean : Literals true or false
+. Number : Decimal and Integer values are supported (ex: 2.0)
+. Dates : IS0-8601 enclosed by "|" (ex:|2003-10-01T23:57:59Z|)
+. Regex : Regex expression enclosed by "/" (ex:/(\d+)-(\d+)/)
+
+[source,DataWeave]
+---------------------------------------------------------------------
+This is a String literal expression
+---------------------------------------------------------------------
+
+=== Arrays
+
+Arrays are sequences of *expressions*.
+
+[source,DataWeave]
+--------------------------------------------------------------------
+[ 1, 2 + 2, 3 * 3, $x ]
+--------------------------------------------------------------------
+
+=== Objects
+
+These are represented as a comma separated sequence of key:value pairs surrounded by curly braces { }.
+
+.Transform
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+myoutput:{
+  name : "Jill",
+  payload : payload.id + 3
+  }
+---------------------------------------------------------------------
+
+.Output
+[source,xml,linenums]
+---------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<myoutput>
+  <name>Jill</name>
+  <payload>5</payload>
+</myoutput>
+---------------------------------------------------------------------
+
+Note that both the keys and the values may be *expressions*.
+
+== Streaming
+
+DataWeave supports streaming a large payload. No configuration is necessary in the DataWeave code itself, but other components need to be set up for this to work. See link:/mule-user-guide/v/3.7/dataweave-streaming[DataWeave Streaming].
+
+
+
+== Example Transformation
+
+Suppose you want to transform an XML document to JSON, appending extra content to the output.
+
+.Input as XML
+[source, xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
+----
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+%var date='01-MAR-2015'
+---
+{
+  letter : payload,
+  sent : date
+}
+----
+
+.Output as JSON
+[source, json,linenums]
+----
+{
+  "letter": {
+    "note": {
+      "to": "Tove",
+      "from": "Jani",
+      "heading": "Reminder",
+      "body": "Don't forget me this weekend!"
+    }
+  },
+  "sent": "01-MAR-2015"
+}
+----
+
+[WARNING]
+Whenever you make a transformation from JSON to XML, make sure that the resulting output is valid as an XML file. Specifically, make sure that there's a single parent tag, JSON supports having multiple elements at the highest level while XML doesn't.
+Likewise, whenever you transform from XML to JSON, make sure the resulting output is valid as a JSON file. Specifically, make sure that there are no repeated keys inside the same parent. XML supports having this but JSON doesn't.
+
+== DataWeave Canonical Model
+
+As covered above, DataWeave uses three basic data types: Objects, Arrays, and Simple Types, the execution of a DataWeave transformation always produces one of these three types of data. In essence, the body of every DataWeave transformation is a single expression that defines the structure and contents of one such element (which can be an Object, Array, or Simple Literal).
+
+This expression can be built using any of the following elements:
+
+* Objects
+* Arrays
+* Simple literals
+* Variable and Constant references
+
+A DataWeave transformation can be as simple as the definition of a single element from the list above. Even a simple literal 'Hello world' is a valid DataWeave transformation.
+
+Expressions can also be complex, meaning that they can be composed of other expressions. This can be achieved by either nesting expressions inside Arrays or Objects, or through the use of operators.
+In complex expressions, the result of one expression sets the context for the subsequent execution of other expressions. You just need to remember that each expression produces an Object, an Array, or a Simple literal.
+
+If you declare input directives in your DataWeave's header, regardless of its type (XML, JSON, Java),
+any execution that references these inputs produces, as stated before, an Object, an Array, or a Simple literal. When you understand the structure of these data types, expressed in the syntax of DataWeave expressions, you effectively understand DataWeave.
+
+In Anypoint Studio, if you ever need to visualize the canonical DataWeave model of your data to get a better reference, set the output type of your transform to `application/dw`. Your transform then outputs your data as a DataWeave expression, which resembles a JSON object. See the example below.
+
+=== Example Transformation to DataWeave
+
+.Input
+[source, xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
+----
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/dw
+---
+payload
+----
+
+.Output
+[source,DataWeave,linenums]
+----
+{ # <1>
+  note: { # <2>
+    to: "Tove",
+    from: "Jani",
+    heading: "Reminder", # <3>
+    body: "Dont forget me this weekend!"
+  }
+}
+----
+<1> The input is parsed into an Object.
+<2> As previously stated, Objects are sequences of key:value pairs. Note how each element name from the XML input is parsed into a key followed by a colon : and then the value.
+<3> The value may be a Simple literal, as is the case of the *heading* field, or an object, as is the case in *note* #2.
+
+== Literal Expressions
+
+These correspond to the three different data-types: Simple, Object, and Array.
+
+*Simple Literal*
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+---
+123
+----
+
+*Object Literal*
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  message: "Hello"
+}
+----
+
+*Array Literal*
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+---
+[ "My", "three", "words" ]
+----
+
+== Variables
+
+=== Input Variables
+
+Input directives allow you to make any number of input sources available in global variables, which can then be referenced in any part of the Transform's body. To reference one of these, you can just call it by the name you defined in the directive.
+Remember that the Transform is itself an expression, so the entire body of the transform could be written as a simple variable reference to the input document.
+Consider the example below, which transforms an incoming JSON document into XML, and where the output XML structure mimics the input JSON structure.
+
+.Input
+[source, json,linenums]
+----
+{
+  "document" : {
+    "language" : "English",
+    "text" : "Hello world"
+  }
+}
+----
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/xml
+---
+payload
+----
+
+.Output
+[source,xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <language>English</language>
+  <text>Hello world</text>
+</document>
+----
+
+=== Constants
+
+In the DataWeave header, you define constants as directives, these can then be referenced as variables in any part of your transform body, just as you do with input variables.
+The following creates an XML document and inserts the constant value for Language "Español" in the output language element.
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+%var language='Español'
+---
+{
+  document: {
+    language: language,
+    text: "Hola mundo"
+  }
+}
+----
+
+.Output
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+  <language>Español</language>
+  <text>Hola Mundo</text>
+</document>
+----
+
+=== Scoped Variables
+
+Variables declared in the Transform's header always have a global scope, to declare and initialize a variable with a limited scope, you can do so in any part of the transform's body.
+
+You can initialize these variables using literal expressions, variable reference expressions, or functional expressions. They may reference any other scoped variables or any of the input variables or constants in their initialization. The declaration and initialization can be prepended to any literal expression, but you must be aware that the literal they are prepended to delimits their scope. You cannot reference a variable outside its scope.
+
+To declare a variable in the DataWeave body, the following syntax is supported: *using (<variable-name> = <expression>)* and it must be written before defining the contents of the literal that it exists in.
+To reference an already initialized variable, you can just call it by the name you defined for it as with any other variable, or you can also write it in the form *$<variable-name>*.
+
+Consider the following examples:
+
+*Scoped to Simple literal*
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+using (x = 2) 3 + x # <1>
+----
+<1> Result is simply 5
+
+*Scoped to Array literal*
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+using (x = 2) [1, x, 3]
+----
+
+*Scoped to Object literal*
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+{
+  person: using (user = "Greg", gender = "male") { # <1>
+    name: user, # <2>
+    gender: gender
+  }
+}
+----
+<1> Declaration and initialization.
+<2> *user* is a valid reference because it is within the object *person* for which it was declared.
+
+*Invalid Reference outside of Scope*
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+entry: using (firstName = "Annie", lastName = "Point") {
+  person: using (user = firstName, gender = "male") {
+    name: user,
+    gender: gender
+  },
+  sn: lastName, # <1>
+  gen: gender # <2>
+}
+----
+<1> The reference *lastName* is valid because it is within scope.
+<2> The reference *gender* is invalid because gender was declared in the *person* object, and this reference exists outside the scope of that object.
+
+
+== Selectors
+
+=== Value Selector Expressions
+
+The complex structure of Objects and Arrays can be navigated using Selector Expressions. Each selector expression returns either an object, an array, or a simple type.
+A selector always operates within a given context, which can be a reference to a variable, an object literal, an array literal, or the invocation of a function. As DataWeave processes a selector, a new context is set for further selectors, so you can navigate through the complex structures of arrays and objects by using chains of selectors, who's depth is limited only by the depth of the current context.
+
+There are 4 types of selector expression:
+
+* *Single Value selector* .<key-name>
+* *Multi Value selector* .*<key-name>
+* *Descendants Selector* ..<key-name>
+* *Indexed Selector* [<index>]
+
+Applying the *Single level Explicit Selector*, the *Descendants Selector*, or the *Indexed Selector* returns the value of the key:value pair that matches the expression.
+
+*Note*: Each of these selector expressions supports having a '?' appended at the end of the chain. This changes the expression into a query that checks upon the existence of the key. The return type in this case is a boolean true or false.
+
+=== Single Value selector
+
+This selector returns the first value whose key matches the expression, that is, *payload.name*, which returns the value whose key matches *name*.
+
+.Input
+[source, json,linenums]
+----
+{
+  "people": {
+    "size" : 1,
+    "person": {
+      "name": "Nial",
+      "address": {
+        "street": {
+          "name": "Italia",
+          "number": 2164
+        },
+        "area": {
+          "zone": "San Isidro",
+          "name": "Martinez"
+        }
+      }
+    }
+  }
+}
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+{
+  address: payload.people.person.address
+}
+----
+
+.Output
+[source, xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<address>
+  <street>
+    <name>Italia</name>
+    <number>2164</number>
+  </street>
+  <area>
+    <zone>San Isidro</zone>
+    <name>Martinez</name>
+  </area>
+</address>
+----
+
+=== Multi Value selector
+
+This selector returns an array with all the values whose key matches the expression.
+
+.Input
+[source, json,linenums]
+----
+<users>
+  <user>Mariano</user>
+  <user>Martin</user>
+  <user>Leandro</user>
+</users>
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  users: payload.users.*user
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  "users": [
+    "Mariano",
+    "Martin",
+    "Leandro"
+  ]
+}
+----
+
+=== Indexed Selector
+
+This selector can be applied to String literals, Arrays and Objects. In the case of Objects, the value of the key:value pair found at the index is returned.
+The index is zero based.
+
+. If the index is bigger or equal to 0, it starts counting from the beginning.
+. If the index is negative, it starts counting from the end where -1 is the last element.
+
+.Input
+[source, json,linenums]
+----
+{
+  "people": [
+        {
+          "name": "Nial",
+          "address": "Martinez"
+        },
+        {
+          "name": "Coty",
+          "address": "Belgrano"
+        }
+    ]
+}
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+payload.people[1]
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  name: Coty,
+  address: Belgrano
+}
+----
+
+When using the Index Selector with a String, the string is broken down into an array, where each character is an index.
+
+.Transform
+[source,DataWeave, linenums]
+--------------------------------------------------------
+%output application/json
+---
+{
+  name: "MuleSoft"[0]
+}
+--------------------------------------------------------
+
+.Output
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "name": "M"
+}
+--------------------------------------------------------
+
+=== Range selector
+
+Range selectors limit the output to only the elements specified by the range on that specific order. This selector allows you to slice an array or even invert it.
+
+.Transform
+[source,DataWeave, linenums]
+------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  slice: [0,1,2][0..1],
+  last: [0,1,2][-1..0]
+}
+------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+-----------------------------------------------------------
+{
+  "slice": [
+    0,
+    1
+  ],
+  "last": [
+    2,
+    1,
+    0
+  ]
+}
+-----------------------------------------------------------
+
+
+=== Attribute Selector Expressions
+
+In order to query for the attributes on an Object, the syntax *.@<key-name>* is used. If you just use *.@* (without <key-name>) it returns an object containing each key:value pair in it.
+
+.Input
+[source, xml,linenums]
+----
+<product id="1" type="tv">
+  <brand>Samsung</brand>
+</product>
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  item: {
+    type : payload.product.@type,
+    name : payload.product.brand,
+    attributes: payload.product.@
+  }
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  item: {
+    type: tv,
+    name: Samsung,
+    attributes: { # <1>
+      id: 1,
+      type: tv
+    }
+  }
+}
+----
+<1> The third element in this output retrieves an object with all of the attributes in it, in this case both the id and the type.
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  item: {
+    attributes : payload.product.@,
+    name : payload.product.brand
+  }
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  item: {
+    attributes: {
+      id: 1,
+      type: tv
+    },
+    name: Samsung
+  }
+}
+----
+
+=== Applying Selectors to Arrays
+
+When the context for selection is an Array, the result is always an Array. Each element on the context Array is queried for matching key:value pairs.
+In each case, only the *value* of the key:value pair is returned.
+
+.Input
+[source,DataWeave, linenums]
+----
+{
+  "people": [ # <1>
+    {
+      "person": {
+        "name": "Nial",
+        "address": {
+          "street": {
+            "name": "Italia",
+            "number": 2164
+          },
+          "area": {
+            "zone": "San Isidro",
+            "name": "Martinez"
+          }
+        }
+      }
+    },
+    {
+      "person": {
+        "name": "Coty",
+        "address": {
+          "street": {
+            "name": "Monroe",
+            "number": 323
+          },
+          "area": {
+            "zone": "BA",
+            "name": "Belgrano"
+          }
+        }
+      }
+    }
+  ]
+}
+----
+<1> As 'people' is an array, this sets the context for searching across both 'person' instances. The result from this is always an array.
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+payload.people.person.address.street
+----
+
+.Output
+[source, json,linenums]
+----
+[ # <1>
+  {
+    name: Italia,
+    number: 2164
+  },
+  {
+    name: Monroe,
+    number: 323
+  }
+]
+----
+<1> As the context is an array, the output is always an array. An array is returned even if there's a single matching value.
+
+==== Selecting the key value pair
+
+As selectors only return the value of a key:value pair, in order to get both the key and value, you can use a type conversion to object.
+
+.Input
+[source, json,linenums]
+----
+{
+  "name": "Mariano",
+  "lastName" : "Doe"
+}
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+user: payload.name as :object <1>
+----
+<1> Using the *as :object* transforms the value into an object that contains the key as well as the value. Without this conversion to object, the returned XML body would simply be <user>Mariano</user>.
+
+.Output
+[source,xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<user>
+  <name>Mariano</name>
+</user>
+----
+
+
+=== Descendants Selector
+
+This selector is applied to the context using the form *..<field-name>* and retrieves the values of all matching key:value pairs in the sub-tree under the current context. Regardless of the hierarchical structure these fields are organized in, they are all placed at the same level in the output.
+
+.Input
+[source, json,linenums]
+----
+{
+  "people": {
+    "person": {
+      "name": "Nial",
+      "address": {
+        "street": {
+          "name": "Italia",
+          "number": 2164
+        },
+        "area": {
+          "zone": "San Isidro",
+          "name": "Martinez"
+        }
+      }
+    }
+  }
+}
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  names: payload.people..name <1>
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  "names": [
+    "Nial",
+    "Italia",
+    "Martinez"
+  ]
+}
+----
+<1> In this example, all of the fields that match the key "name" are placed in a list called "names" regardless of their cardinality in the tree of the input data.
+
+==== Selecting all the Descendant Key Value Pairs
+
+.Input
+[source, json,linenums]
+----
+{
+  "people": {
+    "person": {
+      "name": "Nial",
+      "address": {
+        "street": {
+          "name": "Italia",
+          "number": 2164
+        },
+        "area": {
+          "zone": "San Isidro",
+          "name": "Martinez"
+        }
+      }
+    }
+  }
+}
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+{
+  names: payload.people..name as :object<1>
+}
+----
+<1> The *as: object* makes the expression return an object rather than an array (which would be returned by default). This implies that each value has a key. Without this conversion, in XML the returned array would be a single long string of characters comprised of all three names merged into one.
+
+.Output
+[source, xml,linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<names>
+  <name>Nial</name>
+  <name>Italia</name>
+  <name>Martinez</name>
+</names>
+----
+
+=== Selectors modifiers
+
+There are two selectors modifiers: ? and !.
+The question mark returns true or false whether the keys are present on the structures.
+The exclamation mark evaluates the selection and fails if any key is not present.
+
+==== Key Present
+
+Returns true if the specified key is present in the object.
+
+.Input
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "name": "Annie"
+}
+--------------------------------------------------------
+
+.Transform
+[source,DataWeave,linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+present: payload.name?
+--------------------------------------------------------
+
+.Output:
+[source,xml,linenums]
+--------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<present>true</present>
+--------------------------------------------------------
+
+In the example above, if a 'name' key does exist in the input, it returns *true*.
+
+This operation also works with attributes:
+
+.Input
+[source, xml,linenums]
+----
+<product id="1" type="tv">
+  <brand>Samsung</brand>
+</product>
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  item: {
+    typePresent : payload.product.@type?
+  }
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  item: {
+    typePresent: true
+  }
+}
+----
+
+You can also use this validation operation as part of a filter:
+
+.Input
+[source,xml,linenums]
+--------------------------------------------------------
+<users>
+  <name>Mariano</name>
+  <name>Luis</name>
+  <name>Mariano</name>
+</users>
+--------------------------------------------------------
+
+.Transform
+[source,DataWeave,linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+users: payload.users.*name[?($ == "Mariano")]
+--------------------------------------------------------
+
+.Output
+[source,xml,linenums]
+--------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+  <name>Mariano</name>
+  <name>Mariano</name>
+</users>
+--------------------------------------------------------
+
+The example above selects key:value pairs with value "Mariano" => {name: Mariano, name: Mariano}
+
+==== Assert Present
+
+Returns an exception if any of the specified keys are not found.
+
+.Input
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "name": "Annie"
+}
+--------------------------------------------------------
+
+.Transform
+[source,DataWeave,linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+present: payload.lastName!<1>
+--------------------------------------------------------
+<1> Throws the exception "There is no key named 'lastName'".
+
+== Reference Elements From an Incoming Mule Message
+
+Often, you want to use the different elements from the Mule Message that arrive at the DataWeave Transformer in your transform. The following sections show you how to reference each of these.
+
+=== The Payload of a Mule Message
+
+You can take the *Payload* of the Mule message that reaches the DataWeave transformer and use it in your transform body.
+
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+{
+  a: payload
+}
+----
+
+You can also refer to sub elements of the payload through the dot syntax `payload.user`.
+
+[TIP]
+If the metadata for the payload's inner contents are known to Studio, an autocomplete function  helps you out.
+
+You can optionally also define the payload as an input directive in the header, although this isn't required.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%input payload application/xml
+%output application/xml
+---
+{
+  a: payload
+}
+---------------------------------------------------------------------
+
+=== Inbound Properties from a Mule Message
+
+You can take *Inbound Properties* from the Mule message that arrives to the DataWeave transformer and use them in your transform body. To refer to one of these, simply call it through the matching
+link:/mule-user-guide/v/3.8-m1/mule-expression-language-mel[Mule Expression Language (MEL)] expression.
+
+In MEL, there are two supported syntaxes to call for an inbound property:
+
+* `inboundProperties.name`
+* `inboundProperties[’name’]`
+
+[IMPORTANT]
+The first method only works if the variable name doesn't include any periods or spaces.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+{
+  a: inboundProperties.userName
+}
+---------------------------------------------------------------------
+
+[TIP]
+If the metadata about these inbound properties is known to Studio, an autocomplete function  helps you out.
+
+You can optionally also define the inbound property as a variable input directive in the header, although this isn't required.
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%var inboundProperties[’userName’]
+---------------------------------------------------------------------
+
+=== Outbound Properties from a Mule Message
+
+You can take any *Outbound Properties* in the Mule message that arrives to the DataWeave transformer and use it in your transform body. To refer to it, simply call it through the matching link:/mule-user-guide/v/3.8-m1/mule-expression-language-mel[Mule Expression Language (MEL)] expression.
+
+In MEL, there are two supported syntaxes to call an outbound property:
+
+* `outboundProperties.name`
+* `outboundProperties[’name’]`
+
+[IMPORTANT]
+The first method only works if the variable name doesn't include any periods or spaces.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+{
+  a: outboundProperties.userName
+}
+---------------------------------------------------------------------
+
+[TIP]
+If the metadata about these outbound properties is known to Studio, an autocomplete function  helps you out.
+
+You can optionally also define the outbound property as a variable input directive in the header, although this isn't required.
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%var outboundProperties[’userName’]
+---------------------------------------------------------------------
+
+
+=== Flow Variables from a Mule Message
+
+You can take any *Flow Variable* in the Mule message that arrives at the DataWeave transformer and use it in your transform body. To refer to it, simply call it through the matching
+link:/mule-user-guide/v/3.8-m1/mule-expression-language-mel[Mule Expression Language (MEL)]  expression.
+
+In MEL, there are two supported syntaxes to call a flow variable:
+
+* `flowVars.name`
+* `flowVars[’name’]`
+
+[IMPORTANT]
+The first method only works if the variable name doesn't include any periods or spaces.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+{
+  a: flowVars.userName
+}
+---------------------------------------------------------------------
+
+[TIP]
+If the metadata about these flow variables is known to Studio, an autocomplete function helps you out.
+
+You can optionally also define the flow variable as a variable input directive in the header, although this isn't required.
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%var flowVars[’userName’]
+---------------------------------------------------------------------
+
+=== Accessing System and Spring Properties
+
+You can reference any *Property* (System or Spring) that exists in the server while DataWeave is processing your transformation, to do so use the *p('prop_name')* function.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+{
+  a: p('userName')
+}
+---------------------------------------------------------------------
+
+
+
+
+See Operators
+
+See Types
+
+See Functions
+
+
+
+== See Also
+
+* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
+* link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+* link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
+* link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
+* link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]
+* link:https://www.mulesoft.com/platform/studio[Anypoint Studio]
+* link:http://forums.mulesoft.com[MuleSoft's Forums]
+* link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[MuleSoft Support]
+* mailto:support@mulesoft.com[Contact MuleSoft]

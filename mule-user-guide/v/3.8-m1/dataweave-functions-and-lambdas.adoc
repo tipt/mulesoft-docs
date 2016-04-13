@@ -1,0 +1,177 @@
+== DataWeave Functions and Lambdas
+:keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
+
+see intro
+
+maybe what you need is already covered by an operator
+
+
+
+
+
+
+
+
+
+There are two types of directives you can use to define a function, through `%var` (as with variables) using a lambda, or through `%function`.
+
+
+== Lambdas
+
+Lambdas can be used inside operators such as map, mapObject, etc. or they can be assigned to a variable.
+When using lambdas with an operator, they can be either named or anonymous.
+
+=== Assign to a var
+
+.Transport
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+%var toUser = (user) -> {firstName: user.givenName, lastName: user.sn}
+---
+{
+  "user" : toUser({ givenName : "Annie", sn : "Point" })
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  "user": {
+    "firstName": "Annie",
+    "lastName": "Point"
+  }
+}
+----
+
+=== Named with an Operator
+
+.Input
+[source,DataWeave, linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+users: ["john", "peter", "matt"] map ((name) ->  upper name)
+---------------------------------------------------------------------
+
+.Transform
+[source,json,linenums]
+---------------------------------------------------------------------
+{
+  "users": ["JOHN","PETER","MATT"]
+}
+---------------------------------------------------------------------
+
+=== Anonymous with an Operator
+
+.Transform
+[source,DataWeave, linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+users: ["john", "peter", "matt"] map  upper $
+---------------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+---------------------------------------------------------------------
+{
+  "users": ["JOHN","PETER","MATT"]
+}
+---------------------------------------------------------------------
+
+
+== Functions
+
+You can declare functions in the Header and these can be invoked at any point in the Body. You refer to them as you do to any variable or constant: using the form *$<function-name>()* passing an expression as argument. The result of the expression that is passed as an argument is used in the execution of the function body.
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+%function toUser(user){firstName: user.givenName, lastName: user.sn}
+---
+{
+  "user" : toUser({ givenName : "Annie", sn : "Point" })
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  "user": {
+    "firstName": "Annie",
+    "lastName": "Point"
+  }
+}
+----
+
+=== Existing Functions
+
+==== Expressions that Call External Flows
+
+From a DataWeave transform, you can trigger the calling of a different flow in your Mule application, and whatever the flow returns is what the expression returns.
+
+You can do this through the following expression:
+
+`lookup(“flowName”,$)`
+
+Which takes two parameters:
+
+* The name of the flow that must be called
+* The payload to send to this flow, as a map
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  a: lookup("mySecondFlow",{b:"Hello"})
+}
+----
+
+.Mule Flow
+[source, xml,linenums]
+----
+<flow name="mySecondFlow">
+    <set-payload doc:name="Set Payload" value="#[payload.b + ' world!' ]"/>
+</flow>
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  "a": "Hello world!"
+}
+----
+
+
+
+== Global MEL Functions
+
+Your DataWeave code can call any function you define as a global link:/mule-user-guide/v/3.8-m1/mule-expression-language-mel[Mule Expression Language (MEL)] function, as long as it is correctly defined in the Mule Project where your Transform Message element sits.
+
+Refer to link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#calling-global-mel-functions-from-dataweave-code[Using DataWeave in Studio].
+
+
+== See Also
+
+* link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
+* link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
+* link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
+* link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]
+* link:https://www.mulesoft.com/platform/studio[Anypoint Studio]
+* link:http://forums.mulesoft.com[MuleSoft's Forums]
+* link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[MuleSoft Support]
+* mailto:support@mulesoft.com[Contact MuleSoft]
