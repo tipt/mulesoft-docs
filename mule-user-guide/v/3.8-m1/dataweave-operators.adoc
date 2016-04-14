@@ -1,11 +1,10 @@
 = DataWeave Operators
 :keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
 
+In link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] you can carry out many different operations upon the elements of a transform. This document walks serves as a reference for all of the available operations.
 
-See introduction
-
-
-
+* For an introduction to the essentials of the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 
 
 
@@ -1755,7 +1754,7 @@ Returns a time stamp.
 -----------------------------------------------------------------
 
 [TIP]
-See <<Accessors>> for a list of possible selectors to use here.
+See link:/mule-user-guide/v/3.8-m1/dataweave-types#accessors[Accessors] for a list of possible selectors to use here.
 
 === Append Time Zone
 
@@ -1820,12 +1819,16 @@ c: |2003-10-01T23:57:59Z| + |P1Y|
 }
 ----------------------------------------------------------------
 
+== Next Steps
+
+* For a high level overview about the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* For a listing and details about all of the types you can use, see link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+* View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
 
 == See Also
 
-* link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
-* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
-* link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]

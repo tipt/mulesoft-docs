@@ -1,15 +1,17 @@
 = DataWeave Language Introduction
 :keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
 
-The DataWeave Language is a powerful template engine that allows you to transform data to and from any kind of format (XML, CSV, JSON, Pojos, Maps, etc).
+The link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] Language is a powerful template engine that allows you to transform data to and from any kind of format (XML, CSV, JSON, Pojos, Maps, etc). This document covers basic examples, an overview, the structure of a DataWeave file and information about how to access different data from it. Below are some links for more advanced topics:
 
-== Getting Started
 
-In order to show the power of DataWeave, here are a few examples to get started.
+* For a reference about all of the operators that are available for using, see link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
+* For a listing and details about all of the types you can use, see link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 
-=== Basic Example
 
-This example shows a simple mapping form JSON to XML
+== Basic Example
+
+In order to show the power of DataWeave, here is a minimal example to get started. This example shows a simple mapping form JSON to XML:
 
 .Input
 [source,json,linenums]
@@ -50,9 +52,10 @@ This example shows a simple mapping form JSON to XML
 [TIP]
 In Anypoint Studio, inputs are implicitly known based on the metadata that runs through the flow components. If using DW outside of Mule, you should declare an input directive '%input payload application/json'
 
-=== String manipulation
+== String Manipulation Example
 
-This example shows how easy it is to work with strings in DataWeave.
+This example shows how easy it is to work with strings in DataWeave, it transforms one of the fields in the input with the link:/mule-user-guide/v/3.8-m1/dataweave-operators#replace[Replace operator].
+It also uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[Map operator] to iterate through each `user` element in the 'users' collection, referencing 'user' with a <<Multi Value selector>> . It also defines a link:/mule-user-guide/v/3.8-m1/dataweave-functions[function] in the header.
 
 .Input
 [source,xml,linenums]
@@ -112,9 +115,9 @@ contacts: payload.users.*user map using (parts =  words($.name)){
 [TIP]
 In Anypoint Studio, inputs are implicitly known based on the metadata that runs through the flow components. If using DW outside of Mule, you should declare an input directive '%input payload application/xml'
 
-=== Group by ...
+== Group by Example
 
-This example shows how easy it is to group by a given criteria and then transform that result to match the expected output.
+This example shows how easy it is to group by a given criteria and then transform that result to match the expected output. It uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#group-by[Group By operator] and the link:/mule-user-guide/v/3.8-m1/dataweave-operators#pluck[Pluck operator].
 
 .Input
 [source,json,linenums]
@@ -238,7 +241,7 @@ Upon receiving that as an input, DataWeave produces the XML output shown below:
 </user>
 ---------------------------------------------------------------------
 
-=== Header
+== The DataWeave Header
 
 The DataWeave header contains the directives, which define high level information about your transformation. The structure of the Header is a sequence of lines, each with its own Directives. The Header is terminated with '---'.
 
@@ -254,7 +257,7 @@ Through directives you can define:
 All directives are declared on the header section of your DataWeave document and act upon the entire scope of it. Directives are a mechanism to declare variables and constants and namespace aliases which need to be referenced in the Document.
 They are also needed to declare the type of the output of your transform. In Anypoint Studio, you can optionally use them to declare additional inputs. You rarely need them for this as any data arriving in the incoming Mule Message is already implicitly recognized as an input.
 
-==== Version Directive
+=== Version Directive
 
 Through this directive, you specify the version of the DataWeave syntax that is used to interpret the transformation.
 
@@ -263,7 +266,7 @@ Through this directive, you specify the version of the DataWeave syntax that is 
 %dw 1.0
 ---------------------------------------------------------------------
 
-==== Namespace Directive
+=== Namespace Directive
 
 This directive associates an alias with its subsequent URI. The directive is relevant only when either the input or the output is of type XML.
 [source,DataWeave,linenums]
@@ -271,7 +274,7 @@ This directive associates an alias with its subsequent URI. The directive is rel
 %namespace mes http://www.mulesoft.com/anypoint/SOA/message/v1.0
 ---------------------------------------------------------------------
 
-==== Input Directive
+=== Input Directive
 
 [WARNING]
 When using DataWeave in Anypoint Studio, it's not necessary to declare input directives for any of the components of the Mule Message that arrive at the DataWeave transformer (Payload, flow variables, and input/outbound properties) nor for any system variables. These are already implicitly recognized as inputs and can be referenced anywhere in the DataWeave body without a need to include them in the header because their type is known from the Mule metadata.
@@ -294,7 +297,7 @@ Valid types are:
 * `text/xml`
 * `text/csv`
 
-===== CSV Input Parsing
+==== CSV Input Parsing
 
 [WARNING]
 When using DataWeave in Anypoint Studio, it's not necessary to declare any input directives for any of the components of the Mule Message that arrive at the DataWeave transformer (Payload, flow variables, and input/outbound properties) nor for any system variables. These are already implicitly recognized as inputs and can be referenced anywhere in the DataWeave body without a need to include them in the header as their type is known from the Mule metadata.
@@ -303,7 +306,7 @@ When defining an input of type CSV, there are a few optional parameters you can 
 
 In Anypoint Studio there are two ways to achieve this. You can either manually add the attributes to the project's XML, or do it through the graphical interface, by selecting the element from the tree view in the input section and clicking the gear icon. See link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#parsing-csv-inputs[Using DataWeave in Studio] for more details.
 
-==== Output Directive
+=== Output Directive
 
 The Output Directive specifies what the output type is in a transformation, which is specified using content/type.
 Only one output can be specified, the structure of this output is then defined in the DataWeave body.
@@ -325,7 +328,7 @@ Valid types are:
 * `text/csv`
 * `text/plain`
 
-===== Skip Null On
+==== Skip Null On
 
 Whenever the output is of XML or JSON type and it has null values in its elements or attributes, you can specify whether this generates an outbound message that contains fields with "null" values, or if these fields are ignored entirely. This can be set through an attribute in the output directive named *skipNullOn*, which can be set to three different values: *elements*, *attributes*, or *everywhere*.
 
@@ -343,7 +346,7 @@ When set to:
 [NOTE]
 This attribute is only available when the output is of XML or JSON type.
 
-===== CSV Output Formatting
+==== CSV Output Formatting
 
 When defining an output of type CSV, there are a few optional parameters you can add to the output directive to customize how the data is parsed:
 
@@ -360,7 +363,7 @@ When defining an output of type CSV, there are a few optional parameters you can
 |quoteValues |bool |false |Indicates if every value should be quoted whether or not it contains special characters within
 |=======================
 
-===== Flat File Schemas
+==== Flat File Schemas
 
 When defining an output of type flat file (which includes fixed width, EDI and Copybook but not CSV) there are a few optional parameters you can add to the output directive to customize how the data is parsed:
 
@@ -383,7 +386,7 @@ payload
 See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas] for instructions and examples on how to create the required schema file.
 
 
-==== Define Constant Directive
+=== Define Constant Directive
 
 You can define a constant in the header, you can then reference it (or its child elements, if any exist) in the DataWeave body.
 
@@ -399,7 +402,7 @@ You can define a constant in the header, you can then reference it (or its child
 }
 ---------------------------------------------------------------------
 
-==== Define Function Directive
+=== Define Function Directive
 
 You can define a function in the header, you can then call it in any part of the DataWeave body, including arguments.
 
@@ -414,19 +417,20 @@ You can define a function in the header, you can then call it in any part of the
 }
 ---------------------------------------------------------------------
 
-=== Body
+== The DataWeave Body
 
 The body contains the *expression* that generates the output structure. Regardless of the types of the input and output, the data model for the output is always described in the standard DataWeave language, and this model that the transform executes.
 
 The data model of the produced output can consist of three different types of data:
 
-. Objects: Represented as collection of key value pairs
-. Arrays: Represented as a sequence of comma separated values
 . Simple literals
+. Arrays: Represented as a sequence of comma separated values
+. Objects: Represented as collection of key value pairs
+
 
 When you write your DataWeave file, you define an expression that generates one of the data types listed above.
 
-=== Simple Literal Types
+=== Simple Literals
 
 Literals can be of the following types:
 
@@ -484,11 +488,30 @@ DataWeave supports streaming a large payload. No configuration is necessary in t
 
 
 
-== Example Transformation
+== DataWeave Canonical Model
 
-Suppose you want to transform an XML document to JSON, appending extra content to the output.
+As covered above, DataWeave uses three basic data types: Objects, Arrays, and Simple Types, the execution of a DataWeave transformation always produces one of these three types of data. In essence, the body of every DataWeave transformation is a single expression that defines the structure and contents of one such element (which can be an Object, Array, or Simple Literal).
 
-.Input as XML
+This expression can be built using any of the following elements:
+
+* Objects
+* Arrays
+* Simple literals
+* Variable and Constant references
+
+A DataWeave transformation can be as simple as the definition of a single element from the list above. Even a simple literal 'Hello world' is a valid DataWeave transformation.
+
+Expressions can also be complex, meaning that they can be composed of other expressions. This can be achieved by either nesting expressions inside Arrays or Objects, or through the use of operators.
+In complex expressions, the result of one expression sets the context for the subsequent execution of other expressions. You just need to remember that each expression produces an Object, an Array, or a Simple literal.
+
+If you declare input directives in your DataWeave's header, regardless of its type (XML, JSON, Java),
+any execution that references these inputs produces, as stated before, an Object, an Array, or a Simple literal. When you understand the structure of these data types, expressed in the syntax of DataWeave expressions, you effectively understand DataWeave.
+
+In Anypoint Studio, if you ever need to visualize the canonical DataWeave model of your data to get a better reference, set the output type of your transform to `application/dw`. Your transform then outputs your data as a DataWeave expression, which resembles a JSON object. See the example below.
+
+== Closer Look at an Example Transformation
+
+.Input
 [source, xml,linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -513,85 +536,32 @@ Suppose you want to transform an XML document to JSON, appending extra content t
 }
 ----
 
+
 .Output as JSON
 [source, json,linenums]
 ----
 {
-  "letter": {
-    "note": {
+  "letter": { # <1>
+    "note": { # <2>
       "to": "Tove",
       "from": "Jani",
-      "heading": "Reminder",
+      "heading": "Reminder", # <3>
       "body": "Don't forget me this weekend!"
     }
   },
-  "sent": "01-MAR-2015"
+  "sent": "01-MAR-2015"  # <4>
 }
 ----
+
+
+<1> The "payload" input is parsed into an Object.
+<2> As previously stated, Objects are sequences of key:value pairs. Note how each element name from the XML input is parsed into a key followed by a colon : and then the value.
+<3> The value may be a Simple literal, as is the case of the *heading* field, or an object, as is the case in *note* #2.
+<4> This value arises from a variable 'date', which is defined in a directive in the DataWeave header.
 
 [WARNING]
 Whenever you make a transformation from JSON to XML, make sure that the resulting output is valid as an XML file. Specifically, make sure that there's a single parent tag, JSON supports having multiple elements at the highest level while XML doesn't.
 Likewise, whenever you transform from XML to JSON, make sure the resulting output is valid as a JSON file. Specifically, make sure that there are no repeated keys inside the same parent. XML supports having this but JSON doesn't.
-
-== DataWeave Canonical Model
-
-As covered above, DataWeave uses three basic data types: Objects, Arrays, and Simple Types, the execution of a DataWeave transformation always produces one of these three types of data. In essence, the body of every DataWeave transformation is a single expression that defines the structure and contents of one such element (which can be an Object, Array, or Simple Literal).
-
-This expression can be built using any of the following elements:
-
-* Objects
-* Arrays
-* Simple literals
-* Variable and Constant references
-
-A DataWeave transformation can be as simple as the definition of a single element from the list above. Even a simple literal 'Hello world' is a valid DataWeave transformation.
-
-Expressions can also be complex, meaning that they can be composed of other expressions. This can be achieved by either nesting expressions inside Arrays or Objects, or through the use of operators.
-In complex expressions, the result of one expression sets the context for the subsequent execution of other expressions. You just need to remember that each expression produces an Object, an Array, or a Simple literal.
-
-If you declare input directives in your DataWeave's header, regardless of its type (XML, JSON, Java),
-any execution that references these inputs produces, as stated before, an Object, an Array, or a Simple literal. When you understand the structure of these data types, expressed in the syntax of DataWeave expressions, you effectively understand DataWeave.
-
-In Anypoint Studio, if you ever need to visualize the canonical DataWeave model of your data to get a better reference, set the output type of your transform to `application/dw`. Your transform then outputs your data as a DataWeave expression, which resembles a JSON object. See the example below.
-
-=== Example Transformation to DataWeave
-
-.Input
-[source, xml,linenums]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<note>
-  <to>Tove</to>
-  <from>Jani</from>
-  <heading>Reminder</heading>
-  <body>Don't forget me this weekend!</body>
-</note>
-----
-
-.Transform
-[source,DataWeave,linenums]
-----
-%dw 1.0
-%output application/dw
----
-payload
-----
-
-.Output
-[source,DataWeave,linenums]
-----
-{ # <1>
-  note: { # <2>
-    to: "Tove",
-    from: "Jani",
-    heading: "Reminder", # <3>
-    body: "Dont forget me this weekend!"
-  }
-}
-----
-<1> The input is parsed into an Object.
-<2> As previously stated, Objects are sequences of key:value pairs. Note how each element name from the XML input is parsed into a key followed by a colon : and then the value.
-<3> The value may be a Simple literal, as is the case of the *heading* field, or an object, as is the case in *note* #2.
 
 == Literal Expressions
 
@@ -1508,21 +1478,17 @@ You can reference any *Property* (System or Spring) that exists in the server wh
 ---------------------------------------------------------------------
 
 
+== Next Steps
 
 
-See Operators
-
-See Types
-
-See Functions
-
-
+* For a reference about all of the operators that are available for using, see link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
+* For a listing and details about all of the types you can use, see link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+* View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
 
 == See Also
 
-* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
-* link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
-* link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]

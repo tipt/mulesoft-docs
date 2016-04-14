@@ -1,19 +1,12 @@
 == DataWeave Functions and Lambdas
 :keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
 
-see intro
 
-maybe what you need is already covered by an operator
+In link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave], if you want to carry out a complex operation that is not covered by any of the existing link:/mule-user-guide/v/3.8-m1/dataweave-operators[Operators], you can create a function or a lambda.
 
+Functions and Lambdas can be defined anywhere in the DataWeave code, and even be treated as link:/mule-user-guide/v/3.8-m1/dataweave-types#object[objects], you can then pass them as arguments for other functions. They are defined through `%var` (as with variables) using a lambda, or through `%function`.
 
-
-
-
-
-
-
-
-There are two types of directives you can use to define a function, through `%var` (as with variables) using a lambda, or through `%function`.
+They can be defined in the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[the DataWeave header], as link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#define-function-directive[function directives], or anywhere in the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-body[the DataWeave body].
 
 
 == Lambdas
@@ -163,11 +156,15 @@ Your DataWeave code can call any function you define as a global link:/mule-user
 Refer to link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#calling-global-mel-functions-from-dataweave-code[Using DataWeave in Studio].
 
 
+== Next Steps
+
+* For a high level overview about the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* For a reference about all of the already existing operators that are available for executing from scratch, see link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
+* For a listing and details about all of the types you can use, see link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
+
 == See Also
 
-* link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
-* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
-* link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]

@@ -1,7 +1,9 @@
-= DataWeave Reference Documentation
+= DataWeave Types
 :keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
 
-The DataWeave Language is a powerful template engine that allows you to transform data to and from any kind of format (XML, CSV, JSON, Pojos, Maps, etc).
+
+The link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] language functions essentially as a template engine that describes an output structure through the use of elements that may be of various different types. This document covers the different types of objects you can use to construct your output.
+
 
 == Object
 
@@ -584,11 +586,17 @@ books: payload.items.*item map
 
 In Anypoint Studio, you can define several more values, like separators, quote characters and escape characters. See link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#configuring-the-csv-reader[Using DataWeave in Studio].
 
+== Next Steps
+
+* For a high level overview about the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* For a reference about all of the operators that are available for using, see link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
+* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+* View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
+
+
 == See Also
 
-* link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
-* link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
-* link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]

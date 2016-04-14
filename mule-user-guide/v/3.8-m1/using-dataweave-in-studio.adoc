@@ -108,6 +108,8 @@ When the input is of types JSON, XML, CSV or flat file, the sample input contain
 
 If your metadata is missing any variables, inbound properties, outbound properties, session variables or record variables that you know will exist in the incoming mule message, you can manually add these too in the editor. Just right-click on one of these categories in the input section of the properties editor and select *Add Flow Variable*, *Add Inbound Property* or whatever the element you want to add may be.
 
+
+
 ==== Reader Configuration
 
 Some input formats allow you to define a reader with specific properties that make DataWeave parse inputs differently. Right click on the input section and select *Reader Configuration* to open this menu.
@@ -115,6 +117,32 @@ Some input formats allow you to define a reader with specific properties that ma
 image:dw_reader_configuration_select.png[reader conf]
 
 The available parameters will depend on the type of your input.
+
+===== Explicitly Defining an Input Type
+
+By default, DataWeave should be able to recognize the type of an input from the metadata. If you must explicitly define an input payload type, use the `mimeType` attribute in an XML tag as in the example below:
+
+[source,xml, linenums]
+----
+<dw:transform-message doc:name="Transform Message">
+	<dw:input-payload mimeType="text/json" />
+	<dw:set-payload>
+	<![CDATA[%dw 1.0
+	%output application/java
+	---
+	{
+		// YOUR DW SCRIPT
+	}
+	]]>
+	</dw:set-payload>
+</dw:transform-message>
+----
+
+
+If you do not provide this attribute, DataWeave will try to read the payload MIME type from the metadata.
+If it is undeclared or not understood it will default to 'application/java', a warning will be logged.
+
+
 
 ===== CSV
 
@@ -369,6 +397,7 @@ Even with these external functions in place, you should be able to preview the o
 == See Also
 
 * link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]
+* View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
 * link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
