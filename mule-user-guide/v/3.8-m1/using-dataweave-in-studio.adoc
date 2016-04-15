@@ -343,6 +343,15 @@ That same expression could be added inside a Logger, within a MEL expression, to
 #[dw("myobject:{id:payload.accountid, user:payload.user}")]
 ----
 
+
+
+
+extra arguments
+
+
+
+
+
 === The Split Function
 
 The `split()` function runs an expression written in DataWeave language and returns an iterator who's result can be then processed by your flow one index at a time. It takes at least two arguments: a DataWeave expression and the desired output type. This function may be equivalent to running the 'dw()' function and then adding an additional step to your flow, such as a link:/mule-user-guide/v/3.8-m1/foreach[Foreach Scope], but it's less heavy on resources.
