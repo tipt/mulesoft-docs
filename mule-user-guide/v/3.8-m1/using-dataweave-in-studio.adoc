@@ -344,9 +344,25 @@ That same expression could be added inside a Logger, within a MEL expression, to
 ----
 
 
+The function has the following attributes:
+
+[cols="30a,70a",options="header"]
+|===
+|Attributes |Description
+|DataWeave Expression |The actual DataWeave expression to carry out
+|Type?	|
+|Reader Properties ?	|
 
 
-extra arguments
+
+
+
+
+
+
+
+
+|===
 
 
 
@@ -384,6 +400,16 @@ That same expression could be added inside a link:/mule-user-guide/v/3.8-m1/fore
 
 
 
+The function has the following attributes:
+
+[cols="30a,70a",options="header"]
+|===
+|Attributes |Description
+|DataWeave Expression |The actual DataWeave expression to carry out
+|Output Type	| The type of the output of the transform
+|Reader Properties	| For inputs such as CSV, sometimes some properties are needed to know how to parse the input, see <<Reader Configuration>>
+|Writer Properties	| For inputs such as CSV, sometimes some properties are needed to compose the output
+|===
 
 == Calling Global MEL Functions from DataWeave Code
 
