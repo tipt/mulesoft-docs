@@ -33,7 +33,7 @@ In order to show the power of DataWeave, here is a minimal example to get starte
   order: {
     type: "Book",
     title: payload.title,
-    details: "By $(payload.author) ($(payload.year))"
+    details: "By " ++ payload.author ++ " (" ++ payload.year ++ ")"
   }
 }
 ----

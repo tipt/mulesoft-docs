@@ -12,9 +12,11 @@ They can be defined in the link:/mule-user-guide/v/3.8-m1/dataweave-language-int
 == Lambdas
 
 Lambdas can be used inside operators such as map, mapObject, etc. or they can be assigned to a variable.
-When using lambdas with an operator, they can be either named or anonymous.
+When using lambdas within the body of a DataWeave file in conjunction to an operator such as link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[map], its attributes can either be explicitly named or left anonymous, in which case they can be referenced as $, $$, etc.
 
 === Assign to a var
+
+You can define a lambda as a variable with a link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#define-constant-directive[constant directive] through '%var'
 
 .Transport
 [source,DataWeave, linenums]
@@ -39,7 +41,9 @@ When using lambdas with an operator, they can be either named or anonymous.
 }
 ----
 
-=== Named with an Operator
+=== Named attributes with an Operator
+
+This example uses a lambda with an attribute that's explicitly named as 'name'.
 
 .Input
 [source,DataWeave, linenums]
@@ -58,7 +62,9 @@ users: ["john", "peter", "matt"] map ((name) ->  upper name)
 }
 ---------------------------------------------------------------------
 
-=== Anonymous with an Operator
+=== Anonymous attributes with an Operator
+
+This example uses a lambda with an attribute that's not explicitly named, and so is referred to by default as '$'.
 
 .Transform
 [source,DataWeave, linenums]
@@ -80,7 +86,7 @@ users: ["john", "peter", "matt"] map  upper $
 
 == Functions
 
-You can declare functions in the Header and these can be invoked at any point in the Body. You refer to them as you do to any variable or constant: using the form *$<function-name>()* passing an expression as argument. The result of the expression that is passed as an argument is used in the execution of the function body.
+You can declare functions in the Header and these can be invoked at any point in the Body, you can also declare functions anywhere in the body. You refer to them using the form *function-name()* passing an expression in between the parenthesis for each necessary argument. Each expression between the parenthesis is evaluated and the result is passed as an argument used in the execution of the function body.
 
 .Transform
 [source,DataWeave, linenums]
