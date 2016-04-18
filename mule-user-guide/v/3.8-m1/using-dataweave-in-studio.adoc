@@ -142,6 +142,15 @@ By default, DataWeave should be able to recognize the type of an input from the 
 If you do not provide this attribute, DataWeave will try to read the payload MIME type from the metadata.
 If it is undeclared or not understood it will default to 'application/java', a warning will be logged.
 
+For some types, you can also define other properties of the reader by adding 'dw:reader-property' child elements within:
+
+[source, xml, linenums]
+----
+<dw:input-payload doc:sample="list_csv.csv" mimeType="text/csv" >
+    <dw:reader-property name="separator" value="|"/>
+    <dw:reader-property name="header" value="false"/>
+</dw:input-payload>
+----
 
 
 ===== CSV
@@ -174,7 +183,8 @@ You can set these propertes by either editing the XML code or via the UI:
 In Anypoint Studio, there are two ways to set this up. You can either set the parameters of the CSV input through the Transform Message component itself or by setting it up on the component of your Mule flow that actually brings this information in.
 
 On the Transform Message component, left-click on the element in the input structure and select *Reader Configuration*.
-+
+
+
 image:dw_reader_configuration.png[reader]
 
 [TIP]

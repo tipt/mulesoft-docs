@@ -5,6 +5,90 @@
 The link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] language functions essentially as a template engine that describes an output structure through the use of elements that may be of various different types. This document covers the different types of objects you can use to construct your output.
 
 
+
+== String
+
+*Type* => ':string'
+
+A string can be defined by the use of double quotes or single quotes.
+
+[source,DataWeave, linenums]
+--------------------------------------------------------
+{
+  doubleQuoted: "Hello",
+  singleQuoted: 'Hello',
+}
+--------------------------------------------------------
+
+=== String interpolation
+
+String interpolation allows you to embed variables or expressions directly in a string.
+
+.Transform
+[source,DataWeave, linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/json
+%var name = "Shoki"
+---
+{
+    Greeting: "Hi, my name is $name",
+    Sum: "1 + 1 = $(1 + 1)"
+}
+--------------------------------------------------------
+
+.Output
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "Greeting": "Hi, my name is Shoki",
+  "Sum": "1 + 1 = 2"
+}
+--------------------------------------------------------
+
+=== Selectors
+
+==== Index selector
+
+Selects the character at a given position using "[]".
+
+. If the index is bigger or equals to 0, it starts counting from the beginning.
+. If the index is negative, it starts counting from the end.
+
+.Transform
+[source,DataWeave, linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  name: "Emiliano"[0]
+}
+--------------------------------------------------------
+
+.Output
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "name": "E"
+}
+--------------------------------------------------------
+
+== Number
+
+*Type* => ':number'
+
+There is only one number type that supports both floating point and integer numbers.
+There is no loss of precision in any operation, the engine always stores the data in the most performant way that doesn't compromise precision.
+
+== Boolean
+
+*Type* => ':boolean'
+
+A boolean is defined by the keywords 'true' and 'false'.
+
+
+
 == Object
 
 *Type* => ':object'
@@ -99,86 +183,7 @@ Dynamic elements allow you to add the result of an expression as key:value pairs
 }
 --------------------------------------------------------
 
-== String
 
-*Type* => ':string'
-
-A string can be defined by the use of double quotes or single quotes.
-
-[source,DataWeave, linenums]
---------------------------------------------------------
-{
-  doubleQuoted: "Hello",
-  singleQuoted: 'Hello',
-}
---------------------------------------------------------
-
-=== String interpolation
-
-String interpolation allows you to embed variables or expressions directly in a string.
-
-.Transform
-[source,DataWeave, linenums]
---------------------------------------------------------
-%dw 1.0
-%output application/json
-%var name = "Shoki"
----
-{
-    Greeting: "Hi, my name is $name",
-    Sum: "1 + 1 = $(1 + 1)"
-}
---------------------------------------------------------
-
-.Output
-[source,json,linenums]
---------------------------------------------------------
-{
-  "Greeting": "Hi, my name is Shoki",
-  "Sum": "1 + 1 = 2"
-}
---------------------------------------------------------
-
-=== Selectors
-
-==== Index selector
-
-Selects the character at a given position using "[]".
-
-. If the index is bigger or equals to 0, it starts counting from the beginning.
-. If the index is negative, it starts counting from the end.
-
-.Transform
-[source,DataWeave, linenums]
---------------------------------------------------------
-%dw 1.0
-%output application/json
----
-{
-  name: "Emiliano"[0]
-}
---------------------------------------------------------
-
-.Output
-[source,json,linenums]
---------------------------------------------------------
-{
-  "name": "E"
-}
---------------------------------------------------------
-
-== Number
-
-*Type* => ':number'
-
-There is only one number type that supports both floating point and integer numbers.
-There is no loss of precision in any operation, the engine always stores the data in the most performant way that doesn't compromise precision.
-
-== Boolean
-
-*Type* => ':boolean'
-
-A boolean is defined by the keywords 'true' and 'false'.
 
 == Dates
 
@@ -585,6 +590,9 @@ books: payload.items.*item map
 -----------------------------------------------------------------------
 
 In Anypoint Studio, you can define several more values, like separators, quote characters and escape characters. See link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#configuring-the-csv-reader[Using DataWeave in Studio].
+
+
+
 
 == Next Steps
 

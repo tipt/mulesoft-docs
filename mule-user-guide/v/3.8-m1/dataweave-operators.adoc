@@ -7,7 +7,6 @@ In link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] you can carry out many di
 * For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 
 
-
 == Map
 
 === Using Map on an Array
@@ -67,6 +66,9 @@ users: ["john", "peter", "matt"] map ((firstName, position) -> position ++ ":" +
 Returns an array with the values that result out of applying a transformation function (lambda) to each of the values in the object. The keys of the original object are all ignored by this operation and the object is treated as an array. To have access to the keys, you can use the operation *mapObject* instead.
 The lambda is invoked with two parameters: *index* and the *value*.
 If these parameters are not named, the index is defined by default as *$$* and the value as *$*. The index refers to the position of a key:value pair when the object is treated as an array.
+
+[TIP]
+Check <<map object>> if what you want is to process both keys and values instead of just values.
 
 .Input
 [source,xml,linenums]
@@ -1544,30 +1546,6 @@ Returns the provided string with every word separated by an underscore.
 --------------------------------------------------------
 
 
-== Ordinalize
-
-Returns the provided numbers set as ordinals.
-
-[source,DataWeave, linenums]
---------------------------------------------------------
-%dw 1.0
-%output application/json
----
-{
-  a: ordinalize 1,
-  b: ordinalize 8,
-  c: ordinalize 103
-}
---------------------------------------------------------
-
-[source,json,linenums]
---------------------------------------------------------
-{
-  "a": "1st",
-  "b": "8th",
-  "c": "103rd"
-}
---------------------------------------------------------
 
 == Pluralize
 
@@ -1619,6 +1597,30 @@ Returns the provided string transformed into its singular form.
 }
 --------------------------------------------------------
 
+== Ordinalize
+
+Returns the provided numbers set as ordinals.
+
+[source,DataWeave, linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: ordinalize 1,
+  b: ordinalize 8,
+  c: ordinalize 103
+}
+--------------------------------------------------------
+
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "a": "1st",
+  "b": "8th",
+  "c": "103rd"
+}
+--------------------------------------------------------
 
 == Basic Math Operations
 
@@ -1800,7 +1802,7 @@ a: |2014-01-01T14:00-03:00| >> |-08:00|
 
 === Adding a Period of Time
 
-Add or subtract a period of time from a given date.
+Add or subtract a period of time from a given date type object.
 
 .Transform
 [source,DataWeave, linenums]
@@ -1818,6 +1820,8 @@ c: |2003-10-01T23:57:59Z| + |P1Y|
   "c": "2004-10-01T23:57:59Z"
 }
 ----------------------------------------------------------------
+
+The same logically applies to subtracting time periods forma date type object.
 
 == Next Steps
 
