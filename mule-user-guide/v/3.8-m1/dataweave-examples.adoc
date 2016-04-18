@@ -1508,7 +1508,7 @@ This example takes in an XML file that is grouped separating two types of elemen
 *Transform*
 
 [source,DataWeave, linenums]
-----
+------------------
 %dw 1.0
 %input payload application/xml
 %output application/dw
@@ -1530,83 +1530,83 @@ classrooms: payload.school.teachers groupBy $.subject mapObject ((teacherGroup, 
       }) }
     }
 })
-----
+------------------
 
 *Output*
 
 [source, json, linenums]
 ----
 {
-  classrooms: {
-    class: {
-      name: DW,
-      teachers: [
+  "classrooms": {
+    "class": {
+      "name": "DW",
+      "teachers": [
         {
-          teacher: {
-            name: [
-              Mariano
+          "teacher": {
+            "name": [
+              "Mariano"
             ],
-            lastName: [
-              De Achaval
+            "lastName": [
+              "De Achaval"
             ]
           }
         },
         {
-          teacher: {
-            name: [
-              Emiliano
+          "teacher": {
+            "name": [
+              "Emiliano"
             ],
-            lastName: [
-              Lesende
+            "lastName": [
+              "Lesende"
             ]
           }
         }
       ],
-      attendees: [
+      "attendees": [
         {
-          attendee: {
-            name: [
-              Peter
+          "attendee": {
+            "name": [
+              "Peter"
             ],
-            lastName: [
-              Parker
+            "lastName": [
+              "Parker"
             ]
           }
         }
       ]
     },
-    class: {
-      name: Scala,
-      teachers: [
+    "class": {
+      "name": "Scala",
+      "teachers": [
         {
-          teacher: {
-            name: [
-              Leandro
+          "teacher": {
+            "name": [
+              "Leandro"
             ],
-            lastName: [
-              Shokida
+            "lastName": [
+              "Shokida"
             ]
           }
         }
       ],
-      attendees: [
+      "attendees": [
         {
-          attendee: {
-            name: [
-              Peter
+          "attendee": {
+            "name": [
+              "Peter"
             ],
-            lastName: [
-              Parker
+            "lastName": [
+              "Parker"
             ]
           }
         },
         {
-          attendee: {
-            name: [
-              Homer
+          "attendee": {
+            "name": [
+              "Homer"
             ],
-            lastName: [
-              Simpson
+            "lastName": [
+              "Simpson"
             ]
           }
         }
@@ -1676,6 +1676,231 @@ payload map {
 ]
 ----
 
+= Adding XML elements based on a condition
+
+It is very common when mapping to Xml that we want to output a tag based on a condition.
+For example in this mapping we are going to insert the insurance tag only if it is present in the input
+.Input
+[source,json]
+---------------------------------------------------------
+[
+  {
+    "name" : "Julian",
+    "gender" : "Male",
+    "age" : 41,
+    "insurance": "Osde"
+  },
+  {
+    "name" : "Mariano",
+    "gender" : "Male",
+    "age" : 33
+  }
+]
+---------------------------------------------------------
+
+.Transform
+[source,ruby]
+---------------------------------------------------------
+%dw 1.0
+%input payload application/json
+%output application/xml
+---
+users: {
+  (
+    payload map {
+        user: {
+          (insurance: $.insurance) when $.insurance?,
+          name: $.name
+        }
+    }
+  )
+}
+---------------------------------------------------------
+
+.Output
+[source,xml]
+---------------------------------------------------------
+<?xml version='1.0' encoding='US-ASCII'?>
+<users>
+  <user>
+    <insurance>Osde</insurance>
+    <name>Julian</name>
+  </user>
+  <user>
+    <name>Mariano</name>
+  </user>
+</users>
+---------------------------------------------------------
+
+= Traversing an XML
+
+It is very common to need to traverse an xml for different transformation.
+
+== Mapping the keys
+
+Making all the keys lower case. In this example we create a function that receives the element to be traverse and the function to which all the
+
+.Input
+[source,xml]
+---------------------------------------------------------
+<CATALOG>
+  <CD>
+    <TITLE name="foo">Empire Burlesque</TITLE>
+    <ARTIST>Bob Dylan</ARTIST>
+    <COUNTRY>USA</COUNTRY>
+    <COMPANY>Columbia</COMPANY>
+    <PRICE>10.90</PRICE>
+    <YEAR>1985</YEAR>
+  </CD>
+  <CD>
+    <TITLE>Hide your heart</TITLE>
+    <ARTIST>Bonnie Tyler</ARTIST>
+    <COUNTRY>UK</COUNTRY>
+    <COMPANY>CBS Records</COMPANY>
+    <PRICE>9.90</PRICE>
+    <YEAR>1988</YEAR>
+  </CD>
+</CATALOG>
+---------------------------------------------------------
+
+.Transform
+[source,ruby]
+---------------------------------------------------------
+%dw 1.0
+%input payload application/xml
+%output application/xml
+%function mapKeys(element, func)
+  element match {
+    obj is :object -> obj mapObject {
+      "$(func($$))" @(($$.@ when $.@? otherwise {}) ): mapKeys($, func)
+    },
+    default -> element
+  }
+---
+mapKeys(payload, ((key) ->(lower key)))
+---------------------------------------------------------
+
+.Output
+[source,xml]
+---------------------------------------------------------
+<?xml version='1.0' encoding='US-ASCII'?>
+<catalog>
+  <cd>
+    <title name="foo">Empire Burlesque</title>
+    <artist>Bob Dylan</artist>
+    <country>USA</country>
+    <company>Columbia</company>
+    <price>10.90</price>
+    <year>1985</year>
+  </cd>
+  <cd>
+    <title>Hide your heart</title>
+    <artist>Bonnie Tyler</artist>
+    <country>UK</country>
+    <company>CBS Records</company>
+    <price>9.90</price>
+    <year>1988</year>
+  </cd>
+</catalog>
+---------------------------------------------------------
+
+== Removing unwanted attributes
+
+We may want to remove attributes that has sensitive value before send it to an endpoint.
+
+.Input
+[source,xml]
+---------------------------------------------------------
+<users>
+  <user username="Julian" password="1234"/>
+  <user username="Mariano" password="4321"/>
+</users>
+---------------------------------------------------------
+
+.Transform
+[source,ruby]
+---------------------------------------------------------
+%dw 1.0
+%input payload application/xml
+%output application/dw
+%var removeAttribute = (element,attrName) ->
+element mapObject {
+  ($$) @((($$.@ - attrName) when $$.@? otherwise {} ) ) : $ match {
+    :object -> removeAttribute($, attrName),
+    default -> $
+  }
+}
+---
+
+removeAttribute(payload, "password")
+---------------------------------------------------------
+
+== Dynamic mapping based on a definition
+
+This example shows how based on a mapping definition that it may be stored in a DB table you can dynamically execute it.
+
+.Input
+
+This input describes a mapping definition
+
+[source,json]
+------------------------------------------------------------
+[
+  {
+    "source": "sfdc_name",
+    "target": "name",
+    "default": "---"
+  },
+  {
+    "source": "sfdc_last_name",
+    "target": "lastName",
+    "default": "---"
+  },
+  {
+    "source": "sfdc_employee",
+    "target": "user",
+    "default": true
+  }
+]
+------------------------------------------------------------
+
+[source,xml]
+------------------------------------------------------------
+<sfdc_users>
+    <sfdc_user>
+      <sfdc_name>Mariano</sfdc_name>
+      <sfdc_last_name>Achaval</sfdc_last_name>
+      <sfdc_employee>true</sfdc_employee>
+    </sfdc_user>
+    <sfdc_user>
+      <sfdc_name>Julian</sfdc_name>
+      <sfdc_last_name>Esevich</sfdc_last_name>
+      <sfdc_employee>true</sfdc_employee>
+    </sfdc_user>
+    <sfdc_user>
+      <sfdc_name>Leandro</sfdc_name>
+      <sfdc_last_name>Shokida</sfdc_last_name>
+    </sfdc_user>
+</sfdc_users>
+------------------------------------------------------------
+
+.Transform
+
+[source,ruby]
+------------------------------------------------------------
+%dw 1.0
+%input mapping application/json
+%input payload application/xml nullValueOn="empty"
+%output application/json
+%var applyMapping = (input, mappingsDef) ->
+{
+  (mappingsDef map ((mappingDef) -> {
+  (mappingDef.target) : input[mappingDef.source] default mappingDef.default
+  }))
+}
+---
+payload.sfdc_users.*sfdc_user map ((user) -> applyMapping(user, mapping))
+------------------------------------------------------------
 
 == See Also
 
