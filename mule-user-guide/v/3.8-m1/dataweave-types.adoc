@@ -592,6 +592,174 @@ books: payload.items.*item map
 In Anypoint Studio, you can define several more values, like separators, quote characters and escape characters. See link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#configuring-the-csv-reader[Using DataWeave in Studio].
 
 
+== DataWeave Operators Sorted by Type
+
+Below is an index that includes all of the different operators in DataWeave, sorted by the types of the parameters it accepts.
+Each operator displays what type is accepted on each of its arguments, not all arguments are required.
+
+=== Operations Performed on any Type
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#typ-Of[typeOf] |(':any')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#as-(type-coercion)[as] |(':any', ':type')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#push[+] |(':any', ':array')
+|===
+
+
+=== Operations Performed on ':number')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#sum[+] |(':number', ':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#minus[-] |(':number', ':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#multiply[*] |(':number', ':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#division[/] |(':number', ':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#round[round] |(':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#sqrt[sqrt] |(':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#pow[pow] |(':number', ':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#ceil[ceil] |(':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#floor[floor] |(':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#abs[abs] |(':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#mod[mod] |(':number', ':number')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#ordinalize[ordinalize] |(':number')
+|===
+
+
+=== Operations Performed on ':array')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#min[min] |(':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#max[max] |(':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#size-of[sizeOf] |(':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#sum[sum] |(':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#flatten[flatten] |(':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#order-by[orderBy] |(':array', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#reduce[reduce] |(':array', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#array-push[+] |(':array', ':any')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#array-remove[-] |(':array', ':any')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#array-remove-all[--] |(':array', ':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[map] |(':array', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#array-average[avg] |(':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#filter[filter] |(':array', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#contains[contains] |(':array', ':any')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#distinct-by[distinctBy] |(':array', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#join-by[joinBy] |(':array', ':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#using-oncat-on-an-array[++] |(':array', ':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#group-by[groupBy] |(':array', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#zip-arrays[zip] |(':array', ':array')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#unzip-array[unzip] |(':array')
+|===
+
+=== Operations Performed on ':string')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#trim[trim] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#+using-concat-on-a-string[++] |(':string', ':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#size-of[sizeOf] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#capitalize[capitalize] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#lower[lower] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#upper[upper] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#camelize[camelize] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#dasherize[dasherize] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#underscore[underscore] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#singularize[singularize] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#pluralize[pluralize] |(':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#split-by[splitBy ] |(':string', ':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#split-by[splitBy] |(':string', ':regex')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#find[find] |(':string', ':regex')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#find[find] |(':string', ':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#replace[replace] |(':string', ':regex', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#starts-with[startsWith] |(':string', ':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#ends-with[endsWith] |(':string', ':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#match[match] |(':string', ':regex')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#matches[matches] |(':string', ':regex')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#scan[scan] |(':string', ':regex')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#contains[contains] |(':string', ':string')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#contains[contains] |(':string', ':regex')
+|===
+
+=== Operations Performed on ':object')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#size-of[sizeOf] |(':object')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#order-by[orderBy] |(':object', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#using-map-on-an-object[map] |(':object', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#map-object[mapObject] |(':object', ':function')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#using-oncat-on-an-object[++] |(':object', ':object')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#using-remove-on-an-object[-] |(':object', ':name')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#remove-by-matching-key-and-value[--] |(':object', ':object')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#pluck[pluck] |(':object', ':function')
+|===
+
+
+
+=== Operations Performed on ':datetime')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#shift-time-zone[>>] |(':datetime', ':timezone')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[+] |(':datetime', ':period')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#subtracting-a-period-of-time[-] |(':datetime', ':period')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#subtracting-two-dates[-] |(':datetime', ':datetime')
+|===
+
+=== Operations Performed on ':date')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#subtracting-two-dates[-] |(':date', ':date')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#append-time[++] |(':date', ':localtime')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#append-time[++] |(':date', ':time')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#append-time-zone[++] |(':date', ':timezone')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[+] |(':date', ':period')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[-] |(':date', ':period')
+|===
+
+=== Operations Performed on ':time')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#subtracting-two-dates[-] | ('#:time', ':time')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#append-time[++] | ('#:time', ':date')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[+] | (':time', ':period')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[-] | (':time', ':period')
+|===
+
+
+=== Operations Performed on ':localtime')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#subtracting-two-dates[-] |(':localtime', ':localtime')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#append-time[++] |(':localtime', ':date')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#append-time-zone[++] |(':localtime', ':timezone')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[+] |(':localtime', ':period')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[-] |(':localtime', ':period')
+|===
+
+=== Operations Performed on ':localdatetime')
+
+[width="100%",cols="50,50",options="header",]
+|===
+| Operator| Accepted types for each argument
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#subtracting-two-dates[-] |(':localdatetime', ':localdatetime')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#append-time-zone[++] |(':localdatetime', ':timezone')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[+] |(':localdatetime', ':period')
+| link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[-] |(':localdatetime', ':period')
+|===
 
 
 == Next Steps

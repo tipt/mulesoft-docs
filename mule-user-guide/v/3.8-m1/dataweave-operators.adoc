@@ -4,12 +4,16 @@
 In link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] you can carry out many different operations upon the elements of a transform. This document walks serves as a reference for all of the available operations.
 
 * For an introduction to the essentials of the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* For an introduction to types in DataWeave, see link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* For an index of all available operators, categorized by the types you need to supply as parameters, see link:/mule-user-guide/v/3.8-m1/dataweave-types#dataweave-operators-sorted-by-type[Operators by Type]
 * For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 
 
 == Map
 
 === Using Map on an Array
+
+.(':array', ':function')
 
 Returns an array that is the result of applying a transformation function (lambda) to each of the elements.
 The lambda is invoked with two parameters: *index* and the *value*.
@@ -62,6 +66,8 @@ users: ["john", "peter", "matt"] map ((firstName, position) -> position ++ ":" +
 
 
 === Using Map on an Object
+
+.(':object', ':function')
 
 Returns an array with the values that result out of applying a transformation function (lambda) to each of the values in the object. The keys of the original object are all ignored by this operation and the object is treated as an array. To have access to the keys, you can use the operation *mapObject* instead.
 The lambda is invoked with two parameters: *index* and the *value*.
@@ -151,6 +157,8 @@ Note that when you use a parameter to populate one of the keys of your output, a
 
 == Map Object
 
+.(':object', ':function')
+
 Similar to Map, but instead of processing only the values of an object, it processes both keys and values, and instead of returning an array with the results of processing these values through the lambda, it returns an object with the key:value pairs that result from processing both key and value of the object through the lambda.
 
 The lambda is invoked with two parameters: *key* and the *value*.
@@ -231,6 +239,8 @@ Note that when you use a parameter to populate one of the keys of your output, a
 
 == Pluck
 
+.(':object', ':function')
+
 Pluck is useful for mapping an object into an array. Pluck is an alternate mapping mechanism to mapObject.
 Like mapObject, pluck executes a lambda over every key:value pair in its processed object,
 but instead of returning an object, it returns an array, which may be built from either the values or the keys in the object.
@@ -281,7 +291,36 @@ result: {
 
 == Filter
 
+=== Using Filter on an Array
+
+.(':array', ':function')
+
+Returns an array that only contains those that pass the criteria specified in the lambda. The lambda is invoked with two parameters: *index* and the *value*.
+If these parameters are not named, the index is defined by default as *$$* and the value as *$*.
+
+.Transform
+[source,DataWeave, linenums]
+-----------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  biggerThanTwo: [0, 1, 2, 3, 4, 5] filter $ > 2
+}
+-----------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+-----------------------------------------------------------------
+{
+  "biggerThanTwo": [3,4,5]
+}
+-----------------------------------------------------------------
+
+
 === Using Filter on an Object
+
+.(':object', ':function')
 
 Returns an object with the key:value pairs that pass the acceptance criteria defined in the lambda.
 If these parameters are not named, the key is defined by default as *$$* and the value as *$*.
@@ -307,58 +346,11 @@ filtered: {
 </filtered>
 --------------------------------------------------------
 
-=== Using Filter on an Array
-
-Returns an array that only contains those that pass the criteria specified in the lambda. The lambda is invoked with two parameters: *index* and the *value*.
-If these parameters are not named, the index is defined by default as *$$* and the value as *$*.
-
-.Transform
-[source,DataWeave, linenums]
------------------------------------------------------------------
-%dw 1.0
-%output application/json
----
-{
-  biggerThanTwo: [0, 1, 2, 3, 4, 5] filter $ > 2
-}
------------------------------------------------------------------
-
-.Output
-[source,json,linenums]
------------------------------------------------------------------
-{
-  "biggerThanTwo": [3,4,5]
-}
------------------------------------------------------------------
-
 
 == Remove
 
-=== Using Remove on an Object
-
-When running it on an object, it returns another object where the specified keys are removed.
-
-.Transform
-[source,DataWeave,linenums]
--------------------------------------------------------
-%dw 1.0
-%output application/xml
----
-myObject: {aa: "a", bb: "b"} - "aa"
--------------------------------------------------------
-
-.Output
-[source,xml,linenums]
--------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
-<myObject>
-  <bb>b</bb>
-</myObject>
--------------------------------------------------------
-
-The above example removes the key value pair that contains the key 'aa' from {aa: "a", bb: "b"} => {bb: "b"}
-
 === Using Remove on an Array
+.(':array', ':name')
 
 When running it on an array, it returns another array where the specified indexes are removed.
 
@@ -380,6 +372,62 @@ When running it on an array, it returns another array where the specified indexe
   "aa": [a, c]
 }
 -----------------------------------------------------------------------
+
+
+=== Using Remove on an Object
+.(':object', ':name')
+
+When running it on an object, it returns another object where the specified keys are removed.
+
+.Transform
+[source,DataWeave,linenums]
+-------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+myObject: {aa: "a", bb: "b"} - "aa"
+-------------------------------------------------------
+
+.Output
+[source,json,linenums]
+-------------------------------------------------------
+{
+  "myObject": {
+    "bb": "b"
+  }
+}
+-------------------------------------------------------
+
+The above example removes the key value pair that contains the key 'aa' from {aa: "a", bb: "b"} => {bb: "b"}
+
+
+== Remove by Matching Key and Value
+.(':object', ':object')
+
+Works just like <<using remove on an object, remove>> on objects, but only removes an element when there is a match of not just the key but of the key + value pair . It returns another object where the specified keys are removed.
+
+.Transform
+[source,DataWeave,linenums]
+-------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+myObject: {aa: "a", aa:"c", bb: "b"} -- { aa:"a"}
+-------------------------------------------------------
+
+.Output
+[source,json,linenums]
+-------------------------------------------------------
+{
+  "myObject": {
+    "aa": "c",
+    "bb": "b"
+  }
+}
+-------------------------------------------------------
+
+The above example removes the key value pair that contains both the key 'aa' and value "a", but not the one that contains only a matching key but not value.
+
 
 == Default
 
@@ -494,78 +542,6 @@ otherwise
 
 In the example above, currency is "EUR", only when one of the conditions evaluates to true.
 
-== Concat
-
-=== Using Concat on an Object
-
-Returns the resulting object of concatenating two existing objects.
-
-.Transform
-[source,DataWeave,linenums]
---------------------------------------------------------
-%dw 1.0
-%output application/xml
----
-concat: {aa: "a"} ++ {cc: "c"}
---------------------------------------------------------
-
-.Output
-[source,xml,linenums]
---------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
-<concat>
-  <aa>a</aa>
-  <cc>c</cc>
-</concat>
---------------------------------------------------------
-
-The example above concatenates object {aa: a} and {cc: c} in a single one => {aa: a , cc: c}
-
-=== Using Concat on an Array
-
-When using arrays, it returns the resulting array of concatenating two existing arrays.
-
-.Transform
-[source,DataWeave, linenums]
-----------------------------------------------------------------------
-%dw 1.0
-%output application/json
----
-{
-  a: [0, 1, 2] ++ [3, 4, 5]
-}
-----------------------------------------------------------------------
-
-.Output
-[source,json,linenums]
-----------------------------------------------------------------------
-{
-  "a": [0, 1, 2, 3, 4, 5]
-}
-----------------------------------------------------------------------
-
-=== Using Concat on a String
-
-Strings are treated as arrays of characters, so the operation works just the same with strings.
-
-.Transform
-[source,DataWeave, linenums]
---------------------------------------------------------
-%dw 1.0
-%output application/json
----
-{
-  name: "Mule" ++ "Soft"
-}
---------------------------------------------------------
-
-.Output
-[source,json,linenums]
---------------------------------------------------------
-{
-  "name": MuleSoft
-}
---------------------------------------------------------
 
 == IS
 
@@ -617,11 +593,92 @@ ROOT: payload.root.*order mapObject (
 </ROOT>
 --------------------------------------------------------
 
+
+== Concat
+
+=== Using Concat on an Array
+.(':array', ':array')
+
+
+When using arrays, it returns the resulting array of concatenating two existing arrays.
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: [0, 1, 2] ++ [3, 4, 5]
+}
+----------------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----------------------------------------------------------------------
+{
+  "a": [0, 1, 2, 3, 4, 5]
+}
+----------------------------------------------------------------------
+
+=== Using Concat on a String
+
+.(':string', ':string')
+
+Strings are treated as arrays of characters, so the operation works just the same with strings.
+
+.Transform
+[source,DataWeave, linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  name: "Mule" ++ "Soft"
+}
+--------------------------------------------------------
+
+.Output
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "name": MuleSoft
+}
+--------------------------------------------------------
+
+=== Using Concat on an Object
+
+(':object', ':object')
+
+Returns the resulting object of concatenating two existing objects.
+
+.Transform
+[source,DataWeave,linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+concat: {aa: "a"} ++ {cc: "c"}
+--------------------------------------------------------
+
+.Output
+[source,xml,linenums]
+--------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<concat>
+  <aa>a</aa>
+  <cc>c</cc>
+</concat>
+--------------------------------------------------------
+
+The example above concatenates object {aa: a} and {cc: c} in a single one => {aa: a , cc: c}
+
 == Contains
 
 Evaluates if an array or list contains in at least one of its indexes a value that validateso true and returns a boolean value. You can search for a literal value, or match a regex too.
 
-== Using Contains on an Array
+=== Using Contains on an Array
+.(':array', ':any')
 
 You can evaluate if any value in an array matches a given condition:
 
@@ -675,9 +732,10 @@ ContainsRequestedItem: payload.root.*order.*items contains "3"
 --------------------------------------------------------
 
 
+=== using Contains on a String
 
-
-== using Contains on a String
+.(':string', ':string')
+.(':string', ':regex')
 
 You can also use contains to evaluate a substring from a larger string:
 
@@ -747,6 +805,7 @@ Coerce the given value to the specified type.
 DataWeave by default attempts to convert the type of a value before failing, so using this operator to convert is sometimes not required but still recommended.
 
 === Coerce to string
+.(':any', ':type')
 
 Any simple types can be coerced to string. If formatting is required (such as for a number or date) the format schema property can be used.
 
@@ -776,6 +835,7 @@ Date and number format schemas are based on Java link:https://docs.oracle.com/ja
 -----
 
 === Coerce to number
+.(':string', ':type')
 
 A string can be coerced to number. If the given number has a specific format the schema property can be used.
 
@@ -804,6 +864,7 @@ Any format pattern accepted by link:https://docs.oracle.com/javase/8/docs/api/ja
 ----------------------------------------------------------------------
 
 ==== Coerce a date to number
+.(':time', ':type')
 
 When coercing a date to a number, there is an extra parameter you can add – 'unit' – to specify what unit of time to use,
 
@@ -832,6 +893,7 @@ When coercing a date to a number, there is an extra parameter you can add – 'u
 Only the values 'seconds' and 'milliseconds' are valid for using in the 'unit' parameter.
 
 === Coerce to date
+.(':string', ':type')/(':number', ':type')
 
 Date types can be coerced from string or number.
 
@@ -860,6 +922,7 @@ Any format pattern accepted by link:https://docs.oracle.com/javase/8/docs/api/ja
 
 
 === Coerce to Object
+.(':any', ':type')
 
 You can coerce your input into a custom object type of whatever class you want.
 
@@ -879,6 +942,7 @@ Keep in mind that if the class name contains any '$' characters, they must be es
 
 
 == Type Of
+.(':any')
 
 Returns the type of a provided element (eg: '":string"' , '":number"' )
 
@@ -910,6 +974,7 @@ isString: typeOf payload.mystring
 
 
 == Flatten
+.(':array')
 
 If you have an array of arrays, this function can flatten it into a single simple array.
 
@@ -946,8 +1011,9 @@ flatten payload
 ----------------------------------------------------------------------
 
 == Size Of
+.(':array')/(':string')/(':object')
 
-Returns the number of elements in an array (or anything that can be converted to an array)
+Returns the number of elements in an array (or anything that can be converted to an array such as a string).
 
 .Transform
 [source,DataWeave, linenums]
@@ -974,6 +1040,7 @@ Returns the number of elements in an array (or anything that can be converted to
 -----------------------------------------------------------------
 
 == Array Push
+.(:array', ':any')
 
 Pushes a new element to the end of an array.
 
@@ -995,6 +1062,7 @@ aa: [0, 1, 2] + 5
 ----------------------------------------------------------------------
 
 == Array Remove
+.(':array', ':any')
 
 Removes an element from an array when it matches the specified value. If multiple elements in the array match the value, they will all be removed.
 
@@ -1020,8 +1088,9 @@ Removes an element from an array when it matches the specified value. If multipl
 ----------------------------------------------------------------------
 
 == Array Remove All
+.(':array', ':array')
 
-Removes an set of elements from an array, all in one operation when an element in the base array matches one of the values in the substracted array. If multiple elements in the array match a value, they will all be removed.
+Removes a set of elements from an array when an element in the base array matches one of the values in the substracted array. If multiple elements in the array match a value, they will all be removed.
 
 .Transform
 [source,DataWeave, linenums]
@@ -1042,6 +1111,7 @@ a: [0, 1, 1, 2] -- [1,2]
 
 
 == Array Average
+.(':array')
 
 Creates an average of all the values in an array and outputs a single number. The array must of course contain only numerical value in it.
 
@@ -1070,6 +1140,8 @@ Creates an average of all the values in an array and outputs a single number. Th
 
 
 == Reduce
+
+.(':array', ':function')
 
 Applies a reduction to the array. The lambda is invoked with two parameters:
 the accumulator (*$$*) and the value (*$*).
@@ -1131,6 +1203,8 @@ concat: ["a", "b", "c", "d"] reduce ((val, acc = "z") -> acc ++ val)
 
 == Join By
 
+.(':array', ':string')
+
 Merges an array into a single string value, using the provided string as a separator between elements.
 
 .Transform
@@ -1151,6 +1225,8 @@ aa: ["a","b","c"] joinBy "-"
 ----------------------------------------------------------------------
 
 == Split By
+
+.(':string', ':string')/(':string', ':regex')
 
 Performs the opposite operation as Join By. It splits a string into an array of separate elements, looking for instances of the provided string and using it as a separator.
 
@@ -1173,7 +1249,9 @@ split: "a-b-c" splitBy "-"
 
 == Order By
 
-Returns the provided array ordered according to the value returned by the lambda. The lambda is invoked with two parameters: *index* and the *value*.
+.(':array', ':function')/(':object', ':function')
+
+Returns the provided array (or object) ordered according to the value returned by the lambda. The lambda is invoked with two parameters: *index* and the *value*.
 If these parameters are not named, the index is defined by default as *$$* and the value as *$*.
 
 .Transform
@@ -1233,6 +1311,8 @@ orderDescending: ([3,8,1] orderBy $)[-1..0]
 
 == Group By
 
+.(':array', ':function')
+
 Partitions an array into a Object that contains Arrays, according to the discriminator lambda you define.
 The lambda is invoked with two parameters: *index* and the *value*.
 If these parameters are not named, the index is defined by default as *$$* and the value as *$*.
@@ -1284,6 +1364,8 @@ If these parameters are not named, the index is defined by default as *$$* and t
 -----------------------------------------------------------------
 
 == Distinct By
+
+.(':array', ':function')
 
 Returns only unique values from an array that may have duplicates.
 The lambda is invoked with two parameters: *index* and *value*.
@@ -1342,7 +1424,9 @@ If these parameters are not defined, the index is defined by default as $$ and t
 }
 -----------------------------------------------------------------
 
-== Zip Arrayz
+== Zip Arrays
+
+.(':array', ':array')
 
 Given two arrays, it pairs indexes together to create a third array where each element is in itself an array that contains the two matching elements of the original ones.
 
@@ -1387,6 +1471,8 @@ Note that in example b, since only one element was provided in the second array,
 
 == Unzip Array
 
+.(':array')
+
 Performs the opposite function of <<zip arrays>>, that is: given a single array where each index contains an array with two elements, it outputs two separate arrays, each with one of the elements of the pair. This can also be scaled up, if the indexes in the provided array contain arrays with more than two elements, the output will contain as many arrays as there are elements for each index.
 
 .Transform
@@ -1425,6 +1511,8 @@ Note even though example b can be considered the inverse function to the example
 
 == Replace
 
+.(':string', ':regex', ':function')
+
 Replaces a section of a string for another, in accordance to a regular expression, and returns a modified string.
 
 .Transform
@@ -1446,6 +1534,8 @@ b: "admin123" replace /(\d+)/ with "ID"
 
 == Matches
 
+.(':string', ':regex')
+
 Matches a string against a regular expression, and returns *true* or *false*.
 
 .Transform
@@ -1465,7 +1555,97 @@ b: "admin123" matches /(\d+)/
 }
 ------------------------------------------------------------------
 
+== Starts With
+
+.(':string', ':string')
+
+Returns true or false depending on if a string starts with a provided substring.
+
+.Transform
+[source,DataWeave, linenums]
+------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: "Mariano" startsWith "Mar",
+  b: "Mariano" startsWith "Em"
+}
+------------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+------------------------------------------------------------------
+{
+  "a": true,
+  "b": false
+}
+------------------------------------------------------------------
+
+
+== Ends With
+
+.(':string', ':string')
+
+Returns true or false depending on if a string ends with a provided substring.
+
+.Transform
+[source,DataWeave, linenums]
+------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: "Mariano" endsWith "no",
+  b: "Mariano" endsWith "to"
+}
+------------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+------------------------------------------------------------------
+{
+  "a": true,
+  "b": false
+}
+------------------------------------------------------------------
+
+
+
+== Find
+
+.(':string', ':string')/.(':string', ':regex')
+
+Given a string, it returns the index position within the string at which a match was matched. If found in multiple parts of the string, it returns an array with the various idex positions at which it was found. You can either look for a simple string or a regular expression.
+
+.Transform
+[source,DataWeave, linenums]
+------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: "aabccde" find /(a).(b)(c.)d/,
+  b: "aabccdbce" find "a",
+  c: "aabccdbce" find "bc"
+}
+------------------------------------------------------------------
+
+
+.Output
+[source,json,linenums]
+------------------------------------------------------------------
+{
+  "a": [[0,0,2,3]],
+  "b": [0,1],
+  "c": [2,6]
+}
+------------------------------------------------------------------
+
+
 == Match
+
+.(':string', ':regex')
 
 Match a string against a regular expression. Match returns an array that contains the entire matching expression, followed by all of the capture groups that match the provided regex.
 
@@ -1492,7 +1672,10 @@ Match a string against a regular expression. Match returns an array that contain
 
 In the example above, we see that the search regular expression describes an email address. It contains two capture groups, what's before and what's after the @. The result is an array of three elements: the first is the whole email address, the second matches one of the capture groups, the third matches the other one.
 
+
 == Scan
+
+.(':string', ':regex')
 
 Returns an array with all of the matches in the given string. Each match is returned as an array that contains the complete match, as well as any capture groups there may be in your regular expression.
 
@@ -1557,9 +1740,11 @@ Evaluates if two values are similar, regardless of their type. For example, the 
 
 
 == Upper
+.(':string')
 
 Returns the provided string in uppercase characters.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1570,6 +1755,7 @@ Returns the provided string in uppercase characters.
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1579,9 +1765,11 @@ Returns the provided string in uppercase characters.
 
 
 == Lower
+.(':string')
 
 Returns the provided string in lowercase characters.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1592,6 +1780,7 @@ Returns the provided string in lowercase characters.
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1601,9 +1790,11 @@ Returns the provided string in lowercase characters.
 
 
 == Camelize
+.(':string')
 
 Returns the provided string in camel case.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1616,6 +1807,7 @@ Returns the provided string in camel case.
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1626,9 +1818,11 @@ Returns the provided string in camel case.
 --------------------------------------------------------
 
 == Capitalize
+.(':string')
 
 Returns the provided string with every word starting with a capital letter and no underscores.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1641,6 +1835,7 @@ Returns the provided string with every word starting with a capital letter and n
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1651,9 +1846,11 @@ Returns the provided string with every word starting with a capital letter and n
 --------------------------------------------------------
 
 == Dasherize
+.(':string')
 
 Returns the provided string with every word separated by a dash.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1666,6 +1863,7 @@ Returns the provided string with every word separated by a dash.
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1676,9 +1874,11 @@ Returns the provided string with every word separated by a dash.
 --------------------------------------------------------
 
 == Underscore
+.(':string')
 
 Returns the provided string with every word separated by an underscore.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1691,6 +1891,7 @@ Returns the provided string with every word separated by an underscore.
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1703,9 +1904,11 @@ Returns the provided string with every word separated by an underscore.
 
 
 == Pluralize
+.(':string')
 
 Returns the provided string transformed into its plural form.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1718,6 +1921,7 @@ Returns the provided string transformed into its plural form.
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1728,9 +1932,11 @@ Returns the provided string transformed into its plural form.
 --------------------------------------------------------
 
 == Singularize
+.(':string')
 
 Returns the provided string transformed into its singular form.
 
+.Transform
 [source,DataWeave, linenums]
 --------------------------------------------------------
 %dw 1.0
@@ -1743,6 +1949,7 @@ Returns the provided string transformed into its singular form.
 }
 --------------------------------------------------------
 
+.Output
 [source,json,linenums]
 --------------------------------------------------------
 {
@@ -1752,7 +1959,33 @@ Returns the provided string transformed into its singular form.
 }
 --------------------------------------------------------
 
+== Trim
+.(':string')
+
+Removes any excess spaces at the start and end of a string.
+
+.Transform
+[source,DataWeave, linenums]
+------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  "a": trim "   my long text     "
+}
+------------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "a": "my long text"
+}
+--------------------------------------------------------
+
+
 == Ordinalize
+.(':number')
 
 Returns the provided numbers set as ordinals.
 
@@ -1780,6 +2013,7 @@ Returns the provided numbers set as ordinals.
 == Basic Math Operations
 
 === Sum
+.(':number', ':number')
 
 .Transform
 [source,DataWeave, linenums]
@@ -1791,6 +2025,7 @@ plus : 2 + 2.5
 ----------------------------------------------------------
 
 === Minus
+.(':number', ':number')
 
 .Transform
 [source,DataWeave, linenums]
@@ -1802,6 +2037,7 @@ minus : 2.5 - 2
 ----------------------------------------------------------
 
 === Multiply
+.(':number', ':number')
 
 .Transform
 [source,DataWeave, linenums]
@@ -1813,6 +2049,7 @@ multiply : 2.5 * 2
 ----------------------------------------------------------
 
 === Division
+.(':number', ':number')
 
 .Transform
 [source,DataWeave, linenums]
@@ -2071,13 +2308,60 @@ Returns the remainder after division of the first number by the second one
 
 == Date Time Operations
 
+There are several operators that deal with link:/mule-user-guide/v/3.8-m1/dataweave-types#dates[date related types], which include date, time, localtime, datetime, localdatetime, period, timezone.
+
+=== Get Time Unit
+
+You can extract a particular time unit from any date related type as shown below:
+
+.Transform
+[source,DataWeave, linenums]
+-----------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: |2003-10-01|.day,
+  b: |2003-10-01|.month,
+  c: |2003-10-01|.year,
+  d: |2003-10-01T23:57:59Z|.hour,
+  e: |2003-10-01T23:57:59Z|.minutes,
+  f: |2003-10-01T23:57:59Z|.seconds,
+  g: |2003-10-01T23:57:59-03:00|.offsetSeconds,
+  h: |23:57:59Z|.hour,
+  i: |23:57:59.700|.nanoseconds,
+  j: |23:57:59.700|.milliseconds,
+  k: |2003-10-01T23:57:59Z|.dayOfWeek,
+  l: |2003-10-01T23:57:59Z|.dayOfYear,
+  m: |P3Y2M10D|.years
+}
+-----------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+-----------------------------------------------------------------
+{
+  "a": 1,
+  "b": 10,
+  "c": 2003,
+  "d": 23,
+  "e": 57,
+  "f": 59,
+  "g": -10800,
+  "h": 23,
+  "i": 700000000,
+  "j": 700,
+  "k": 3,
+  "l": 274,
+  "m": 3
+}
+-----------------------------------------------------------------
 
 === Now
 
 Returns a time stamp.
 
 .Transform
-
 [source,DataWeave, linenums]
 -----------------------------------------------------------------
 %dw 1.0
@@ -2091,7 +2375,6 @@ Returns a time stamp.
 -----------------------------------------------------------------
 
 .Output
-
 [source,json,linenums]
 -----------------------------------------------------------------
 {
@@ -2103,6 +2386,7 @@ Returns a time stamp.
 
 [TIP]
 See link:/mule-user-guide/v/3.8-m1/dataweave-types#accessors[Accessors] for a list of possible selectors to use here.
+
 
 === Append Time Zone
 
@@ -2146,9 +2430,40 @@ a: |2014-01-01T14:00-03:00| >> |-08:00|
 }
 -----------------------------------------------------------------
 
+=== Append Time
+
+You can append a date to a time (or localtime) object so as to provide a more precise value.
+
+
+.Transform
+[source,DataWeave, linenums]
+-----------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: |2003-10-01| ++ |23:57:59|,
+  b: |2003-10-01| ++ |23:57:59Z|
+}
+
+-----------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+-----------------------------------------------------------------
+{
+    "a": "2003-10-01T23:57:59",
+    "b": "2003-10-01T23:57:59Z"
+}
+-----------------------------------------------------------------
+
+
+Note that the order in which the two objects are appended is irrelevant, so logically a ':date' + ':time'  will result in the same as a '#:time' + ':date'.
+
+
 === Adding a Period of Time
 
-Add or subtract a period of time from a given date type object.
+Add or subtract a period of time from a given date or time type object.
 
 .Transform
 [source,DataWeave, linenums]
@@ -2156,18 +2471,75 @@ Add or subtract a period of time from a given date type object.
 %dw 1.0
 %output application/json
 ---
-c: |2003-10-01T23:57:59Z| + |P1Y|
+a: |2003-10-01T23:57:59Z| + |P1Y|
 ----------------------------------------------------------------
 
 .Output
 [source,json,linenums]
 ----------------------------------------------------------------
 {
-  "c": "2004-10-01T23:57:59Z"
+  "a": "2004-10-01T23:57:59Z"
 }
 ----------------------------------------------------------------
 
-The same logically applies to subtracting time periods forma date type object.
+=== Subtracting a Period of Time
+
+The same logically applies to subtracting time periods from a date or time type object.
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: |2003-10-01| - |P1Y|,
+  b: |2003-10-01T23:57:59Z| - |P1Y|
+}
+----------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----------------------------------------------------------------
+{
+  "a": "2002-10-01",
+  "b": "2002-10-01T23:57:59Z"
+}
+----------------------------------------------------------------
+
+Note that when a subtraction operation includes a time object and a period, the order in which both elements are placed is indiferent since it would be impossible to subtract a date from a period, so `|2003-10-01| - |P1Y|` returns the same as `|P1Y| - |2003-10-01|`.
+
+
+=== Subtracting two Dates
+
+When subtracting one date or time type object from another, what we logically get is the difference between these times expressed as a time period.
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: |23:59:56-03:00| - |22:59:56-00:00|,
+  b: |2003-10-01| - |2002-09-23|
+}
+----------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----------------------------------------------------------------
+{
+  "a": "PT-4H",
+  "b": "P-1Y-8D"
+}
+----------------------------------------------------------------
+
+=== Date Coercion
+
+You can change the format of a date to fit another stnadard, see <<coerce to date>>.
+
+
 
 == Next Steps
 
