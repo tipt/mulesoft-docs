@@ -1823,7 +1823,7 @@ multiply : 2.5 * 2
 division : 10 / 2
 ----------------------------------------------------------
 
-=== Max
+== Max
 
 Returns the highest number in an array or object.
 
@@ -1850,7 +1850,7 @@ Returns the highest number in an array or object.
 }
 ----
 
-=== Min
+== Min
 
 Returns the lowest number in an array or object.
 
@@ -1868,13 +1868,204 @@ Returns the lowest number in an array or object.
 ----------------------------------------------------------
 
 .Output
-
 [source,json,linenums]
 ----
 {
   "a": 1,
   "b": 1,
   "d": 1.5
+}
+----
+
+== Round
+
+Rounds the value of the number to the nearest integer
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: round 1.2,
+  b: round 4.6,
+  c: round 3.5
+}
+----------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  "a": 1,
+  "b": 5,
+  "c": 4
+}
+----
+
+== Sqrt
+
+Returns the square root of the provided number
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: sqrt 4,
+  b: sqrt 25,
+  c: sqrt 100
+}
+----------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  "a": 2.0,
+  "b": 5.0,
+  "c": 10.0
+}
+----
+
+== Pow
+
+Returns the result of the first number to the power of the second one
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: 2 pow 3,
+  b: 3 pow 2,
+  c: 7 pow 3
+}
+----------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  "a": 8,
+  "b": 9,
+  "c": 343
+}
+----
+
+== Ceil
+
+Returns the smallest following number
+
+.Transform
+[source,DataWeave, linenums]
+---
+%dw 1.0
+%output application/json
+---
+
+{
+  a: ceil 1.5,
+  b: ceil 2.2,
+  c: ceil 3
+}
+----------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  "a": 2,
+  "b": 3,
+  "c": 3
+}
+----
+
+== Floor
+
+Returns the largest previous number
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: floor 1.5,
+  b: floor 2.2,
+  c: floor 3
+}
+----------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  "a": 1,
+  "b": 2,
+  "c": 3
+}
+----
+
+== Abs
+
+Returns the absolute value of a number,
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: abs -2,
+  b: abs 2.5,
+  c: abs -3.4,
+  d: abs 3
+}
+----------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  "a": 2,
+  "b": 2.5,
+  "c": 3.4,
+  "d": 3
+}
+----
+
+== Mod
+
+Returns the remainder after division of the first number by the second one
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: 3 mod 2,
+  b: 4 mod 2,
+  c: 2.2 mod 2
+}
+----------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  "a": 1,
+  "b": 0,
+  "c": 0.2
 }
 ----
 
