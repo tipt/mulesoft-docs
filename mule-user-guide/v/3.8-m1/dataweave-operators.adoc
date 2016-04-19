@@ -2062,6 +2062,8 @@ division : 10 / 2
 
 == Max
 
+.(':array')/(':object')
+
 Returns the highest number in an array or object.
 
 .Transform
@@ -2088,6 +2090,8 @@ Returns the highest number in an array or object.
 ----
 
 == Min
+
+.(':array')/(':object')
 
 Returns the lowest number in an array or object.
 
@@ -2116,7 +2120,9 @@ Returns the lowest number in an array or object.
 
 == Round
 
-Rounds the value of the number to the nearest integer
+.(':number')
+
+Rounds the value of a number to the nearest integer
 
 .Transform
 [source,DataWeave, linenums]
@@ -2142,6 +2148,8 @@ Rounds the value of the number to the nearest integer
 ----
 
 == Sqrt
+
+.(':number')
 
 Returns the square root of the provided number
 
@@ -2170,6 +2178,8 @@ Returns the square root of the provided number
 
 == Pow
 
+.(':number', ':number')
+
 Returns the result of the first number to the power of the second one
 
 .Transform
@@ -2197,11 +2207,13 @@ Returns the result of the first number to the power of the second one
 
 == Ceil
 
-Returns the smallest following number
+.(':number')
+
+Rounds a number upwards, returning the first full number above than the one provided.
 
 .Transform
 [source,DataWeave, linenums]
----
+----
 %dw 1.0
 %output application/json
 ---
@@ -2211,7 +2223,7 @@ Returns the smallest following number
   b: ceil 2.2,
   c: ceil 3
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2225,7 +2237,10 @@ Returns the smallest following number
 
 == Floor
 
-Returns the largest previous number
+.(':number')
+
+Rounds a number downwards, returning the first full number below than the one provided.
+
 
 .Transform
 [source,DataWeave, linenums]
@@ -2251,6 +2266,8 @@ Returns the largest previous number
 ----
 
 == Abs
+
+.(':number')
 
 Returns the absolute value of a number,
 
@@ -2280,6 +2297,8 @@ Returns the absolute value of a number,
 ----
 
 == Mod
+
+.(':number', ':number')
 
 Returns the remainder after division of the first number by the second one
 
@@ -2311,6 +2330,8 @@ Returns the remainder after division of the first number by the second one
 There are several operators that deal with link:/mule-user-guide/v/3.8-m1/dataweave-types#dates[date related types], which include date, time, localtime, datetime, localdatetime, period, timezone.
 
 === Get Time Unit
+
+.(':date')/(':time')/(':localtime')/(':datetime')/(':localdatetime')/(':period')
 
 You can extract a particular time unit from any date related type as shown below:
 
@@ -2388,28 +2409,9 @@ Returns a time stamp.
 See link:/mule-user-guide/v/3.8-m1/dataweave-types#accessors[Accessors] for a list of possible selectors to use here.
 
 
-=== Append Time Zone
-
-Appends a time zone to a date type value.
-
-.Transform
-[source,DataWeave, linenums]
------------------------------------------------------------------
-%dw 1.0
-%output application/json
----
-a: |2003-10-01T23:57:59| ++ |-03:00|
------------------------------------------------------------------
-
-.Output
-[source,json,linenums]
------------------------------------------------------------------
-{
-  "a": "2003-10-01T23:57:59-03:00"
-}
------------------------------------------------------------------
-
 === Shift Time Zone
+
+.(':datetime', ':timezone')
 
 Shift a date time to the specified timezone.
 
@@ -2431,6 +2433,8 @@ a: |2014-01-01T14:00-03:00| >> |-08:00|
 -----------------------------------------------------------------
 
 === Append Time
+
+.(':date', ':time')/(':date', ':localtime')/(':time', ':date')/(':localtime', ':date')
 
 You can append a date to a time (or localtime) object so as to provide a more precise value.
 
@@ -2461,7 +2465,33 @@ You can append a date to a time (or localtime) object so as to provide a more pr
 Note that the order in which the two objects are appended is irrelevant, so logically a ':date' + ':time'  will result in the same as a '#:time' + ':date'.
 
 
+=== Append Time Zone
+
+.(':datetime', ':timezone')/(':time', ':timezone')/(':localtime', ':timezone')/(':localdatetime', ':timezone')
+
+Appends a time zone to a date type value.
+
+.Transform
+[source,DataWeave, linenums]
+-----------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+a: |2003-10-01T23:57:59| ++ |-03:00|
+-----------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+-----------------------------------------------------------------
+{
+  "a": "2003-10-01T23:57:59-03:00"
+}
+-----------------------------------------------------------------
+
+
 === Adding a Period of Time
+
+.(':time', ':period')/(':datetime', ':period')/(':localtime', ':period')/(':localdatetime', ':period')
 
 Add or subtract a period of time from a given date or time type object.
 
@@ -2483,6 +2513,8 @@ a: |2003-10-01T23:57:59Z| + |P1Y|
 ----------------------------------------------------------------
 
 === Subtracting a Period of Time
+
+.(':time', ':period')/(':datetime', ':period')/(':localtime', ':period')/(':localdatetime', ':period')
 
 The same logically applies to subtracting time periods from a date or time type object.
 
@@ -2512,6 +2544,8 @@ Note that when a subtraction operation includes a time object and a period, the 
 
 === Subtracting two Dates
 
+.(':date', ':date')/(':datetime', ':datetime')/('#:time', ':time')/(':localtime', ':localtime')/(':localdatetime', ':localdatetime')
+
 When subtracting one date or time type object from another, what we logically get is the difference between these times expressed as a time period.
 
 .Transform
@@ -2536,8 +2570,9 @@ When subtracting one date or time type object from another, what we logically ge
 ----------------------------------------------------------------
 
 === Date Coercion
+.(':any', ':type')
 
-You can change the format of a date to fit another stnadard, see <<coerce to date>>.
+You can change the format of a date to fit another standard, see <<coerce to date>>.
 
 
 
