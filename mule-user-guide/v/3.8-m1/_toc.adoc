@@ -159,6 +159,8 @@
 ***** link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]
 ***** link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 ***** link:/mule-user-guide/v/3.8-m1/dataweave-migrator[DataWeave Migrator Tool]
+***** link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas]
+***** link:/mule-user-guide/v/3.8-m1/dataweave-edi-schemas[DataWeave EDI Schemas]
 **** link:/mule-user-guide/v/3.8-m1/append-string-transformer-reference[Append String Transformer Reference]
 **** link:/mule-user-guide/v/3.8-m1/attachment-transformer-reference[Attachment Transformer Reference]
 **** link:/mule-user-guide/v/3.8-m1/expression-transformer-reference[Expression Transformer Reference]

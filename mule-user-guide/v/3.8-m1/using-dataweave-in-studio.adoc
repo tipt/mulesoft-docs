@@ -163,7 +163,7 @@ In CSV you can assign any special character as the indicator for separating fiel
 
 image:edit_input_reader2.png[image]
 
-When defining an input of type CSV, there are a few optional parameters you can add to the input directive to customize how the data will be parsed.
+When defining an input of type CSV, there are a few optional parameters you can use to customize how the data will be parsed.
 
 * `header`: boolean that defines if the first line in the data contains headers. 'true' by default.
 * `separator`: character that separates fields, `','` by default
@@ -266,28 +266,11 @@ See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat Fi
 
 === Writer Configuration
 
-Some output formats allow you to define a writer with specific properties that make DataWeave construct the output with a different syntax
+Some output formats allow you to define a writer with specific properties that make DataWeave construct the output with a different syntax.
 
+These properties are simply written on the `%output` directive of your DataWeave code.
 
-
-
-
-. Right click on the input section and select *Reader Configuration* to open this menu.
-
-image:dw_reader_configuration_select.png[reader conf]
-
-The available parameters will depend on the type of your output.
-
-==== XML
-
-
-
-
-
-
-
-
-
+See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[output directive] for details on this.
 
 
 === Handling Multiple Outputs
