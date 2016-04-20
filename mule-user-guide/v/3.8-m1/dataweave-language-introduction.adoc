@@ -364,11 +364,64 @@ When defining an output of type CSV, there are a few optional parameters you can
 |encoding |string | |The character set to be used for the output
 |quote |char |" |Character that delimits the field values
 |escape |char | \ |Character used to escape occurrences of the separator or quote character within field values
-|bufferSize |number | |
-|ignoreEmptyLine |bool | |
+|`lineSeparator`| char | system line ending default | line separator to be used
+|ignoreEmptyLine |bool | true | defines if empty lines are ignored
 |header |bool |true |Indicates if the first line of the output shall contain field names
+|quoteHeader |bool |false |Indicates header values should be quoted
 |quoteValues |bool |false |Indicates if every value should be quoted whether or not it contains special characters within
+|`headerLineNumber` | number | 0 | the line number where the header is located
+|`bodyStartLineNumber` | number | 0 | the line number where the actual body starts
 |=======================
+
+All of these parameters are optional. A CSV output directive might for example look like this:
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%output text/csv separator=";", header=false, quoteValues=true
+---------------------------------------------------------------------
+
+
+==== XML Output Formatting
+
+When defining an output of type XML, there are a few optional parameters you can add to the output directive to customize how the data is parsed:
+
+[options="header"]
+|=======================
+|Parameter |Type |Default|Description
+|`Indent`| boolean | true | defines if the XML code will be indented for better readability, or if it will be compressed into a single line
+|`encoding`|string | UTF-8 |The character set to be used for the output
+|`bufferSize`| number | 153600 | The size of the buffer writer
+|`inlineCloseOn` | string | | When the writer should use inline close tag. Possible values = empty/none
+|`skipNullOn`| string | | Posible values = elements/attributes/everywhere
+|=======================
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%output application/xml indent=false, skipNullOn="attributes"
+---------------------------------------------------------------------
+
+==== JSON Output Formatting
+
+
+When defining an output of type JSON, there are a few optional parameters you can add to the output directive to customize how the data is parsed:
+
+[options="header"]
+|=======================
+|Parameter |Type |Default|Description
+|`Indent`| boolean | true | defines if the JSON code will be indented for better readability, or if it will be compressed into a single line
+|`encoding`|string | UTF-8 |The character set to be used for the output
+|`bufferSize`| number | 153600 | The size of the buffer writer
+|`inlineCloseOn` | string | | When the writer should use inline close tag. Possible values = empty/none
+|`skipNullOn`| string | | Posible values = arrays/objects/everywhere
+|`duplicateKeyAsArray`| boolean | false | JSON language doesn't allow duplicate keys with one same parent, this usually raises an exception. If set to true, the output contains a single key that points to an array containing all the values assigned to it.
+|=======================
+
+[source,DataWeave]
+---------------------------------------------------------------------
+%output application/json indent=false, skipNullOn="arrays"
+---------------------------------------------------------------------
+
+
 
 ==== Flat File Schemas
 
@@ -390,8 +443,9 @@ payload
 ----
 
 [TIP]
-See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas] for instructions and examples on how to create the required schema file.
-
+====
+See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas] or link:/mule-user-guide/v/3.8-m1/dataweave-edi-schemas[DataWeave EDI Schemas] for instructions and examples on how to create the required schema file.
+====
 
 === Define Constant Directive
 
@@ -416,13 +470,31 @@ You can define a function in the header, you can then call it in any part of the
 [source,DataWeave,linenums]
 ---------------------------------------------------------------------
 %dw 1.0
-%var toUser = (user) -> {name: user.name, lastName: user.lastName}
 %output application/json
+%var toUser = (user) -> {firstName: user.name, lastName: user.lastName}
 ---
 {
  user: toUser(payload)
 }
 ---------------------------------------------------------------------
+
+A function directive can be defined via a `%var` as in the example above, or via `%function`
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+%function toUser(user){firstName: user.name, lastName: user.lastName}
+---
+{
+ user: toUser(payload)
+}
+----
+
+
+
+See link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas] for more on this.
 
 == The DataWeave Body
 

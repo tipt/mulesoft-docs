@@ -84,47 +84,27 @@ image:dw_click.png[click]
 
 If the other elements in your Mule flow expose metadata about their input and output, then this information will already be available to the *Transform Message* component. If they don't, you can configure these elements so that they expose this information by editing their *Metadata* tab. For example, you can configure an HTTP connector and assign it a JSON sample file so that this sample's structure is exposed as metadata that your Transform Message component can read.
 
-If the Mule flow doesn't expose Metadata about the elements you need from the incoming message, you can also manually specify it directly in the input section of your Tranform Message component. If a metadata definition is missing, a notification will advise you to provide one, otherwise you can also right-click your input and select *Set Metadata*.
+If the Mule flow doesn't expose Metadata about the elements you need from the incoming message, you can also manually specify it directly in the input section of your Transform Message component.
+
+If a metadata definition is missing, a notification will advise you to provide one, click the *Define Metadata* link. Otherwise, at any time you can also right-click your input and select *Set Metadata* to access the same options.
 
 You can select an existing metadata type, this may save you several steps:
 
 image:dw_define_type1.png[define type]
 
+
 Or you can also create a new metadata, which can be done freely through an editor, or – for certain types – loading a schema:
 
 image:dw_define_type2.png[define type]
 
-[TIP]
-See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas] for instructions and examples on how to create the required schema for a flat file format.
+There are a number of fields you can set up, depending on the selected format.
 
-This sample data is used together with your DataWeave code to produce a sample output in the output section, which gets updated in real time as you make changes.
-
-
-You can then define the data structure manually by writing or pasting a sample into the newly created tab.
-
-image:input_payload_2.png[image]
-
-You can also access this tab by right clicking on the input section and selecting *Edit Sample Data*.
-
-image:dataweave-edit-sample-data.png[sample data]
-
-When the input is of types JSON, XML, CSV or flat file, the sample input contains plain code in the corresponding format. When the input is of type POJO or DataWeave, the sample input is written in DataWeave for more simplicity. In these cases the sample DataWeave code is merely a way to display the sample data, not a transformation in itself.
 
 If your metadata is missing any variables, inbound properties, outbound properties, session variables or record variables that you know will exist in the incoming mule message, you can manually add these too in the editor. Just right-click on one of these categories in the input section of the properties editor and select *Add Flow Variable*, *Add Inbound Property* or whatever the element you want to add may be.
 
-
-
-=== Reader Configuration
-
-Some input formats allow you to define a reader with specific properties that make DataWeave parse inputs differently. Right click on the input section and select *Reader Configuration* to open this menu.
-
-image:dw_reader_configuration_select.png[reader conf]
-
-The available parameters will depend on the type of your input.
-
-==== Explicitly Defining an Input Type
-
-By default, DataWeave should be able to recognize the type of an input from the metadata. If you must explicitly define an input payload type, use the `mimeType` attribute in an XML tag as in the example below:
+[TIP]
+====
+You can aslo set this via the XML editor. To define an input payload type, use the `mimeType` attribute in an XML tag as in the example below:
 
 [source,xml, linenums]
 ----
@@ -142,11 +122,22 @@ By default, DataWeave should be able to recognize the type of an input from the 
 </dw:transform-message>
 ----
 
-
 If you do not provide this attribute, DataWeave will try to read the payload MIME type from the metadata.
-If it is undeclared or not understood it will default to 'application/java', a warning will be logged.
+====
 
-For some types, you can also define other properties of the reader by adding 'dw:reader-property' child elements within:
+If the type of your input is undeclared or not understood it will default to 'application/java', a warning will be logged.
+
+=== Reader Configuration
+
+Some input formats allow you to define a reader with specific properties that make DataWeave parse inputs differently. You can set this either by:
+
+* Right clicking on the input section and selecting *Reader Configuration* to access a menu
+* Adding properties in the XML source of your Mule project
+
+image:dw_reader_configuration_select.png[reader conf]
+
+
+In XML, you can add properties by adding 'dw:reader-property' child elements within:
 
 [source, xml, linenums]
 ----
@@ -155,6 +146,12 @@ For some types, you can also define other properties of the reader by adding 'dw
     <dw:reader-property name="header" value="false"/>
 </dw:input-payload>
 ----
+
+
+The available properties will depend on the type of your input.
+
+
+
 
 
 ==== CSV
@@ -260,7 +257,17 @@ When defining an input of type Flat File, there are a few optional parameters yo
 [TIP]
 See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Shcemas] for instructions and examples on how to create the required schema.
 
+== Providing Input Sample Data
 
+Once you have defined the input structure, you can create a sample populated with test data based on that sample.
+
+This sample data is used together with your DataWeave code to produce a sample output in <<the preview section>>, which gets updated in real time as you make changes.
+
+You can also access this tab by right clicking on the input section and selecting *Edit Sample Data*.
+
+image:dataweave-edit-sample-data.png[sample data]
+
+When the input is of types JSON, XML, CSV or flat file, the sample input contains plain code in the corresponding format. When the input is of type POJO or DataWeave, the sample input is written in DataWeave for more simplicity. In these cases the sample DataWeave code is merely a way to display the sample data, not a transformation in itself.
 
 == Defining Output Structure
 
