@@ -652,4 +652,5 @@ payload
 * link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
 * link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 * See more advanced examples in link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
+* link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
 * Migrate your old DataMapper components automatically using link:/mule-user-guide/v/3.8-m1/dataweave-migrator[DataWeave Migrator Tool]

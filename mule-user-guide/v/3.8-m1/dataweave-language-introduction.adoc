@@ -1,7 +1,14 @@
 = DataWeave Language Introduction
 :keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
 
-The link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] Language is a powerful template engine that allows you to transform data to and from any kind of format (XML, CSV, JSON, Pojos, Maps, etc). This document covers basic examples, an overview, the structure of a DataWeave file and information about how to access different data from it. Below are some links for more advanced topics:
+The link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] Language is a powerful template engine that allows you to transform data to and from any kind of format (XML, CSV, JSON, Pojos, Maps, etc). In Anypoint Studio, this language can be used in:
+
+* The *Transform Message Component*, described in link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
+* Any Mule component that accepts Mule Expression Language, through link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
+
+
+
+This document covers basic examples, an overview, the structure of a DataWeave file and information about how to access different data from it. Below are some links for more advanced topics:
 
 
 * For a reference about all of the operators that are available for using, see link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
@@ -1492,7 +1499,7 @@ You can reference any *Property* (System or Spring) that exists in the server wh
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]
-* link:https://www.mulesoft.com/platform/studio[Anypoint Studio]
+* link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
 * link:http://forums.mulesoft.com[MuleSoft's Forums]
 * link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[MuleSoft Support]
 * mailto:support@mulesoft.com[Contact MuleSoft]

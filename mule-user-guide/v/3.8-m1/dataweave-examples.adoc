@@ -1909,3 +1909,4 @@ payload.sfdc_users.*sfdc_user map ((user) -> applyMapping(user, mapping))
 * link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
 * link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
+* link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
