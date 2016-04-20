@@ -155,16 +155,20 @@ For some types, you can also define other properties of the reader by adding 'dw
 
 ===== CSV
 
-You can assign any special character as the indicator for separating fields, toggling quotes, or escaping quotes. Make sure you know what special characters are being used in your input, so that DataWeave can interpret it correctly.
+In CSV you can assign any special character as the indicator for separating fields, toggling quotes, or escaping quotes. Make sure you know what special characters are being used in your input, so that DataWeave can interpret it correctly.
 
 image:edit_input_reader2.png[image]
 
 When defining an input of type CSV, there are a few optional parameters you can add to the input directive to customize how the data will be parsed.
 
-* `header`: boolean that defines if the first line in the data contains headers
+* `header`: boolean that defines if the first line in the data contains headers. 'true' by default.
 * `separator`: character that separates fields, `','` by default
 * `quote`: character that defines quoted text, `" "` by default
 * `escape`: character that escapes quotes, `/` by default
+* `bodyStartLineNumber`: the line number where the actual body starts. 0 by default.
+* `ignoreEmptyLine`: boolean that defines if empty lines are ignored. 'true' by default.
+* `headerLineNumber`: the line number where the header is located. 0 by default.
+* `nullValueOn`: booleand that defines if a tag with empty or blank text should be read as null. 'none' by default.
 
 [NOTE]
 ====
@@ -238,6 +242,8 @@ In the XML editor, if you want to parse CSV inputs with custom modifiers, you mu
 
 [NOTE]
 CSV inputs with multiple lines in their headers are not supported by DataWeave
+
+
 
 ===== Flat File
 
@@ -421,58 +427,6 @@ The function has the following attributes:
 |Writer Properties	| For inputs such as CSV, sometimes some properties are needed to compose the output
 |===
 
-== Calling Global MEL Functions from DataWeave Code
-
-If you define a global link:/mule-user-guide/v/3.8-m1/mule-expression-language-mel[Mule Expression Language] (MEL) function in your Mule project, you can then invoke it anywhere in your DataWeave code, without need for any special syntax.
-
-To create one such global function, you must edit your Mule project's XML file and enclose any functions that you wish to define in the following set of tags, which must be placed in the global elements section, before any of the flows are defined.
-
-[source, xml, linenums]
-----
-<configuration doc:name="Configuration">
-     <expression-language>
-         <global-functions>
-
-         </global-functions>
-     </expression-language>
- </configuration>
-----
-
-
-In this space you can use any MEL expression to define custom functions, for example:
-
-[source, xml, linenums]
-----
-<configuration doc:name="Configuration">
-     <expression-language>
-         <global-functions>
-             def newUser() {
-                 return ["name" : "mariano"]
-             }
-             def upperName(user) {
-                 return user.name.toUpperCase()
-             }
-         </global-functions>
-     </expression-language>
- </configuration>
-----
-
-
-With that in place, in the DataWeave code of your Transform Message element you can just refer to these functions. Note that the inputs and outputs of these functions can even be objects and arrays.
-
-[source, ruby, linenums]
-----
-%dw 1.0
-%output application/json
----
-{
-  "foo" :  newUser(),
-  "bar":  upperName(newUser())
-}
-----
-
-
-Even with these external functions in place, you should be able to preview the output of this transform, updated in real time as you edit it.
 
 
 == See Also

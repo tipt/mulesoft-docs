@@ -155,11 +155,59 @@ Which takes two parameters:
 
 
 
-== Global MEL Functions
+== Calling Global MEL Functions from DataWeave Code
 
-Your DataWeave code can call any function you define as a global link:/mule-user-guide/v/3.8-m1/mule-expression-language-mel[Mule Expression Language (MEL)] function, as long as it is correctly defined in the Mule Project where your Transform Message element sits.
+If you define a global link:/mule-user-guide/v/3.8-m1/mule-expression-language-mel[Mule Expression Language] (MEL) function in your Mule project, you can then invoke it anywhere in your DataWeave code, without need for any special syntax.
 
-Refer to link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#calling-global-mel-functions-from-dataweave-code[Using DataWeave in Studio].
+To create one such global function, you must edit your Mule project's XML file and enclose any functions that you wish to define in the following set of tags, which must be placed in the global elements section, before any of the flows are defined.
+
+[source, xml, linenums]
+----
+<configuration doc:name="Configuration">
+     <expression-language>
+         <global-functions>
+
+         </global-functions>
+     </expression-language>
+ </configuration>
+----
+
+
+In this space you can use any MEL expression to define custom functions, for example:
+
+[source, xml, linenums]
+----
+<configuration doc:name="Configuration">
+     <expression-language>
+         <global-functions>
+             def newUser() {
+                 return ["name" : "mariano"]
+             }
+             def upperName(user) {
+                 return user.name.toUpperCase()
+             }
+         </global-functions>
+     </expression-language>
+ </configuration>
+----
+
+
+With that in place, in the DataWeave code of your Transform Message element you can just refer to these functions. Note that the inputs and outputs of these functions can even be objects and arrays.
+
+[source, ruby, linenums]
+----
+%dw 1.0
+%output application/json
+---
+{
+  "foo" :  newUser(),
+  "bar":  upperName(newUser())
+}
+----
+
+
+Even with these external functions in place, you should be able to preview the output of this transform, updated in real time as you edit it.
+
 
 
 == Next Steps
