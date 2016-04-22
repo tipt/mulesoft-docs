@@ -30,22 +30,51 @@ image:dw_new_mapping.png[new weave]
 
 Note that by default the properties editor of the *Transform Message* element displays two main regions:
 
-* On the left: is the graphical UI, which exposes the input and output structures. The mappings between input and output fields are represented through lines drawn from one side to the other. You can easily click and drag one field onto another to map these.
-* On the right: the DataWeave code editor. This allows you to leverage the full power of DataWeave syntax, which includes many tools that allow you to aggregate, normalize, group, join, partition, pivot and filter. See the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave reference documentation] for a complete guide on the DataWeave language syntax.
+* *On the left*: is the graphical UI, which exposes the known input and output structures. The mappings between input and output fields are represented through lines drawn from one side to the other. You can easily click and drag one field onto another to map these.
+* *On the right*: the DataWeave code editor. This allows you to leverage the full power of DataWeave syntax, which includes many tools that allow you to aggregate, normalize, group, join, partition, pivot and filter. See the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave language introduction] for a guide on the DataWeave language syntax.
 
-Both regions represent the same transform in different ways, and any changes done to one representation are matched in real time by the other one.
+Both regions show different representations of the same transform, and any changes done to one representation are matched in real time by the other one.
 
 [TIP]
-When creating a new transformation, it's a lot easier if you first add and configure any other elements on your flow that expose metadata. In this way, this metadata that other message processors expose to Studio is displayed in the input and output structures, which you can use to build out the DataWeave code through the UI.
+When creating a new transformation, it's a lot easier if you first add and configure any other elements on your flow that expose metadata. In this way, this metadata that other message processors expose to Studio is displayed in the input and output structures, without you needing to define the metadata explicitly.
 
-== The DataWeave Text Editor UI
 
-In this section, you write the actual link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave] code that carries out the transform. Sometimes, all you need to do can be automatically built by dragging elements in the GUI, other times you may want to carry out more complex operations that involve aggregation, filtering, calculations, defining custom functions, etc and there you must write this out in DataWeave code.
+== The Graphical UI
+
+image:dw-ui-side.png[ui]
+
+Two tree views show the known metadata contents of the incoming and the outgoing Mule Messages, allowing you to explore them and know what data is available for using as an input and where it can fit into, and how to reference each of these parts.
+
+You can simplify or hide the graphical UI if you wish by clicking the icons on the top right to select between the different views for this properties editor:
++
+image:dw_buttons.png[buttons]
+
+
+By simple interactions with the graphical UI, you can intuitively build out much of your DataWeave code, often this is all you really need to do. Here some of the most common things you can do through the UI:
+
+* Drag an element on the input structure over to another on the output structure. This will cast a line that joins them and also add the necessary lines to the DataWeave code that describes this mapping.
+* Drag a high-level object that contains inner fields inside it onto another in the output. You will be prompted about how to represent this in the DW code.
++
+image:dw-complex-object-drag.png[complex object drag]
+
+* Double click on an output field to add it into the DataWeave code with a static value. This will add an `Fx` icon next to it, as well as a line to the DataWeave code that assigns a default `null` value to the field. You can then change this value in the code to whatever you want.
++
+image:dw_click.png[click]
+* Select an element to have its corresponding line in the DataWeave code highlighted. This is very helpful when dealing with large transforms.
+* If an input field is mapped to two or more output fields, you can right-click it and then select which of the multiple outputs you want to highlight in the DataWeave code.
+* Filter the views displayed in the input and output structures by typing a name in the search boxes at the top of either, only those fields that match your search are then displayed. This is particularly useful when dealing with large data structures with many nested elements.
+
+
+
+== The DataWeave Text Editor
+
+image:dw-code-side.png[code]
+
+In this section, you write the actual link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave] code that carries out the transform. Sometimes, all you need to do can be automatically built by dragging elements in the GUI, but other times you may want to carry out more complex operations that involve aggregation, filtering, calculations, defining custom functions, etc... and for that you must write DataWeave code.
 
 === Directives in Studio
 
-
-Although DataWeave as a language supports adding input directives and naming these by any name you like, when using DataWeave in Anypoint Studio, it's not necessary to declare any input directives for any of the components of the Mule Message that arrives to the DataWeave transformer (Payload, flow variables and input/outbound properties) nor for any system variables. These are already implicitly recognized as inputs and can be referenced anywhere in the DataWeave body without a need to include them in the header, their type is known from Mule metadata.
+The header of a dataweave script defines directives that indicate the input, the output and constant values or functions that can be referenced anywhere in the code. See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[The DataWeave Header]. These directives can be manually set on the code, or automatically defined based on the metadata on your flow or what you map in the UI.
 
 If your transform outputs XML data, a namespace directive will be automatically added to your DataWeave header section, defining a default name for it. This namespace is then referenced in the body too.
 
@@ -55,61 +84,78 @@ If your transform outputs XML data, a namespace directive will be automatically 
 %namespace ns0 http://mulesoft.org/tshirt-service
 ----
 
+[NOTE]
+Although DataWeave as a language supports adding input directives and naming these by any name you like, when using DataWeave in Anypoint Studio, it's not necessary to declare any input directives for any of the components of the Mule Message that arrives to the DataWeave transformer (Payload, flow variables and input/outbound properties) nor for any system variables. These are already implicitly recognized as inputs and can be referenced anywhere in the DataWeave body without a need to include them in the header, their type is known from Mule metadata.
+
+
 For further reference about writing DataWeave code, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
 
 
 
-== The Graphical UI
-
-
-Two tree views show the known metadata contents of the incoming and the outgoing Mule Messages, allowing you to explore them and know what data is available for using as an input and where it can fit into, and how to reference each of these parts.
-
-You can simplify or hide the graphical UI if you wish by clicking the icons on the top right to select between the different views for this properties editor:
-+
-image:dw_buttons.png[buttons]
-
-
-By simple interactions with the graphical UI, you can intuitively build out much of your DataWeave code, often this is all you really need to do.
-
-* Drag an element on the input structure over to another on the output structure. This will cast a line that joins them and also add a line to the DataWeave code that describes this mapping.
-* Double click on an output field to add it into the DataWeave code with a static value. This will add an `Fx` icon next to it, as well as a line to the DataWeave code that assigns a default null value to the field. You can then change this value in the code to whatever you want.
-+
-image:dw_click.png[click]
-* Select an element to have it's corresponding line in the DataWeave code highlighted. This is very helpful when dealing with large transforms.
-* If an input field is mapped to two or more output fields, you can right-click it and then select which of the multiple outputs you want to highlight in the DataWeave code.
-* Type a name in the search boxes at the top of the input and output structures to display only fields that match your search. This is particularly useful when dealing with large data structures with many nested elements.
-
-
 == Defining Input Structure
 
-If the other elements in your Mule flow expose metadata about their input and output, then this information will already be available to the *Transform Message* component. If they don't, you can configure these elements so that they expose this information by editing their *Metadata* tab. For example, you can configure an HTTP connector and assign it a JSON sample file so that this sample's structure is exposed as metadata that your Transform Message component can read.
+If other elements in your Mule flow expose metadata about their input and output, then this information should already be available to the *Transform Message* component and the UI section should display it. If they don't, there are two things you can do:
 
-If the Mule flow doesn't expose Metadata about the elements you need from the incoming message, you can also manually specify it directly in the input section of your Transform Message component.
+* *you can configure the elements themselves* so that they expose this information. Do this by editing their *Metadata* tab. For example, you can configure an HTTP connector and assign it a JSON sample file so that this sample's structure is exposed as metadata that your Transform Message component can read.
+* *you can manually specify it directly in the input section of your Transform Message component*
 
-If a metadata definition is missing, a notification will advise you to provide one, click the *Define Metadata* link. Otherwise, at any time you can also right-click your input and select *Set Metadata* to access the same options.
+=== Defining Metadata Via the UI
 
-You can select an existing metadata type, this may save you several steps:
+If the metadata definition is missing, a notification on the input section of the Graphical UI will advise you to provide it, click the *Define Metadata* link. Otherwise, at any time you can also right-click the input section and select *Set Metadata* to access the same options.
+
+The metadata classes that you have previously defined in the current Mule project will be displayed for you to select one if appropriate:
 
 image:dw_define_type1.png[define type]
 
 
-Or you can also create a new metadata, which can be done freely through an editor, or – for certain types – loading a schema:
+You can also create a new metadata class. Depending on the type that you pick, you may have the option to specify it through a sample, through a schema, or via a simple editor:
 
 image:dw_define_type2.png[define type]
 
-There are a number of fields you can set up, depending on the selected format.
+The main field you must configure is the *type* of your input. If the type of your input is undeclared or not understood it will default to 'application/java', a warning will be logged.
+
+There are a number of fields you can set up, depending on the selected format type. For example if you assign an XML schema, you can pick what root element to use.
 
 
-If your metadata is missing any variables, inbound properties, outbound properties, session variables or record variables that you know will exist in the incoming mule message, you can manually add these too in the editor. Just right-click on one of these categories in the input section of the properties editor and select *Add Flow Variable*, *Add Inbound Property* or whatever the element you want to add may be.
+[cols="40a,20a,20a,20a",options="header"]
+|===
+|Format |Sample | Schema | Editor
+|JSON |X |X |
+|XML |X |X |
+|Java |X | |
+|Map | | |X
+|CSV |X | |X
+|Fixed Width |X |X |X
+|Copybook |X |X |
+|Flat File | |X |
+|Simple | | |X
+|===
 
 [TIP]
 ====
+On the fixed width editor, you can configure several properties of each of your fields through the *format* column of each. Click on the button to open a menu where you can select not only the type of the field, but also its alignment, decimals, if extra characters are to be filled with zeros or empty spaces, etc.
+
++
+image:dw-flatfile-format.png[fixed-width]
+====
+
+
+
+Some input formats such as CSV also allow you to then set some additional parameters in the <<reader configuration>>.
+
+
+If your metadata is missing information about any variables, inbound properties, outbound properties, session variables or record variables that you know will exist in the incoming mule message, you can manually add these too in the editor. Just right-click on one of these categories in the input section of the properties editor and select *Add Flow Variable*, *Add Inbound Property* or whatever the element you want to add may be.
+
+
+=== Defining Metadata Via XML
+
 You can aslo set this via the XML editor. To define an input payload type, use the `mimeType` attribute in an XML tag as in the example below:
 
 [source,xml, linenums]
 ----
 <dw:transform-message doc:name="Transform Message">
-	<dw:input-payload mimeType="text/json" />
+	<dw:input-payload mimeType="application/xml" />
+  <dw:input-payload doc:sample="sample_data/content.xml"/>
 	<dw:set-payload>
 	<![CDATA[%dw 1.0
 	%output application/java
@@ -123,22 +169,20 @@ You can aslo set this via the XML editor. To define an input payload type, use t
 ----
 
 If you do not provide this attribute, DataWeave will try to read the payload MIME type from the metadata.
-====
 
-If the type of your input is undeclared or not understood it will default to 'application/java', a warning will be logged.
+
 
 === Reader Configuration
 
 Some input formats allow you to define a reader with specific properties that make DataWeave parse inputs differently. You can set this either by:
 
 * Right clicking on the input section and selecting *Reader Configuration* to access a menu
-* Adding properties in the XML source of your Mule project
-
++
 image:dw_reader_configuration_select.png[reader conf]
 
+* Adding properties in the XML source of your Mule project, by adding 'dw:reader-property' child elements within, as shown in the example below
 
-In XML, you can add properties by adding 'dw:reader-property' child elements within:
-
++
 [source, xml, linenums]
 ----
 <dw:input-payload doc:sample="list_csv.csv" mimeType="text/csv" >
@@ -147,12 +191,7 @@ In XML, you can add properties by adding 'dw:reader-property' child elements wit
 </dw:input-payload>
 ----
 
-
-The available properties will depend on the type of your input.
-
-
-
-
+The properties you can configure depend on the type of your input.
 
 ==== CSV
 
@@ -166,10 +205,10 @@ When defining an input of type CSV, there are a few optional parameters you can 
 * `separator`: character that separates fields, `','` by default
 * `quote`: character that defines quoted text, `" "` by default
 * `escape`: character that escapes quotes, `/` by default
+* `headerLineNumber`: the line number where the header is located. 0 by default.
 * `bodyStartLineNumber`: the line number where the actual body starts. 0 by default.
 * `ignoreEmptyLine`: boolean that defines if empty lines are ignored. 'true' by default.
-* `headerLineNumber`: the line number where the header is located. 0 by default.
-* `nullValueOn`: booleand that defines if a tag with empty or blank text should be read as null. 'none' by default.
+* `nullValueOn`: boolean that defines if a tag with empty or blank text should be read as null. 'none' by default.
 
 [NOTE]
 ====
@@ -189,13 +228,10 @@ In Anypoint Studio, there are two ways to set this up. You can either set the pa
 
 On the Transform Message component, left-click on the element in the input structure and select *Reader Configuration*.
 
-
-image:dw_reader_configuration.png[reader]
+image:dw_reader_configuration_select.png[reader]
 
 [TIP]
-This option won't be available if the type of the input doesn't allow for this kind of configuration. If the payload is of type `unknown`, you must change its type first. Do this by configuring the elements that come prior to your Transform Data element in the flow, for example configuring an HTTP Listener Connector's Metadata tab so that it explicitly declares that it outputs CSV data.
-
-On the component that brings the input into the flow (eg: an HTTP Connector, FTP Connector, etc), select it, pick the `Metadata` tab, and click `Add Metadata` to provide the details about the incoming data structure.
+This option won't be available if the type of the input doesn't allow for this kind of configuration. If the payload is of type `unknown`, you must change its type first.
 
 ....
 [tab,title="XML Editor"]
@@ -211,6 +247,7 @@ In the XML editor, if you want to parse CSV inputs with custom modifiers, you mu
 </dw:input-payload>
 ----
 
+Refer to the list above for a full reference of all the available parameters.
 
 [source,xml,linenums]
 ----
@@ -241,11 +278,6 @@ In the XML editor, if you want to parse CSV inputs with custom modifiers, you mu
 ------
 
 
-[NOTE]
-CSV inputs with multiple lines in their headers are not supported by DataWeave
-
-
-
 ==== Flat File
 
 
@@ -256,6 +288,16 @@ When defining an input of type Flat File, there are a few optional parameters yo
 
 [TIP]
 See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Shcemas] for instructions and examples on how to create the required schema.
+
+
+
+
+
+
+
+
+
+
 
 == Providing Input Sample Data
 
@@ -270,6 +312,38 @@ image:dataweave-edit-sample-data.png[sample data]
 When the input is of types JSON, XML, CSV or flat file, the sample input contains plain code in the corresponding format. When the input is of type POJO or DataWeave, the sample input is written in DataWeave for more simplicity. In these cases the sample DataWeave code is merely a way to display the sample data, not a transformation in itself.
 
 == Defining Output Structure
+
+Just as with <<Defining Input Structures>>, if other elements in your Mule flow expose metadata about their input and output, then this information should already be available to the *Transform Message* component and the UI section should display it. If they don't, there are three things you can do:
+
+* *you can configure the elements themselves* so that they expose this information
+* *you can manually specify it* in the output section of your Transform Message component
+* *you can skip specifying the definition* and directly set an output type in the output directive of your dataweave code
+
+If the metadata definition is missing, a notification on the output section of the Graphical UI will advise you to provide it, click the *Define Metadata* link. Otherwise, at any time you can also right-click the output section and select *Set Metadata* to access the same options.
+
+The metadata classes that you have previously defined in the current Mule project will be displayed for you to select one if appropriate:
+
+image:dw_define_type1.png[define type]
+
+
+You can also create a new metadata class. Depending on the type that you pick, you may have the option to specify it through a sample, through a schema, or via a simple editor:
+
+image:dw_define_type2.png[define type]
+
+There are a number of fields you can set up, depending on the selected format.
+
+Some input formats such as CSV require that you then set some additional parameters in the <<writer configuration>>.
+
+
+
+
+
+
+
+
+
+
+
 
 === Writer Configuration
 
