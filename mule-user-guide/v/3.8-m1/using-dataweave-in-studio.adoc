@@ -92,16 +92,21 @@ For further reference about writing DataWeave code, see link:/mule-user-guide/v
 
 
 
-== Defining Input Structure
+== Defining Input and Output Structure
 
 If other elements in your Mule flow expose metadata about their input and output, then this information should already be available to the *Transform Message* component and the UI section should display it. If they don't, there are two things you can do:
 
 * *you can configure the elements themselves* so that they expose this information. Do this by editing their *Metadata* tab. For example, you can configure an HTTP connector and assign it a JSON sample file so that this sample's structure is exposed as metadata that your Transform Message component can read.
-* *you can manually specify it directly in the input section of your Transform Message component*
+* *you can manually specify it directly in the input or output section of your Transform Message component*
 
-=== Defining Metadata Via the UI
+For defining the Output structure, you also have a third option if you plan to create your transform entirely via <<the DataWeave text editor>>:
 
-If the metadata definition is missing, a notification on the input section of the Graphical UI will advise you to provide it, click the *Define Metadata* link. Otherwise, at any time you can also right-click the input section and select *Set Metadata* to access the same options.
+* *you can skip specifying the definition* and directly set an output type in the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[output directive] of your DataWeave code
+
+
+=== Defining Metadata via the UI
+
+If the metadata definition is missing for the input or output, a notification on the corresponding section of the Graphical UI will advise you to provide it, click the *Define Metadata* link. Otherwise, at any time you can also right-click on the root of the corresponding section of the Graphical Ui and select *Set Metadata* to access the same options.
 
 The metadata classes that you have previously defined in the current Mule project will be displayed for you to select one if appropriate:
 
@@ -112,7 +117,7 @@ You can also create a new metadata class. Depending on the type that you pick, y
 
 image:dw_define_type2.png[define type]
 
-The main field you must configure is the *type* of your input. If the type of your input is undeclared or not understood it will default to 'application/java', a warning will be logged.
+The main field you must configure is the *type* of your data. If the type of your data is undeclared or not understood it will default to 'application/java', a warning will be logged.
 
 There are a number of fields you can set up, depending on the selected format type. For example if you assign an XML schema, you can pick what root element to use.
 
@@ -125,26 +130,35 @@ There are a number of fields you can set up, depending on the selected format ty
 |Java |X | |
 |Map | | |X
 |CSV |X | |X
-|Fixed Width |X |X |X
+|Fixed Width |X | |X
 |Copybook |X |X |
 |Flat File | |X |
 |Simple | | |X
 |===
 
 [TIP]
+See reference docs for the schema structures required for link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[Flat-File] and link:/mule-user-guide/v/3.8-m1/dataweave-edi-schemas[EDI].
+
+[NOTE]
 ====
+* When defining the structure through the editor, you're implicitly creating a schema for that type. These schemas are stored in your project's `src/main/resources` folder, and you can open these and edit them freely on Anypoint Studio.
+
+* Copybook type definitions actually use flat-file schemas, Migration from copybook to fixedwidth is supported with the exception of some options, link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[see which ones].
+
+* On Fixed Width, the field property 'numbersign' is not configurable via the UI and the default is always used, however you can edit the schema directly if you wish to assign it a different value.
+====
+
+
 On the fixed width editor, you can configure several properties of each of your fields through the *format* column of each. Click on the button to open a menu where you can select not only the type of the field, but also its alignment, decimals, if extra characters are to be filled with zeros or empty spaces, etc.
 
-+
+
 image:dw-flatfile-format.png[fixed-width]
-====
 
 
+Some formats such as CSV also allow you to then set some additional parameters in the <<reader configuration>> or the <<writer configuration>>, depending on if you want to set the input or the output.
 
-Some input formats such as CSV also allow you to then set some additional parameters in the <<reader configuration>>.
 
-
-If your metadata is missing information about any variables, inbound properties, outbound properties, session variables or record variables that you know will exist in the incoming mule message, you can manually add these too in the editor. Just right-click on one of these categories in the input section of the properties editor and select *Add Flow Variable*, *Add Inbound Property* or whatever the element you want to add may be.
+If your input metadata is missing information about any variables, inbound properties, outbound properties, session variables or record variables that you know exist in the incoming mule message, you can manually add these too in the editor. Just right-click on one of these categories in the input section of the properties editor and select *Add Flow Variable*, *Add Inbound Property* or whatever the element you want to add may be.
 
 
 === Defining Metadata Via XML
@@ -172,11 +186,11 @@ If you do not provide this attribute, DataWeave will try to read the payload MIM
 
 
 
-=== Reader Configuration
+== Reader Configuration
 
 Some input formats allow you to define a reader with specific properties that make DataWeave parse inputs differently. You can set this either by:
 
-* Right clicking on the input section and selecting *Reader Configuration* to access a menu
+* Right clicking on the root of the input section and selecting *Reader Configuration* to access a menu
 +
 image:dw_reader_configuration_select.png[reader conf]
 
@@ -191,15 +205,15 @@ image:dw_reader_configuration_select.png[reader conf]
 </dw:input-payload>
 ----
 
-The properties you can configure depend on the type of your input.
+The properties you can configure depend on the type of your input, see the sections below.
 
-==== CSV
+=== CSV
 
 In CSV you can assign any special character as the indicator for separating fields, toggling quotes, or escaping quotes. Make sure you know what special characters are being used in your input, so that DataWeave can interpret it correctly.
 
 image:edit_input_reader2.png[image]
 
-When defining an input of type CSV, there are a few optional parameters you can use to customize how the data will be parsed.
+When defining an input of type CSV, there are a few optional reader parameters you can use to customize how the data will be parsed.
 
 * `header`: boolean that defines if the first line in the data contains headers. 'true' by default.
 * `separator`: character that separates fields, `','` by default
@@ -278,74 +292,49 @@ Refer to the list above for a full reference of all the available parameters.
 ------
 
 
-==== Flat File
+=== Flat File
 
 
-When defining an input of type Flat File, there are a few optional parameters you can add to the input directive to customize how the data will be parsed.
+When defining an input of type Flat File, there are a few optional reader parameters you can add to the input directive to customize how the data will be parsed.
 
 * `SchemaPath`: Location in your local disk of the schema file used to parse your input
 * `StructureIdent`: In case the schema file defines multiple different structures, this field selects which to use
 
+You can set these propertes by either editing the XML code or via the UI:
+
+[tabs]
+------
+[tab,title="Studio Visual Editor"]
+....
+
+On the Transform Message component, left-click on the element in the input structure and select *Reader Configuration*.
+
+image:dw_reader_configuration_select.png[reader]
+
 [TIP]
-See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Shcemas] for instructions and examples on how to create the required schema.
+This option won't be available if the type of the input doesn't allow for this kind of configuration. If the payload is of type `unknown`, you must change its type first.
 
+....
+[tab,title="XML Editor"]
+....
 
+In the XML editor, if you want to parse flat-file inputs with custom modifiers, you must set these up as child elements of the DataWeave component, like in the example below:
 
+[source, xml, linenums]
+----
+<dw:input-payload mimeType="flat-file" >
+    <dw:reader-property name="SchemaPath" value="myschema.ffs"/>
+    <dw:reader-property name="StructureIdent" value="structure1"/>
+</dw:input-payload>
+----
 
+....
+------
 
+[TIP]
+See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas] for instructions and examples on how to create the required schema.
 
-
-
-
-
-
-== Providing Input Sample Data
-
-Once you have defined the input structure, you can create a sample populated with test data based on that sample.
-
-This sample data is used together with your DataWeave code to produce a sample output in <<the preview section>>, which gets updated in real time as you make changes.
-
-You can also access this tab by right clicking on the input section and selecting *Edit Sample Data*.
-
-image:dataweave-edit-sample-data.png[sample data]
-
-When the input is of types JSON, XML, CSV or flat file, the sample input contains plain code in the corresponding format. When the input is of type POJO or DataWeave, the sample input is written in DataWeave for more simplicity. In these cases the sample DataWeave code is merely a way to display the sample data, not a transformation in itself.
-
-== Defining Output Structure
-
-Just as with <<Defining Input Structures>>, if other elements in your Mule flow expose metadata about their input and output, then this information should already be available to the *Transform Message* component and the UI section should display it. If they don't, there are three things you can do:
-
-* *you can configure the elements themselves* so that they expose this information
-* *you can manually specify it* in the output section of your Transform Message component
-* *you can skip specifying the definition* and directly set an output type in the output directive of your dataweave code
-
-If the metadata definition is missing, a notification on the output section of the Graphical UI will advise you to provide it, click the *Define Metadata* link. Otherwise, at any time you can also right-click the output section and select *Set Metadata* to access the same options.
-
-The metadata classes that you have previously defined in the current Mule project will be displayed for you to select one if appropriate:
-
-image:dw_define_type1.png[define type]
-
-
-You can also create a new metadata class. Depending on the type that you pick, you may have the option to specify it through a sample, through a schema, or via a simple editor:
-
-image:dw_define_type2.png[define type]
-
-There are a number of fields you can set up, depending on the selected format.
-
-Some input formats such as CSV require that you then set some additional parameters in the <<writer configuration>>.
-
-
-
-
-
-
-
-
-
-
-
-
-=== Writer Configuration
+== Writer Configuration
 
 Some output formats allow you to define a writer with specific properties that make DataWeave construct the output with a different syntax.
 
@@ -353,44 +342,42 @@ These properties are simply written on the `%output` directive of your DataWeave
 
 See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[output directive] for details on this.
 
+== Providing Input Sample Data
 
-=== Handling Multiple Outputs
+Once you have defined the input structure, you can create a sample populated with test data based on that sample.
 
-A single Transform Message element can give shape to several different components of the output Mule message. Each of these output components must be defined in a separate `.dwl` file, written out in a separate tab of the Transform section. For example in one tab you may be defining the payload contents, in another those of an outbound property, and these will both be parts of the same output Mule message.
+This sample data is used together with your DataWeave code to produce a sample output in <<the preview section>>, which gets updated in real time as you make changes.
 
-To add a new output, open the dropdown menu above your DataWeave code, that should say *Payload* by default.
+You can also access this tab by right clicking on the root of the input section and selecting *Edit Sample Data*.
 
-+
-image:dw_multiple_outputs_first.png[multiple outputs]
+image:dataweave-edit-sample-data.png[sample data]
 
-Then select *Add New Target*.
+[NOTE]
+When the input is of types JSON, XML, CSV or flat file, the sample input contains plain code in the corresponding format. When the input is of type POJO or DataWeave, the sample input is written in DataWeave for more simplicity. In these cases the sample DataWeave code is merely a way to display the sample data, not a transformation in itself.
 
-+
-image:dw_new_target.png[new target]
+Selecting this option opens a new tab in the input section with an empty scaffolding of your input structure, in which values are populated with the string `????`. You can replace these values with more useful sample values to see how they are mapped out to the preview section.
 
-Then you must specify where in the output Mule message to place the output of this new DataWeave transform. In case you're creating a new variable or property, you must also set a name for it.
+image:dw-popupalte-sample-data.png[sample data]
 
-+
-image:dw_new_variable.png[new variable]
 
-In Studio's XML editor you can do the same by adding multiple child elements inside the `dw:transform-message` component.
+[TIP]
+====
+You can always click the *rescafold button* to restore the sample data to its default state. Note that with this you'll loose any sample data you've provided.
 
-[source, xml, linenums]
-----
-<dw:transform-message>
-            <dw:set-payload resource="classpath:path/transform.dwl"/>
-            <dw:set-variable variableName="myVariable" resource="classpath:path/transform.dwl"/>
-            <dw:set-session-variable variableName="mySessionVariable" resource="classpath:path/transform.dwl"/>
-</dw:transform-message>
-----
+image:dw_rescafold-button.png[rescafold]
+====
+
+
 
 == The Preview Section
 
 You can enable the preview section by clicking on the *Preview* button on the top-right of the editor.
-+
+
 image:dw_buttons.png[buttons]
 
-This section presents a sample output, built by taking the sample input you provide and transforming it through the DataWeave transform. As you make changes in the DataWeave code, notice how the output data structure changes.  If your transformer has multiple outputs, the *Preview* section will display the one corresponding to the currently selected transform.
+This section presents a sample output, built by taking the sample input you provide and transforming it through the DataWeave transform. As you make changes in the DataWeave code, notice how the output data structure changes.  If your transformer has <<handling multiple outputs, multiple outputs>>, the *Preview* section will display the one corresponding to the currently selected transform.
+
+image:dw-sample-preview.png[preview]
 
 == Viewing Errors
 
@@ -404,21 +391,45 @@ If you click this notification, a window opens detailing each error in your code
 image:dw_errors2.png[errors]
 
 
-== Streaming
+== Handling Multiple Outputs
 
-DataWeave supports streaming a large payload. No configuration is necessary in the Transform Message component, but other components need to be set up for this to work. See link:/mule-user-guide/v/3.7/dataweave-streaming[DataWeave Streaming].
+A single Transform Message element can give shape to several different components of the output Mule message. Each of these output components must be defined in a separate `.dwl` file, written out in a separate tab of the Transform section. For example in one tab you may be defining the payload contents, in another those of an outbound property, and these will both be parts of the same output Mule message.
+
+To add a new output, simply click the *Add new target* button at the top of the DataWeave code section.
 
 
-== Keeping your DataWeave code in a separate file
+image:dw_multiple_outputs_first.png[multiple outputs]
+
+Then you must specify where in the output Mule message to place the output of this new DataWeave transform. In case you're creating a new variable or property, you must also set a name for it.
+
+
+image:dw_new_variable.png[new variable]
+
+In Studio's XML editor you can do the same by adding multiple child elements inside the `dw:transform-message` component.
+
+[source, xml, linenums]
+----
+<dw:transform-message>
+            <dw:set-payload resource="classpath:path/transform.dwl"/>
+            <dw:set-variable variableName="myVariable" resource="classpath:path/transform.dwl"/>
+            <dw:set-session-variable variableName="mySessionVariable" resource="classpath:path/transform.dwl"/>
+</dw:transform-message>
+----
+
+
+You can also change the target of an existing tranform by clicking the *Edit Current Target* button, and in that way point the output of your transform to a different element in the outgoing Mule Message.
+
+image:dw_multiple_outputs_edit.png[edit target]
+
+
+== Keeping DataWeave code in separate files
 
 By default, DataWeave code is expressed inline within your Mule XML file. If you wish to keep it in a separate file and have your XML reference this file, you can easily do this from the DataWeave UI.
 In order to export the DataWeave code to a .dwl file, you need to do the following:
 
-* Click on the dropdown menu above the DataWeave code that defines the output, which should say 'Payload' by default
+* click the *Edit Current Target* button
 +
-image:dataweave-externalfile1.png[external file1]
-
-* Select 'Edit current target'
+image:dw_multiple_outputs_edit.png[edit target]
 * Select the 'File' radio button
 
 +
@@ -429,6 +440,9 @@ image:dataweave-externalfile2.png[external file 2]
 
 A file will be created under the 'src/main/resources' folder in your project containing your DataWeave code.
 
+== Streaming
+
+DataWeave supports streaming a large payload. No configuration is necessary in the Transform Message component, but other components need to be set up for this to work. See link:/mule-user-guide/v/3.7/dataweave-streaming[DataWeave Streaming].
 
 
 
