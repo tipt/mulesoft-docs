@@ -5,10 +5,9 @@
 
 == XML to JSON
 
-This example converts an XML input to a JSON output that is structured differently and that cointains URL links that are built from concatenating input content with a few constants that are defined in the header. The transform also creates a few fields that are conditional and are only present in the output when they exist in the input.
+This example converts an XML input to a JSON output that is structured differently and that contains URL links that are built from concatenating input content with a few constants that are defined in link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[The DataWeave Header]. The transform also creates a few fields that are conditional and are only present in the output when they exist in the input.
 
-*Input*
-
+.Input
 [source, xml, linenums]
 ----
 <ns0:getItemsResponse xmlns:ns0="http://www.alainn.com/SOA/message/1.0">
@@ -74,8 +73,7 @@ This example converts an XML input to a JSON output that is structured different
 </ns0:getItemsResponse>
 ----
 
-*Transform*
-
+.Transform
 [source,DataWeave, linenums]
 ----
 %dw 1.0
@@ -122,8 +120,7 @@ using (pageSize = payload.getItemsResponse.PageInfo.pageSize) {
 }
 ----
 
-*Output*
-
+.Output
 [source, json, linenums]
 ----
 {
@@ -225,10 +222,9 @@ using (pageSize = payload.getItemsResponse.PageInfo.pageSize) {
 
 == XML to JSON 2
 
-This example takes an XML list of books and outputs a JSON version of the same. As JSON can't have duplicate keys, for elements that may be duplicate in the inbound XML, only the first is selected to be put into the output. Values that are numeric are defined as numbers to avoid having them being treated as strings.
+This example takes an XML list of books and outputs a JSON version of the same. As JSON can't have duplicate keys, for elements that may be duplicate in the inbound XML, only the first is selected to be put into the output. Values that are numeric are defined as numbers using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[As operator] to avoid having them treated as strings.
 
-*Input*
-
+.Input
 [source, xml, linenums]
 ----
 <bookstore>
@@ -350,10 +346,12 @@ payload.bookstore map {
 
 == JSON to XML
 
-This example transforms a JSON array of objects, each representing a book, into XML. The *map* operation carries out the same steps for each element in the input array. Through the use of @, attributes are added into the XML tags.
+This example transforms a JSON array of objects, each representing a book, into XML. The link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation] carries out the same steps for each element in the input array. Through the use of @, attributes are added into the XML tags.
 
-*Input*
+[TIP]
+See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-selector-expressions[Attribute selector expressions] for how to access XML attributes in DataWeave.
 
+.Input
 [source, json, linenums]
 ----
 [
@@ -416,8 +414,7 @@ This example transforms a JSON array of objects, each representing a book, into 
 ]
 ----
 
-*Transform*
-
+.Transform
 [source,DataWeave, linenums]
 ----
 %dw 1.0
@@ -437,8 +434,7 @@ This example transforms a JSON array of objects, each representing a book, into 
 }
 ----
 
-*Output*
-
+.Output
 [source, xml, linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -476,7 +472,10 @@ This example transforms a JSON array of objects, each representing a book, into 
 
 == Multiple Inputs
 
-In this example, there are three different input JSON files. One of them contains an array of book objects, another a set of currency exchange rates, and the other one a querry. The transform filters the first input using the conditions passed in the third input, then performs a map operation to deal with each remaining object separately. Within this map, it defines two variables: *it* and *props*. Through the use of @, attributes are added into the XML tags. A second map operation inside the first one calculates the price of each book for each of the currencies provided in the second input. Another map operation displays each element in the "author" array as a separate <author></author> tag.
+In this example, there are three different input JSON files, these three could all potentially arrive in one single Mule message, occupying variables and properties. One of them contains an array of book objects, another a set of currency exchange rates, and the other one a querry. The transform filters the first input using the conditions passed in the third input, then performs a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation] to deal with each remaining object separately. Within this map, it defines two variables: *it* and *props*. Through the use of @, attributes are added into the XML tags. A second map operation inside the first one calculates the price of each book for each of the currencies provided in the second input. Another map operation displays each element in the "author" array as a separate <author></author> tag.
+
+[TIP]
+See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-selector-expressions[Attribute selector expressions] for how to access XML attributes in DataWeave.
 
 [WARNING]
 ====
@@ -485,8 +484,7 @@ Note that for this example to run in Anypoint Studio, you must rename the inputs
 
 *Input*
 
-*in0:*
-
+.in0
 [source; json]
 ----
 [
@@ -550,8 +548,7 @@ Note that for this example to run in Anypoint Studio, you must rename the inputs
 ]
 ----
 
-*in1:*
-
+.in1
 [source, json, linenums]
 ----
 {
@@ -563,8 +560,7 @@ Note that for this example to run in Anypoint Studio, you must rename the inputs
 }
 ----
 
-*in2:*
-
+.in2
 [source; json]
 ----
 {
@@ -572,8 +568,7 @@ Note that for this example to run in Anypoint Studio, you must rename the inputs
 }
 ----
 
-*Transform*
-
+.Transform
 [source,DataWeave, linenums]
 ----
 %dw 1.0
@@ -597,8 +592,7 @@ books: {
 }
 ----
 
-*Output*
-
+.Output
 [source, xml, linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -628,8 +622,10 @@ books: {
 
 This example does not take any input in, it simply creates an XML output out of hard-coded instructions. It references several external sources through namespace directives. It creates a set of XML tags that replicate the structure of a Mule configuration XML file, including attributes that go inside these tags through the use of @. 
 
-*Transform*
+[TIP]
+See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-selector-expressions[Attribute selector expressions] for how to access XML attributes in DataWeave.
 
+.Transform
 [source,DataWeave, linenums]
 ----
 %dw 1.0
@@ -723,8 +719,7 @@ mule: {
 }
 ----
 
-*Output*
-
+.Output
 [source, xml, linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -751,8 +746,10 @@ mule: {
 
 This example does not take any input in, it simply creates an XML output out of hard-coded instruction. It references several external sources through namespace directives and defines a version as a constant in the header, that is then referenced in the body. It creates a set of XML tags that replicate the structure of a Mule POM file, including attributes inside these tags that are added through the use of @ and references to a variable.
 
-*Transform*
+[TIP]
+See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-selector-expressions[Attribute selector expressions] for how to access XML attributes in DataWeave.
 
+.Transform
 [source,DataWeave, linenums]
 ----
 %dw 1.0
@@ -984,8 +981,7 @@ This example does not take any input in, it simply creates an XML output out of 
 }
 ----
 
-*Output*
-
+.Output
 [source, xml, linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1204,10 +1200,9 @@ This example does not take any input in, it simply creates an XML output out of 
 
 == XML Basic
 
-This example takes an XML input and parses it into a different XML arrangement. After a single header element is copied, a *map* operation carries out the same steps for each item: several fields are passed on without any changes, then the discount and subtotal fields are calculated with references to constants defined in the header directives of the transform. A single set of subtotal, tax and total elements are created by performing a *reduce* operation over all of the items in the "items" array, performing calculations that sometimes involve constants defined in the header.
+This example takes an XML input and parses it into a different XML arrangement. After a single header element is copied, a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation] carries out the same steps for each item: several fields are passed on without any changes, then the discount and subtotal fields are calculated with references to constants defined in the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[header directives] of the transform. A single set of subtotal, tax and total elements are created by performing a link:/mule-user-guide/v/3.8-m1/dataweave-operators#reduce[*reduce*] operation over all of the items in the "items" array, performing calculations that sometimes involve constants defined in the header. The link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[*as* operation] is also used to coerce discound to a number.
 
-*Input*
-
+.Input
 [source, xml, linenums]
 ----
 <invoice>
@@ -1230,8 +1225,7 @@ This example takes an XML input and parses it into a different XML arrangement. 
 </invoice>
 ----
 
-*Transform*
-
+.Transform
 [source,DataWeave, linenums]
 ----
 %dw 1.0
@@ -1259,8 +1253,7 @@ invoice: {
 }
 ----
 
-*Output*
-
+.Output
 [source, xml, linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1295,10 +1288,9 @@ invoice: {
 
 == XML Removal
 
-In this example, the input contains sensitive information that should be removed. The transform replicates the inbound structure but uses a simple *remove* operation to take away specific key:value pairs.
+In this example, the input contains sensitive information that should be removed. The transform replicates the inbound structure but uses a simple link:/mule-user-guide/v/3.8-m1/dataweave-operators#remove[*remove* operation] to take away specific key:value pairs. It goes through the whole set of elements in the input using a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation].
 
-*Input*
-
+.Input
 [source, xml, linenums]
 ----
 <users>
@@ -1329,8 +1321,7 @@ In this example, the input contains sensitive information that should be removed
 </users>
 ----
 
-*Transform*
-
+.Transform
 [source,DataWeave, linenums]
 ----
 %dw 1.0
@@ -1345,8 +1336,7 @@ users: { (payload.users map {
  }) }
 ----
 
-*Output*
-
+.Output
 [source, xml, linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1378,8 +1368,7 @@ users: { (payload.users map {
 
 In this example, the input contains the same sensitive information as in the previous case, but instead of entirely removing the key:value pairs that contain it, the values are replaced with the string **. The transform replicates the inbound structure but uses a simple *when* operation to replace values when specific keys occur.
 
-*Input*
-
+.Input
 [source, xml, linenums]
 ----
 <users>
@@ -1678,10 +1667,11 @@ payload map {
 
 = Adding XML elements based on a condition
 
-It is very common when mapping to Xml that we want to output a tag based on a condition.
-For example in this mapping we are going to insert the insurance tag only if it is present in the input
+When mapping something to an XML format, you may want to add certain tags based on a condition.
+The mapping below only inserts the 'insurance' tag when it's present in the input.
+
 .Input
-[source,json]
+[source,json, linenums]
 ---------------------------------------------------------
 [
   {
@@ -1699,7 +1689,7 @@ For example in this mapping we are going to insert the insurance tag only if it 
 ---------------------------------------------------------
 
 .Transform
-[source,ruby]
+[source,ruby, linenums]
 ---------------------------------------------------------
 %dw 1.0
 %input payload application/json
@@ -1709,8 +1699,8 @@ users: {
   (
     payload map {
         user: {
-          (insurance: $.insurance) when $.insurance?,
-          name: $.name
+          name: $.name,
+          (insurance: $.insurance) when $.insurance?
         }
     }
   )
@@ -1718,13 +1708,13 @@ users: {
 ---------------------------------------------------------
 
 .Output
-[source,xml]
+[source,xml, linenums]
 ---------------------------------------------------------
 <?xml version='1.0' encoding='US-ASCII'?>
 <users>
   <user>
-    <insurance>Osde</insurance>
     <name>Julian</name>
+    <insurance>Osde</insurance>
   </user>
   <user>
     <name>Mariano</name>
@@ -1732,16 +1722,64 @@ users: {
 </users>
 ---------------------------------------------------------
 
-= Traversing an XML
 
-It is very common to need to traverse an xml for different transformation.
+== Removing Unwanted Attributes on XML
 
-== Mapping the keys
+You may want to remove specific attributes from within an XML tag that are known to contain sensitive data.
 
-Making all the keys lower case. In this example we create a function that receives the element to be traverse and the function to which all the
+See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-selector-expressions[Attribute selector expressions] for how to access XML attributes in DataWeave.
+
 
 .Input
-[source,xml]
+[source,xml,linenums]
+---------------------------------------------------------
+<users>
+  <user username="Julian" password="1234"/>
+  <user username="Mariano" password="4321"/>
+</users>
+---------------------------------------------------------
+
+.Transform
+[source,ruby,linenums]
+---------------------------------------------------------
+%dw 1.0
+%input payload application/xml
+%output application/dw
+%var removeAttribute = (element,attrName) ->
+element mapObject {
+  ($$) @((($$.@ - attrName) when $$.@? otherwise {} ) ) : $ match {
+    :object -> removeAttribute($, attrName),
+    default -> $
+  }
+}
+---
+
+removeAttribute(payload, "password")
+---------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----
+{
+  users @(): {
+    user @(
+      username: "Julian"
+    ): "",
+    user @(
+      username: "Mariano"
+    ): ""
+  }
+}
+----
+
+== Passing Functions as Arguments
+
+
+The following examples makes all the keys lower case. The link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[DataWeave header] defines a link:/mule-user-guide/v/3.8-m1/dataweave-functions[function] that receives another function as an argument. It then only applies this function to the keys and not the values it processes. The function that is sent as an argument is a very simple one that uses the link:/mule-user-guide/v/3.8-m1/dataweave-operations#lower[lower operator] to set text to lower case.
+
+
+.Input
+[source,xml,linenums]
 ---------------------------------------------------------
 <CATALOG>
   <CD>
@@ -1764,7 +1802,7 @@ Making all the keys lower case. In this example we create a function that receiv
 ---------------------------------------------------------
 
 .Transform
-[source,ruby]
+[source,ruby,linenums]
 ---------------------------------------------------------
 %dw 1.0
 %input payload application/xml
@@ -1781,7 +1819,7 @@ mapKeys(payload, ((key) ->(lower key)))
 ---------------------------------------------------------
 
 .Output
-[source,xml]
+[source,xml,linenums]
 ---------------------------------------------------------
 <?xml version='1.0' encoding='US-ASCII'?>
 <catalog>
@@ -1804,45 +1842,16 @@ mapKeys(payload, ((key) ->(lower key)))
 </catalog>
 ---------------------------------------------------------
 
-== Removing unwanted attributes
 
-We may want to remove attributes that has sensitive value before send it to an endpoint.
 
-.Input
-[source,xml]
----------------------------------------------------------
-<users>
-  <user username="Julian" password="1234"/>
-  <user username="Mariano" password="4321"/>
-</users>
----------------------------------------------------------
-
-.Transform
-[source,ruby]
----------------------------------------------------------
-%dw 1.0
-%input payload application/xml
-%output application/dw
-%var removeAttribute = (element,attrName) ->
-element mapObject {
-  ($$) @((($$.@ - attrName) when $$.@? otherwise {} ) ) : $ match {
-    :object -> removeAttribute($, attrName),
-    default -> $
-  }
-}
----
-
-removeAttribute(payload, "password")
----------------------------------------------------------
 
 == Dynamic mapping based on a definition
 
-This example shows how based on a mapping definition that it may be stored in a DB table you can dynamically execute it.
-
-.Input
+This example shows how, based on a mapping definition that may be stored in a DB table, you can dynamically execute it.
 
 This input describes a mapping definition
 
+.Mapping as Input
 [source,json]
 ------------------------------------------------------------
 [
@@ -1864,6 +1873,7 @@ This input describes a mapping definition
 ]
 ------------------------------------------------------------
 
+.Main Input
 [source,xml]
 ------------------------------------------------------------
 <sfdc_users>
@@ -1885,7 +1895,6 @@ This input describes a mapping definition
 ------------------------------------------------------------
 
 .Transform
-
 [source,ruby]
 ------------------------------------------------------------
 %dw 1.0
@@ -1901,6 +1910,14 @@ This input describes a mapping definition
 ---
 payload.sfdc_users.*sfdc_user map ((user) -> applyMapping(user, mapping))
 ------------------------------------------------------------
+
+
+[source,json,linenums]
+----
+
+
+----
+
 
 == See Also
 
