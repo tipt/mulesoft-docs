@@ -1714,7 +1714,7 @@ See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-sel
 </project>
 ----
 
-== Using Complex Functions
+== Functions with Multiple Arguments
 
 === Removing Unwanted Attributes on XML
 
@@ -1767,7 +1767,7 @@ removeAttribute(payload, "password")
 }
 ----
 
-=== Passing Functions as Arguments
+=== Passing Other Functions as Arguments
 
 
 The following examples makes all the keys lower case. The link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[DataWeave header] defines a link:/mule-user-guide/v/3.8-m1/dataweave-functions[function] that receives another function as an argument and then calls it in the body. It then only applies this function to the keys and not the values it processes. The function that is sent as an argument is a very simple one that uses the link:/mule-user-guide/v/3.8-m1/dataweave-operations#lower[lower operator] to set text to lower case.
@@ -1843,7 +1843,6 @@ mapKeys(payload, ((key) ->(lower key)))
   </cd>
 </catalog>
 ---------------------------------------------------------
-
 
 
 
