@@ -3,7 +3,540 @@
 
 *_Enterprise_*
 
-== XML to JSON
+
+
+== Using the Map Operator
+
+This example takes an XML list of books and outputs a JSON version of the same. It goes through each 'book' element in the input using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operator].  Values that are numeric are defined as numbers using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[As operator] to avoid having them treated as strings. As JSON can't have duplicate keys, for elements that may be duplicate in the inbound XML, only the first is selected to be put into the output.
+
+.Input
+[source, xml, linenums]
+----
+<bookstore>
+    <book category="cooking">
+        <title lang="en">Everyday Italian</title>
+        <author>Giada De Laurentiis</author>
+        <year>2005</year>
+        <price>30.00</price>
+    </book>
+    <book category="children">
+        <title lang="en">Harry Potter</title>
+        <author>J K. Rowling</author>
+        <year>2005</year>
+        <price>29.99</price>
+    </book>
+    <book category="web">
+        <title lang="en">XQuery Kick Start</title>
+        <author>James McGovern</author>
+        <author>Per Bothner</author>
+        <author>Kurt Cagle</author>
+        <author>James Linn</author>
+        <author>Vaidyanathan Nagarajan</author>
+        <year>2003</year>
+        <price>49.99</price>
+    </book>
+    <book category="web" cover="paperback">
+        <title lang="en">Learning XML</title>
+        <author>Erik T. Ray</author>
+        <year>2003</year>
+        <price>39.95</price>
+    </book>
+</bookstore>
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+payload.bookstore map {
+    item: {
+      type: "book",
+    price: $.price[0] as :number,
+    properties: {
+        title: $.title[0],
+        author: $.author,
+        year: $.year[0] as :number
+    }
+  }
+}
+----
+
+.Output
+[source, json, linenums]
+----
+[
+  {
+    "item": {
+      "type": "book",
+      "price": 30,
+      "properties": {
+        "title": "Everyday Italian",
+        "author": [
+          "Giada De Laurentiis"
+        ],
+        "year": 2005
+      }
+    }
+  },
+  {
+    "item": {
+      "type": "book",
+      "price": 29.99,
+      "properties": {
+        "title": "Harry Potter",
+        "author": [
+          "J K. Rowling"
+        ],
+        "year": 2005
+      }
+    }
+  },
+  {
+    "item": {
+      "type": "book",
+      "price": 49.99,
+      "properties": {
+        "title": "XQuery Kick Start",
+        "author": [
+          "James McGovern",
+          "Per Bothner",
+          "Kurt Cagle",
+          "James Linn",
+          "Vaidyanathan Nagarajan"
+        ],
+        "year": 2003
+      }
+    }
+  },
+  {
+    "item": {
+      "type": "book",
+      "price": 39.95,
+      "properties": {
+        "title": "Learning XML",
+        "author": [
+          "Erik T. Ray"
+        ],
+        "year": 2003
+      }
+    }
+  }
+]
+----
+
+== Field Removal
+
+In this example, the input contains sensitive information that should be removed. The transform replicates the inbound structure but uses a simple link:/mule-user-guide/v/3.8-m1/dataweave-operators#remove[*remove* operation] to take away specific key:value pairs.
+
+The example goes through the whole set of elements in the input using a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation].
+
+.Input
+[source, xml, linenums]
+----
+<users>
+    <user>
+        <personal_information>
+            <first_name>Emiliano</first_name>
+            <middle_name>Romoaldo</middle_name>
+            <last_name>Lesende</last_name>
+            <ssn>001-08-84382</ssn>
+        </personal_information>
+        <login_information>
+            <username>3miliano</username>
+            <password>mypassword1234</password>
+        </login_information>
+    </user>
+    <user>
+        <personal_information>
+            <first_name>Mariano</first_name>
+            <middle_name>Toribio</middle_name>
+            <last_name>de Achaval</last_name>
+            <ssn>002-05-34738</ssn>
+        </personal_information>
+        <login_information>
+            <username>machaval</username>
+            <password>mypassword4321</password>
+        </login_information>
+    </user>
+</users>
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+users: { (payload.users map {
+     user: {
+        personal_information: $.personal_information - "ssn",
+        login_information: $.login_information - "password"
+      }
+ }) }
+----
+
+.Output
+[source, xml, linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+  <user>
+    <personal_information>
+      <first_name>Emiliano</first_name>
+      <middle_name>Romoaldo</middle_name>
+      <last_name>Lesende</last_name>
+    </personal_information>
+    <login_information>
+      <username>3miliano</username>
+    </login_information>
+  </user>
+  <user>
+    <personal_information>
+      <first_name>Mariano</first_name>
+      <middle_name>Toribio</middle_name>
+      <last_name>de Achaval</last_name>
+    </personal_information>
+    <login_information>
+      <username>machaval</username>
+    </login_information>
+  </user>
+</users>
+----
+
+== Field Value Replacement
+
+In this example, the input contains the same sensitive information as in the previous one, but instead of entirely removing the key:value pairs that contain it, the values are replaced with the string **. The transform replicates the inbound structure but uses a simple link:/mule-user-guide/v/3.8-m1/dataweave-operators#when-or-otherwise[*when* operation] to replace values when specific keys occur.
+
+The example goes through the whole set of elements in the input using a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation].
+
+.Input
+[source, xml, linenums]
+----
+<users>
+    <user>
+        <personal_information>
+            <first_name>Emiliano</first_name>
+            <middle_name>Romoaldo</middle_name>
+            <last_name>Lesende</last_name>
+            <ssn>001-08-84382</ssn>
+        </personal_information>
+        <login_information>
+            <username>3miliano</username>
+            <password>mypassword1234</password>
+        </login_information>
+    </user>
+    <user>
+        <personal_information>
+            <first_name>Mariano</first_name>
+            <middle_name>Toribio</middle_name>
+            <last_name>de Achaval</last_name>
+            <ssn>002-05-34738</ssn>
+        </personal_information>
+        <login_information>
+            <username>machaval</username>
+            <password>mypassword4321</password>
+        </login_information>
+    </user>
+</users>
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+users: { (payload.users map {
+    user: {
+       personal_information: $.personal_information mapObject {
+            ($$): $ unless $$ ~= "ssn" otherwise "****"
+       },
+       login_information: $.login_information mapObject {
+          ($$): $ unless $$ ~= "password" otherwise "****"
+       }
+     }
+}) }
+----
+
+.Output
+[source, xml, linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<users>
+  <user>
+    <personal_information>
+      <first_name>Emiliano</first_name>
+      <middle_name>Romoaldo</middle_name>
+      <last_name>Lesende</last_name>
+      <ssn>****</ssn>
+    </personal_information>
+    <login_information>
+      <username>3miliano</username>
+      <password>****</password>
+    </login_information>
+  </user>
+  <user>
+    <personal_information>
+      <first_name>Mariano</first_name>
+      <middle_name>Toribio</middle_name>
+      <last_name>de Achaval</last_name>
+      <ssn>****</ssn>
+    </personal_information>
+    <login_information>
+      <username>machaval</username>
+      <password>****</password>
+    </login_information>
+  </user>
+</users>
+----
+
+
+== Accessing XML Attributes
+
+This example transforms a JSON array of objects, each representing a book, into XML. The link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operator] carries out the same steps for each element in the input array. Through the use of @, attributes are added into the XML tags.
+
+[TIP]
+See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-selector-expressions[Attribute selector expressions] for how to access XML attributes in DataWeave.
+
+.Input
+[source, json, linenums]
+----
+[
+  {
+    "item": {
+      "type": "book",
+      "price": 30,
+      "properties": {
+        "title": "Everyday Italian",
+        "author": [
+          "Giada De Laurentiis"
+        ],
+        "year": 2005
+      }
+    }
+  },
+  {
+    "item": {
+      "type": "book",
+      "price": 29.99,
+      "properties": {
+        "title": "Harry Potter",
+        "author": [
+          "J K. Rowling"
+        ],
+        "year": 2005
+      }
+    }
+  },
+  {
+    "item": {
+      "type": "book",
+      "price": 49.99,
+      "properties": {
+        "title": "XQuery Kick Start",
+        "author": [
+          "James McGovern",
+          "Per Bothner",
+          "Kurt Cagle",
+          "James Linn",
+          "Vaidyanathan Nagarajan"
+        ],
+        "year": 2003
+      }
+    }
+  },
+  {
+    "item": {
+      "type": "book",
+      "price": 39.95,
+      "properties": {
+        "title": "Learning XML",
+        "author": [
+          "Erik T. Ray"
+        ],
+        "year": 2003
+      }
+    }
+  }
+]
+----
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+{
+  bookstore: { (payload map {
+      book : {
+      title @(lang: "en"): $.item.properties.title,
+      year: $.item.properties.year,
+      price: $.item.price,
+      ($.item.properties.author map
+      author @(loc: "US"): $)
+    }
+  }) }
+}
+----
+
+.Output
+[source, xml, linenums]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<bookstore>
+  <book>
+    <title lang="en">Everyday Italian</title>
+    <year>2005</year>
+    <price>30</price>
+    <author loc="US">Giada De Laurentiis</author>
+  </book>
+  <book>
+    <title lang="en">Harry Potter</title>
+    <year>2005</year>
+    <price>29.99</price>
+    <author loc="US">J K. Rowling</author>
+  </book>
+  <book>
+    <title lang="en">XQuery Kick Start</title>
+    <year>2003</year>
+    <price>49.99</price>
+    <author loc="US">James McGovern</author>
+    <author loc="US">Per Bothner</author>
+    <author loc="US">Kurt Cagle</author>
+    <author loc="US">James Linn</author>
+    <author loc="US">Vaidyanathan Nagarajan</author>
+  </book>
+  <book>
+    <title lang="en">Learning XML</title>
+    <year>2003</year>
+    <price>39.95</price>
+    <author loc="US">Erik T. Ray</author>
+  </book>
+</bookstore>
+----
+
+
+== Optional Fields
+
+When mapping something to an XML format, you may want to add certain tags based on a condition.
+The mapping below only inserts the 'insurance' tag when it's present in the input.
+
+The example goes through the whole set of elements in the input using  a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operator]. It also uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#when-or-otherwise[*when* operator] to only select instances that include the field 'insurance'.
+
+.Input
+[source,json, linenums]
+---------------------------------------------------------
+[
+  {
+    "name" : "Julian",
+    "gender" : "Male",
+    "age" : 41,
+    "insurance": "Osde"
+  },
+  {
+    "name" : "Mariano",
+    "gender" : "Male",
+    "age" : 33
+  }
+]
+---------------------------------------------------------
+
+.Transform
+[source,ruby, linenums]
+---------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+users: {
+  (
+    payload map {
+        user: {
+          name: $.name,
+          (insurance: $.insurance) when $.insurance?
+        }
+    }
+  )
+}
+---------------------------------------------------------
+
+.Output
+[source,xml, linenums]
+---------------------------------------------------------
+<?xml version='1.0' encoding='US-ASCII'?>
+<users>
+  <user>
+    <name>Julian</name>
+    <insurance>Osde</insurance>
+  </user>
+  <user>
+    <name>Mariano</name>
+  </user>
+</users>
+---------------------------------------------------------
+
+
+== Rename Keys When These Exist
+
+This example takes in a JSON object that contains several fields. Most of them must be kept identical, except for a couple that optionally might appear in the payload, and if so should be renamed. Instead of referencing each field individually, this example renames two fields in particular and handles the rest without any changes.
+
+The example goes through the whole set of elements in the input using  a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map-object[*map object* operator]. Note that it differs from the map operation in that map object processes both key and value of its input, rather than just the keys. It also uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#when-or-otherwise[*when* operator] together with an link:/mule-user-guide/v/3.8-m1/dataweave-operators#and[*and*] to pick out the specific keys that need to change, and the link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[*as* operator] to coerce its type to string.
+
+.Input
+[source, json, linenums]
+----
+{
+"flight":{
+  "availableSeats":45,
+  "airlineName":"Ryan Air",
+  "aircraftBrand":"Boeing",
+  "aircraftType":"737",
+  "departureDate":"12/14/2015",
+  "origin":"BCN",
+  "destination":"FCO"
+  }
+}
+----
+
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+---
+payload map {
+($ mapObject {
+    (emptySeats: $) when $$ as :string == 'availableSeats',
+    (airline: $) when $$ as :string == 'airlineName',
+    (($$):$) when ($$ as :string !='availableSeats') and ($$ as :string != 'airlineName')
+  }
+)
+}
+----
+
+
+.Output
+[source, json, linenums]
+----
+[
+  {
+    "emptySeats": 45,
+    "airline": "Ryan Air",
+    "aircraftBrand": "Boeing",
+    "aircraftType": "737",
+    "departureDate": "12/14/2015",
+    "origin": "BCN",
+    "destination": "FCO"
+  }
+]
+----
+
+
+
+== Using Constant Directives
 
 This example converts an XML input to a JSON output that is structured differently and that contains URL links that are built from concatenating input content defining a few link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#define-constat-directive[constat directives] in link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[The DataWeave Header]. The transform also creates a few fields that are conditional and are only present in the output when they exist in the input.
 
@@ -219,197 +752,33 @@ using (pageSize = payload.getItemsResponse.PageInfo.pageSize) {
 }
 ----
 
-== XML to JSON 2
 
-This example takes an XML list of books and outputs a JSON version of the same. It goes through each 'book' element in the input using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operator].  Values that are numeric are defined as numbers using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[As operator] to avoid having them treated as strings. As JSON can't have duplicate keys, for elements that may be duplicate in the inbound XML, only the first is selected to be put into the output.
+
+== Basic Maths Operations
+
+This example takes an XML input and parses it into a different XML arrangement. After a single 'header' element is copied, a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation] carries out the same steps for each 'item': several fields are passed on without any changes, then the discount and subtotal fields are calculated with references to constants defined in the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[header directives] of the transform. A single set of subtotal, tax and total elements are created by performing a link:/mule-user-guide/v/3.8-m1/dataweave-operators#reduce[*reduce*] operation over all of the items in the "items" array, performing calculations that sometimes involve constants defined in the header. The link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[*as* operation] is also used to coerce discound to a number and then performs link:/mule-user-guide/v/3.8-m1/dataweave-operators#basic-math-operations[basic math operations] on these numbers.
 
 .Input
 [source, xml, linenums]
 ----
-<bookstore>
-    <book category="cooking">
-        <title lang="en">Everyday Italian</title>
-        <author>Giada De Laurentiis</author>
-        <year>2005</year>
-        <price>30.00</price>
-    </book>
-    <book category="children">
-        <title lang="en">Harry Potter</title>
-        <author>J K. Rowling</author>
-        <year>2005</year>
-        <price>29.99</price>
-    </book>
-    <book category="web">
-        <title lang="en">XQuery Kick Start</title>
-        <author>James McGovern</author>
-        <author>Per Bothner</author>
-        <author>Kurt Cagle</author>
-        <author>James Linn</author>
-        <author>Vaidyanathan Nagarajan</author>
-        <year>2003</year>
-        <price>49.99</price>
-    </book>
-    <book category="web" cover="paperback">
-        <title lang="en">Learning XML</title>
-        <author>Erik T. Ray</author>
-        <year>2003</year>
-        <price>39.95</price>
-    </book>
-</bookstore>
-----
-
-*Transform*
-
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/json
----
-payload.bookstore map {
-    item: {
-      type: "book",
-    price: $.price[0] as :number,
-    properties: {
-        title: $.title[0],
-        author: $.author,
-        year: $.year[0] as :number
-    }
-  }
-}
-----
-
-*Output*
-
-[source, json, linenums]
-----
-[
-  {
-    "item": {
-      "type": "book",
-      "price": 30,
-      "properties": {
-        "title": "Everyday Italian",
-        "author": [
-          "Giada De Laurentiis"
-        ],
-        "year": 2005
-      }
-    }
-  },
-  {
-    "item": {
-      "type": "book",
-      "price": 29.99,
-      "properties": {
-        "title": "Harry Potter",
-        "author": [
-          "J K. Rowling"
-        ],
-        "year": 2005
-      }
-    }
-  },
-  {
-    "item": {
-      "type": "book",
-      "price": 49.99,
-      "properties": {
-        "title": "XQuery Kick Start",
-        "author": [
-          "James McGovern",
-          "Per Bothner",
-          "Kurt Cagle",
-          "James Linn",
-          "Vaidyanathan Nagarajan"
-        ],
-        "year": 2003
-      }
-    }
-  },
-  {
-    "item": {
-      "type": "book",
-      "price": 39.95,
-      "properties": {
-        "title": "Learning XML",
-        "author": [
-          "Erik T. Ray"
-        ],
-        "year": 2003
-      }
-    }
-  }
-]
-----
-
-== JSON to XML
-
-This example transforms a JSON array of objects, each representing a book, into XML. The link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operator] carries out the same steps for each element in the input array. Through the use of @, attributes are added into the XML tags.
-
-[TIP]
-See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-selector-expressions[Attribute selector expressions] for how to access XML attributes in DataWeave.
-
-.Input
-[source, json, linenums]
-----
-[
-  {
-    "item": {
-      "type": "book",
-      "price": 30,
-      "properties": {
-        "title": "Everyday Italian",
-        "author": [
-          "Giada De Laurentiis"
-        ],
-        "year": 2005
-      }
-    }
-  },
-  {
-    "item": {
-      "type": "book",
-      "price": 29.99,
-      "properties": {
-        "title": "Harry Potter",
-        "author": [
-          "J K. Rowling"
-        ],
-        "year": 2005
-      }
-    }
-  },
-  {
-    "item": {
-      "type": "book",
-      "price": 49.99,
-      "properties": {
-        "title": "XQuery Kick Start",
-        "author": [
-          "James McGovern",
-          "Per Bothner",
-          "Kurt Cagle",
-          "James Linn",
-          "Vaidyanathan Nagarajan"
-        ],
-        "year": 2003
-      }
-    }
-  },
-  {
-    "item": {
-      "type": "book",
-      "price": 39.95,
-      "properties": {
-        "title": "Learning XML",
-        "author": [
-          "Erik T. Ray"
-        ],
-        "year": 2003
-      }
-    }
-  }
-]
+<invoice>
+    <header>
+        <customer_name>ACME, Inc.</customer_name>
+        <customer_state>CA</customer_state>
+    </header>
+    <items>
+        <item>
+            <description>Product 1</description>
+            <quantity>2</quantity>
+            <unit_price>10</unit_price>
+        </item>
+        <item>
+            <description>Product 2</description>
+            <quantity>1</quantity>
+            <unit_price>30</unit_price>
+        </item>
+    </items>
+</invoice>
 ----
 
 .Transform
@@ -417,17 +786,25 @@ See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-sel
 ----
 %dw 1.0
 %output application/xml
+%var tax=0.085
+%var discount=0.05
 ---
-{
-  bookstore: { (payload map {
-      book : {
-      title @(lang: "en"): $.item.properties.title,
-      year: $.item.properties.year,
-      price: $.item.price,
-      ($.item.properties.author map
-      author @(loc: "US"): $)
+invoice: {
+    header: payload.invoice.header,
+    items: { (payload.invoice.items.*item map {
+        item @(index: $$ + 1): {
+            description: $.description,
+            quantity: $.quantity,
+            unit_price: $.unit_price,
+            discount: (discount * 100) as :number { format: "##" } ++ "%",
+            subtotal: $.unit_price * $.quantity * (1 - discount)
+        }
+    }) },
+    totals: using (subtotal = payload.invoice.items reduce ((item, sum1 = 0) -> sum1 + (item.unit_price * item.quantity * (1 - discount)))) {
+        subtotal: subtotal,
+        tax: (tax * 100) as :number { format: "##.#" } ++ "%",
+        total: subtotal * (1 + tax)
     }
-  }) }
 }
 ----
 
@@ -435,37 +812,187 @@ See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-sel
 [source, xml, linenums]
 ----
 <?xml version="1.0" encoding="UTF-8"?>
-<bookstore>
-  <book>
-    <title lang="en">Everyday Italian</title>
-    <year>2005</year>
-    <price>30</price>
-    <author loc="US">Giada De Laurentiis</author>
-  </book>
-  <book>
-    <title lang="en">Harry Potter</title>
-    <year>2005</year>
-    <price>29.99</price>
-    <author loc="US">J K. Rowling</author>
-  </book>
-  <book>
-    <title lang="en">XQuery Kick Start</title>
-    <year>2003</year>
-    <price>49.99</price>
-    <author loc="US">James McGovern</author>
-    <author loc="US">Per Bothner</author>
-    <author loc="US">Kurt Cagle</author>
-    <author loc="US">James Linn</author>
-    <author loc="US">Vaidyanathan Nagarajan</author>
-  </book>
-  <book>
-    <title lang="en">Learning XML</title>
-    <year>2003</year>
-    <price>39.95</price>
-    <author loc="US">Erik T. Ray</author>
-  </book>
-</bookstore>
+<invoice>
+  <header>
+    <customer_name>ACME, Inc.</customer_name>
+    <customer_state>CA</customer_state>
+  </header>
+  <items>
+    <item index="1">
+      <description>Product 1</description>
+      <quantity>2</quantity>
+      <unit_price>10</unit_price>
+      <discount>5%</discount>
+      <subtotal>20</subtotal>
+    </item>
+    <item index="2">
+      <description>Product 2</description>
+      <quantity>1</quantity>
+      <unit_price>30</unit_price>
+      <discount>5%</discount>
+      <subtotal>30</subtotal>
+    </item>
+  </items>
+  <totals>
+    <subtotal>47.5</subtotal>
+    <tax>8.5%</tax>
+    <total>51.5375</total>
+  </totals>
+</invoice>
 ----
+
+
+== Group By
+
+This example takes in an XML file that is grouped separating two types of elements: teachers and students, the transform uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#group-by[*Group By* operation] to make it into an XML where the top level grouping is "class". Within each class, the students and teachers that are registered in it are listed.
+
+The example goes through the whole set of elements in the input using both a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map-object[*map object* operation] and a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation]. Note that they differ in that map object processes both key and value of its input, rather than just the keys. It also uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#filter[*filter* operation] to only show the attendees that have the class subject listed as a hobby. As each student may have multiple hobbies, the link:/mule-user-guide/v/3.8-m1/dataweave-language-basics#multi-value-selector[*Multi value* selector] is used to refer to them all.
+
+.Input
+[source, xml, linenums]
+----
+<school>
+    <teachers>
+        <teacher>
+            <name>Mariano</name>
+            <lastName>De Achaval</lastName>
+            <subject>DW</subject>
+        </teacher>
+        <teacher>
+            <name>Emiliano</name>
+            <lastName>Lesende</lastName>
+            <subject>DW</subject>
+        </teacher>
+        <teacher>
+            <name>Leandro</name>
+            <lastName>Shokida</lastName>
+            <subject>Scala</subject>
+        </teacher>
+    </teachers>
+    <students>
+        <student>
+            <name>Peter</name>
+            <lastName>Parker</lastName>
+            <hobby>DW</hobby>
+            <hobby>Scala</hobby>
+        </student>
+        <student>
+            <name>Homer</name>
+            <lastName>Simpson</lastName>
+            <hobby>Scala</hobby>
+        </student>
+    </students>
+</school>
+----
+
+.Transform
+[source,DataWeave, linenums]
+------------------
+%dw 1.0
+%output application/dw
+---
+classrooms: payload.school.teachers groupBy $.subject mapObject ((teacherGroup, subject) -> {
+    class: {
+      name: subject,
+      teachers: { (teacherGroup map {
+        teacher:{
+            name: $.name,
+            lastName: $.lastName
+        }
+      }) },
+      attendees: { (payload.school.students filter ($.*hobby contains subject) map {
+        attendee: {
+          name: $.name,
+          lastName: $.lastName
+        }
+      }) }
+    }
+})
+------------------
+
+.Output
+[source, json, linenums]
+----
+{
+  "classrooms": {
+    "class": {
+      "name": "DW",
+      "teachers": [
+        {
+          "teacher": {
+            "name": [
+              "Mariano"
+            ],
+            "lastName": [
+              "De Achaval"
+            ]
+          }
+        },
+        {
+          "teacher": {
+            "name": [
+              "Emiliano"
+            ],
+            "lastName": [
+              "Lesende"
+            ]
+          }
+        }
+      ],
+      "attendees": [
+        {
+          "attendee": {
+            "name": [
+              "Peter"
+            ],
+            "lastName": [
+              "Parker"
+            ]
+          }
+        }
+      ]
+    },
+    "class": {
+      "name": "Scala",
+      "teachers": [
+        {
+          "teacher": {
+            "name": [
+              "Leandro"
+            ],
+            "lastName": [
+              "Shokida"
+            ]
+          }
+        }
+      ],
+      "attendees": [
+        {
+          "attendee": {
+            "name": [
+              "Peter"
+            ],
+            "lastName": [
+              "Parker"
+            ]
+          }
+        },
+        {
+          "attendee": {
+            "name": [
+              "Homer"
+            ],
+            "lastName": [
+              "Simpson"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+----
+
 
 == Multiple Inputs
 
@@ -1186,527 +1713,6 @@ See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#attribute-sel
   </pluginRepositories>
 </project>
 ----
-
-== XML Basic
-
-This example takes an XML input and parses it into a different XML arrangement. After a single 'header' element is copied, a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation] carries out the same steps for each 'item': several fields are passed on without any changes, then the discount and subtotal fields are calculated with references to constants defined in the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#the-dataweave-header[header directives] of the transform. A single set of subtotal, tax and total elements are created by performing a link:/mule-user-guide/v/3.8-m1/dataweave-operators#reduce[*reduce*] operation over all of the items in the "items" array, performing calculations that sometimes involve constants defined in the header. The link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[*as* operation] is also used to coerce discound to a number.
-
-.Input
-[source, xml, linenums]
-----
-<invoice>
-    <header>
-        <customer_name>ACME, Inc.</customer_name>
-        <customer_state>CA</customer_state>
-    </header>
-    <items>
-        <item>
-            <description>Product 1</description>
-            <quantity>2</quantity>
-            <unit_price>10</unit_price>
-        </item>
-        <item>
-            <description>Product 2</description>
-            <quantity>1</quantity>
-            <unit_price>30</unit_price>
-        </item>
-    </items>
-</invoice>
-----
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/xml
-%var tax=0.085
-%var discount=0.05
----
-invoice: {
-    header: payload.invoice.header,
-    items: { (payload.invoice.items.*item map {
-        item @(index: $$ + 1): {
-            description: $.description,
-            quantity: $.quantity,
-            unit_price: $.unit_price,
-            discount: (discount * 100) as :number { format: "##" } ++ "%",
-            subtotal: $.unit_price * $.quantity * (1 - discount)
-        }
-    }) },
-    totals: using (subtotal = payload.invoice.items reduce ((item, sum1 = 0) -> sum1 + (item.unit_price * item.quantity * (1 - discount)))) {
-        subtotal: subtotal,
-        tax: (tax * 100) as :number { format: "##.#" } ++ "%",
-        total: subtotal * (1 + tax)
-    }
-}
-----
-
-.Output
-[source, xml, linenums]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<invoice>
-  <header>
-    <customer_name>ACME, Inc.</customer_name>
-    <customer_state>CA</customer_state>
-  </header>
-  <items>
-    <item index="1">
-      <description>Product 1</description>
-      <quantity>2</quantity>
-      <unit_price>10</unit_price>
-      <discount>5%</discount>
-      <subtotal>20</subtotal>
-    </item>
-    <item index="2">
-      <description>Product 2</description>
-      <quantity>1</quantity>
-      <unit_price>30</unit_price>
-      <discount>5%</discount>
-      <subtotal>30</subtotal>
-    </item>
-  </items>
-  <totals>
-    <subtotal>47.5</subtotal>
-    <tax>8.5%</tax>
-    <total>51.5375</total>
-  </totals>
-</invoice>
-----
-
-== Field Removal
-
-In this example, the input contains sensitive information that should be removed. The transform replicates the inbound structure but uses a simple link:/mule-user-guide/v/3.8-m1/dataweave-operators#remove[*remove* operation] to take away specific key:value pairs.
-
-The example goes through the whole set of elements in the input using a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation].
-
-.Input
-[source, xml, linenums]
-----
-<users>
-    <user>
-        <personal_information>
-            <first_name>Emiliano</first_name>
-            <middle_name>Romoaldo</middle_name>
-            <last_name>Lesende</last_name>
-            <ssn>001-08-84382</ssn>
-        </personal_information>
-        <login_information>
-            <username>3miliano</username>
-            <password>mypassword1234</password>
-        </login_information>
-    </user>
-    <user>
-        <personal_information>
-            <first_name>Mariano</first_name>
-            <middle_name>Toribio</middle_name>
-            <last_name>de Achaval</last_name>
-            <ssn>002-05-34738</ssn>
-        </personal_information>
-        <login_information>
-            <username>machaval</username>
-            <password>mypassword4321</password>
-        </login_information>
-    </user>
-</users>
-----
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/xml
----
-users: { (payload.users map {
-     user: {
-        personal_information: $.personal_information - "ssn",
-        login_information: $.login_information - "password"
-      }
- }) }
-----
-
-.Output
-[source, xml, linenums]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<users>
-  <user>
-    <personal_information>
-      <first_name>Emiliano</first_name>
-      <middle_name>Romoaldo</middle_name>
-      <last_name>Lesende</last_name>
-    </personal_information>
-    <login_information>
-      <username>3miliano</username>
-    </login_information>
-  </user>
-  <user>
-    <personal_information>
-      <first_name>Mariano</first_name>
-      <middle_name>Toribio</middle_name>
-      <last_name>de Achaval</last_name>
-    </personal_information>
-    <login_information>
-      <username>machaval</username>
-    </login_information>
-  </user>
-</users>
-----
-
-== Field Value Replacement
-
-In this example, the input contains the same sensitive information as in the previous one, but instead of entirely removing the key:value pairs that contain it, the values are replaced with the string **. The transform replicates the inbound structure but uses a simple link:/mule-user-guide/v/3.8-m1/dataweave-operators#when-or-otherwise[*when* operation] to replace values when specific keys occur.
-
-The example goes through the whole set of elements in the input using a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation].
-
-.Input
-[source, xml, linenums]
-----
-<users>
-    <user>
-        <personal_information>
-            <first_name>Emiliano</first_name>
-            <middle_name>Romoaldo</middle_name>
-            <last_name>Lesende</last_name>
-            <ssn>001-08-84382</ssn>
-        </personal_information>
-        <login_information>
-            <username>3miliano</username>
-            <password>mypassword1234</password>
-        </login_information>
-    </user>
-    <user>
-        <personal_information>
-            <first_name>Mariano</first_name>
-            <middle_name>Toribio</middle_name>
-            <last_name>de Achaval</last_name>
-            <ssn>002-05-34738</ssn>
-        </personal_information>
-        <login_information>
-            <username>machaval</username>
-            <password>mypassword4321</password>
-        </login_information>
-    </user>
-</users>
-----
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/xml
----
-users: { (payload.users map {
-    user: {
-       personal_information: $.personal_information mapObject {
-            ($$): $ unless $$ ~= "ssn" otherwise "****"
-       },
-       login_information: $.login_information mapObject {
-          ($$): $ unless $$ ~= "password" otherwise "****"
-       }
-     }
-}) }
-----
-
-.Output
-[source, xml, linenums]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<users>
-  <user>
-    <personal_information>
-      <first_name>Emiliano</first_name>
-      <middle_name>Romoaldo</middle_name>
-      <last_name>Lesende</last_name>
-      <ssn>****</ssn>
-    </personal_information>
-    <login_information>
-      <username>3miliano</username>
-      <password>****</password>
-    </login_information>
-  </user>
-  <user>
-    <personal_information>
-      <first_name>Mariano</first_name>
-      <middle_name>Toribio</middle_name>
-      <last_name>de Achaval</last_name>
-      <ssn>****</ssn>
-    </personal_information>
-    <login_information>
-      <username>machaval</username>
-      <password>****</password>
-    </login_information>
-  </user>
-</users>
-----
-
-== XML Group By
-
-This example takes in an XML file that is grouped separating two types of elements: teachers and students, the transform uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#group-by[*Group By* operation] to make it into an XML where the top level grouping is "class". Within each class, the students and teachers that are registered in it are listed.
-
-The example goes through the whole set of elements in the input using both a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map-object[*map object* operation] and a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operation]. Note that they differ in that map object processes both key and value of its input, rather than just the keys. It also uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#filter[*filter* operation] to only show the attendees that have the class subject listed as a hobby. As each student may have multiple hobbies, the link:/mule-user-guide/v/3.8-m1/dataweave-language-basics#multi-value-selector[*Multi value* selector] is used to refer to them all.
-
-*Input*
-
-[source, xml, linenums]
-----
-<school>
-    <teachers>
-        <teacher>
-            <name>Mariano</name>
-            <lastName>De Achaval</lastName>
-            <subject>DW</subject>
-        </teacher>
-        <teacher>
-            <name>Emiliano</name>
-            <lastName>Lesende</lastName>
-            <subject>DW</subject>
-        </teacher>
-        <teacher>
-            <name>Leandro</name>
-            <lastName>Shokida</lastName>
-            <subject>Scala</subject>
-        </teacher>
-    </teachers>
-    <students>
-        <student>
-            <name>Peter</name>
-            <lastName>Parker</lastName>
-            <hobby>DW</hobby>
-            <hobby>Scala</hobby>
-        </student>
-        <student>
-            <name>Homer</name>
-            <lastName>Simpson</lastName>
-            <hobby>Scala</hobby>
-        </student>
-    </students>
-</school>
-----
-
-.Transform
-[source,DataWeave, linenums]
-------------------
-%dw 1.0
-%output application/dw
----
-classrooms: payload.school.teachers groupBy $.subject mapObject ((teacherGroup, subject) -> {
-    class: {
-      name: subject,
-      teachers: { (teacherGroup map {
-        teacher:{
-            name: $.name,
-            lastName: $.lastName
-        }
-      }) },
-      attendees: { (payload.school.students filter ($.*hobby contains subject) map {
-        attendee: {
-          name: $.name,
-          lastName: $.lastName
-        }
-      }) }
-    }
-})
-------------------
-
-.Output
-[source, json, linenums]
-----
-{
-  "classrooms": {
-    "class": {
-      "name": "DW",
-      "teachers": [
-        {
-          "teacher": {
-            "name": [
-              "Mariano"
-            ],
-            "lastName": [
-              "De Achaval"
-            ]
-          }
-        },
-        {
-          "teacher": {
-            "name": [
-              "Emiliano"
-            ],
-            "lastName": [
-              "Lesende"
-            ]
-          }
-        }
-      ],
-      "attendees": [
-        {
-          "attendee": {
-            "name": [
-              "Peter"
-            ],
-            "lastName": [
-              "Parker"
-            ]
-          }
-        }
-      ]
-    },
-    "class": {
-      "name": "Scala",
-      "teachers": [
-        {
-          "teacher": {
-            "name": [
-              "Leandro"
-            ],
-            "lastName": [
-              "Shokida"
-            ]
-          }
-        }
-      ],
-      "attendees": [
-        {
-          "attendee": {
-            "name": [
-              "Peter"
-            ],
-            "lastName": [
-              "Parker"
-            ]
-          }
-        },
-        {
-          "attendee": {
-            "name": [
-              "Homer"
-            ],
-            "lastName": [
-              "Simpson"
-            ]
-          }
-        }
-      ]
-    }
-  }
-}
-----
-
-== Optional Fields
-
-When mapping something to an XML format, you may want to add certain tags based on a condition.
-The mapping below only inserts the 'insurance' tag when it's present in the input.
-
-The example goes through the whole set of elements in the input using  a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operator]. It also uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#when-or-otherwise[*when* operator] to only select instances that include the field 'insurance'.
-
-.Input
-[source,json, linenums]
----------------------------------------------------------
-[
-  {
-    "name" : "Julian",
-    "gender" : "Male",
-    "age" : 41,
-    "insurance": "Osde"
-  },
-  {
-    "name" : "Mariano",
-    "gender" : "Male",
-    "age" : 33
-  }
-]
----------------------------------------------------------
-
-.Transform
-[source,ruby, linenums]
----------------------------------------------------------
-%dw 1.0
-%output application/xml
----
-users: {
-  (
-    payload map {
-        user: {
-          name: $.name,
-          (insurance: $.insurance) when $.insurance?
-        }
-    }
-  )
-}
----------------------------------------------------------
-
-.Output
-[source,xml, linenums]
----------------------------------------------------------
-<?xml version='1.0' encoding='US-ASCII'?>
-<users>
-  <user>
-    <name>Julian</name>
-    <insurance>Osde</insurance>
-  </user>
-  <user>
-    <name>Mariano</name>
-  </user>
-</users>
----------------------------------------------------------
-
-
-== Rename Keys When These Exist
-
-This example takes in a JSON object that contains several fields. Most of them must be kept identical, except for a couple that optionally might appear in the payload, and if so should be renamed. Instead of referencing each field individually, this example renames two fields in particular and handles the rest without any changes.
-
-The example goes through the whole set of elements in the input using  a link:/mule-user-guide/v/3.8-m1/dataweave-operators#map-object[*map object* operator]. Note that it differs from the map operation in that map object processes both key and value of its input, rather than just the keys. It also uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#when-or-otherwise[*when* operator] together with an link:/mule-user-guide/v/3.8-m1/dataweave-operators#and[*and*] to pick out the specific keys that need to change, and the link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[*as* operator] to coerce its type to string.
-
-.Input
-[source, json, linenums]
-----
-{
-"flight":{
-  "availableSeats":45,
-  "airlineName":"Ryan Air",
-  "aircraftBrand":"Boeing",
-  "aircraftType":"737",
-  "departureDate":"12/14/2015",
-  "origin":"BCN",
-  "destination":"FCO"
-  }
-}
-----
-
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/json
----
-payload map {
-($ mapObject {
-    (emptySeats: $) when $$ as :string == 'availableSeats',
-    (airline: $) when $$ as :string == 'airlineName',
-    (($$):$) when ($$ as :string !='availableSeats') and ($$ as :string != 'airlineName')
-  }
-)
-}
-----
-
-
-.Output
-[source, json, linenums]
-----
-[
-  {
-    "emptySeats": 45,
-    "airline": "Ryan Air",
-    "aircraftBrand": "Boeing",
-    "aircraftType": "737",
-    "departureDate": "12/14/2015",
-    "origin": "BCN",
-    "destination": "FCO"
-  }
-]
-----
-
 
 == Using Complex Functions
 
