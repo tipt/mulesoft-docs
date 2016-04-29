@@ -3,9 +3,9 @@
 
 *_Enterprise_*
 
+Below are a series of advanced examples using link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language]. For a more basic and closely guided step by step series of exercises that take you through how to use this feature via the Anypoint Studio UI, see link:/mule-user-guide/v/3.8-m1/dataweave-tutorials[DataWeave tutorials].
 
-
-== Using the Map Operator
+== Using the Map Operatorisi
 
 This example takes an XML list of books and outputs a JSON version of the same. It goes through each 'book' element in the input using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[*map* operator].  Values that are numeric are defined as numbers using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[As operator] to avoid having them treated as strings. As JSON can't have duplicate keys, for elements that may be duplicate in the inbound XML, only the first is selected to be put into the output.
 

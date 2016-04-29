@@ -1,6 +1,7 @@
 == DataWeave Functions and Lambdas
 :keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
 
+image:dw-logo.png[dw]
 
 In link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave], if you want to carry out a complex operation that is not covered by any of the existing link:/mule-user-guide/v/3.8-m1/dataweave-operators[Operators], you can create a function or a lambda.
 

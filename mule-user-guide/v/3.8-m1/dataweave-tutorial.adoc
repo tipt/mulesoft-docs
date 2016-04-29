@@ -3,6 +3,8 @@
 
 *_Enterprise_*
 
+image:dw-logo.png[dw]
+
 This document walks you step by step through some basic transformations you can easily do with the Transform Message element in Anypoint Studio.
 
 For more advanced examples written directly in DataWeave code, see link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples].
