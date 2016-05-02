@@ -10,6 +10,8 @@ In link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] you can carry out many di
 * For an index of all available operators, categorized by the types you need to supply as parameters, see link:/mule-user-guide/v/3.8-m1/dataweave-types#dataweave-operators-sorted-by-type[Operators by Type]
 * For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 
+[TIP]
+Check the <<Operator Precedence Table>> to see the order in which operators are compiled.
 
 == Map
 
@@ -23,16 +25,16 @@ If these parameters are not named, the index is defined by default as *$$* and t
 
 .Transform
 [source,DataWeave, linenums]
----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 users: ["john", "peter", "matt"] map  upper $
----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
----------------------------------------------------------------------
+----
 {
   "users": [
   "JOHN",
@@ -40,23 +42,23 @@ users: ["john", "peter", "matt"] map  upper $
   "MATT"
   ]
 }
----------------------------------------------------------------------
+----
 
 In the following example, custom names are defined for the index and value parameters of the map operation, and then both are used to construct the returned value.
 In this case, value is defined as *firstName* and its index in the array is defined as *position*.
 
 .Transform
 [source,DataWeave, linenums]
----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 users: ["john", "peter", "matt"] map ((firstName, position) -> position ++ ":" ++ upper firstName)
----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
----------------------------------------------------------------------
+----
 {
   "users": [
     "0:JOHN",
@@ -64,7 +66,7 @@ users: ["john", "peter", "matt"] map ((firstName, position) -> position ++ ":" +
     "2:MATT"
   ]
 }
----------------------------------------------------------------------
+----
 
 
 === Using Map on an Object
@@ -80,17 +82,17 @@ Check <<map object>> if what you want is to process both keys and values instead
 
 .Input
 [source,xml,linenums]
---------------------------------------------------------
+----
 <prices>
     <basic>9.99</basic>
     <premium>53</premium>
     <vip>398.99</vip>
 </prices>
---------------------------------------------------------
+----
 
 .Mapping
 [source,DataWeave,linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 %var conversionRate=13.45
@@ -101,11 +103,11 @@ priceList: payload.prices map (
     localCurrency: $ * conversionRate
   }
 )
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "priceList": [
     {
@@ -128,7 +130,7 @@ priceList: payload.prices map (
     }
   ]
 }
---------------------------------------------------------
+----
 
 [TIP]
 Note that when you use a parameter to populate one of the keys of your output, as with the case of $$ in this example, you must either enclose it in quote marks or brackets. '$$' or ($$) are both equally valid.
@@ -141,7 +143,7 @@ The mapping below performs exactly the same transform, but it defines custom nam
 
 .Mapping
 [source,DataWeave,linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 %var conversionRate=13.45
@@ -152,7 +154,7 @@ priceList: payload.prices map ((money, position) ->
     localCurrency: money * conversionRate
   }
 )
---------------------------------------------------------
+----
 
 [TIP]
 Note that when you use a parameter to populate one of the keys of your output, as with the case of `position` in this example, you must either enclose it in brackets or enclose it in quote marks adding a $ to it, otherwise the name of the property is taken as a literal string. '$position' or (position) are both equally valid.
@@ -168,17 +170,17 @@ If these parameters are not named, the key is defined by default as *$$* and the
 
 .Input
 [source,xml,linenums]
---------------------------------------------------------
+----
 <prices>
     <basic>9.99</basic>
     <premium>53</premium>
     <vip>398.99</vip>
 </prices>
---------------------------------------------------------
+----
 
 .Mapping
 [source,DataWeave,linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 %var conversionRate=13.45
@@ -189,11 +191,11 @@ priceList: payload.prices mapObject (
     localCurrency: $ * conversionRate
   }
 )
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "priceList": {
     "basic": {
@@ -210,7 +212,7 @@ priceList: payload.prices mapObject (
     }
   }
 }
---------------------------------------------------------
+----
 
 [TIP]
 Note that when you use a parameter to populate one of the keys of your output, as with the case of $$ in this example, you must either enclose it in quote marks or brackets. '$$' or ($$) are both equally valid.
@@ -223,7 +225,7 @@ The mapping below performs exactly the same transform, but it defines custom nam
 
 .Mapping
 [source,DataWeave,linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 %var conversionRate=13.45
@@ -234,7 +236,7 @@ priceList: payload.prices mapObject ((money, category) ->
     localCurrency: money * conversionRate
   }
 )
---------------------------------------------------------
+----
 
 [TIP]
 Note that when you use a parameter to populate one of the keys of your output, as with the case of *category* in this example, you must either enclose it in brackets or enclose it in quote marks adding a $ to it, otherwise the name of the property is taken as a literal string. '$category' or (category) are both equally valid.
@@ -252,17 +254,17 @@ If these parameters are not named, the key is defined by default as *$$* and the
 
 .Input
 [source,xml,linenums]
---------------------------------------------------------
+----
 <prices>
     <basic>9.99</basic>
     <premium>53</premium>
     <vip>398.99</vip>
 </prices>
---------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave,linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -270,11 +272,11 @@ result: {
   keys: payload.prices pluck $$,
   values: payload.prices pluck $
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "result": {
     "keys": [
@@ -289,7 +291,7 @@ result: {
     ]
   }
 }
---------------------------------------------------------
+----
 
 == Filter
 
@@ -302,22 +304,22 @@ If these parameters are not named, the index is defined by default as *$$* and t
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   biggerThanTwo: [0, 1, 2, 3, 4, 5] filter $ > 2
 }
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "biggerThanTwo": [3,4,5]
 }
------------------------------------------------------------------
+----
 
 
 === Using Filter on an Object
@@ -329,24 +331,24 @@ If these parameters are not named, the key is defined by default as *$$* and the
 
 .Mapping
 [source,DataWeave,linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/xml
 ---
 filtered: {
   aa: "a", bb: "b", cc: "c", dd: "d"
 } filter $ == "d" <1>
---------------------------------------------------------
+----
 <1> Filters the all key:value pairs with value "d" => {dd:d}
 
 .Result
 [source,xml,linenums]
---------------------------------------------------------
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <filtered>
   <dd>d</dd>
 </filtered>
---------------------------------------------------------
+----
 
 
 == Remove
@@ -358,22 +360,22 @@ When running it on an array, it returns another array where the specified indexe
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   aa: ["a", "b", "c"] - 1
 }
------------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------------
+----
 {
   "aa": [a, c]
 }
------------------------------------------------------------------------
+----
 
 
 === Using Remove on an Object
@@ -383,22 +385,22 @@ When running it on an object, it returns another object where the specified keys
 
 .Transform
 [source,DataWeave,linenums]
--------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 myObject: {aa: "a", bb: "b"} - "aa"
--------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
--------------------------------------------------------
+----
 {
   "myObject": {
     "bb": "b"
   }
 }
--------------------------------------------------------
+----
 
 The above example removes the key value pair that contains the key 'aa' from {aa: "a", bb: "b"} => {bb: "b"}
 
@@ -410,23 +412,23 @@ Works just like <<using remove on an object, remove>> on objects, but only remov
 
 .Transform
 [source,DataWeave,linenums]
--------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 myObject: {aa: "a", aa:"c", bb: "b"} -- { aa:"a"}
--------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
--------------------------------------------------------
+----
 {
   "myObject": {
     "aa": "c",
     "bb": "b"
   }
 }
--------------------------------------------------------
+----
 
 The above example removes the key value pair that contains both the key 'aa' and value "a", but not the one that contains only a matching key but not value.
 
@@ -437,14 +439,14 @@ Assigns a default value in case no value is found in the input field.
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
     currency: payload.currency default "USD"
 }
------------------------------------------------------------------------
+----
 
 
 == Random
@@ -453,14 +455,14 @@ Assigns a random value between 0 and 1
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   price: random * 1000
 }
------------------------------------------------------------------------
+----
 
 
 
@@ -470,7 +472,7 @@ The keyword *when* conditionally evaluates a part of your DataWeave code, depend
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -481,7 +483,10 @@ otherwise
 {
       currency: "EUR"
 }
------------------------------------------------------------------------
+----
+
+[TIP]
+Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
 
 == Unless or Otherwise
 
@@ -489,7 +494,7 @@ The keyword *unless* conditionally evaluates a part of your DataWeave code, depe
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -500,7 +505,10 @@ otherwise
 {
       currency: "USD"
 }
------------------------------------------------------------------------
+----
+
+[TIP]
+Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
 
 == AND
 
@@ -508,7 +516,7 @@ The expression *and* (in lower case) can be used to link multiple conditions, it
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -519,9 +527,12 @@ otherwise
 {
       currency: "EUR"
 }
------------------------------------------------------------------------
+----
 
 In the example above, currency is "EUR", unless the payload has BOTH conditions met.
+
+[TIP]
+Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
 
 == OR
 
@@ -529,7 +540,7 @@ The expression *or* (in lowercase) can be used to link multiple conditions. Its 
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -540,10 +551,12 @@ otherwise
 {
       currency: "USD"
 }
------------------------------------------------------------------------
+----
 
 In the example above, currency is "EUR", only when one of the conditions evaluates to true.
 
+[TIP]
+Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
 
 == IS
 
@@ -551,7 +564,7 @@ Evaluates if a condition validates to true and returns a boolean value. Conditio
 
 .Input
 [source,xml,linenums]
---------------------------------------------------------
+----
 <root>
     <order>
       <items> 155 </items>
@@ -563,11 +576,11 @@ Evaluates if a condition validates to true and returns a boolean value. Conditio
         null
     </order>
 </root>
---------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
------
+----
 %dw 1.0
 %output application/xml
 ---
@@ -576,11 +589,11 @@ ROOT: payload.root.*order mapObject (
     itemsCollectionPresent: $ is :object and $.items?
   }
 )
------
+----
 
 .Output
 [source,xml,linenums]
---------------------------------------------------------
+----
 <?xml version='1.0' encoding='UTF-8'?>
 <ROOT>
   <ORDER>
@@ -593,7 +606,7 @@ ROOT: payload.root.*order mapObject (
     <itemsCollectionPresent>false</itemsCollectionPresent>
   </ORDER>
 </ROOT>
---------------------------------------------------------
+----
 
 
 == Concat
@@ -606,22 +619,22 @@ When using arrays, it returns the resulting array of concatenating two existing 
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   a: [0, 1, 2] ++ [3, 4, 5]
 }
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "a": [0, 1, 2, 3, 4, 5]
 }
-----------------------------------------------------------------------
+----
 
 === Using Concat on a String
 
@@ -631,22 +644,22 @@ Strings are treated as arrays of characters, so the operation works just the sam
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   name: "Mule" ++ "Soft"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "name": MuleSoft
 }
---------------------------------------------------------
+----
 
 === Using Concat on an Object
 
@@ -656,22 +669,22 @@ Returns the resulting object of concatenating two existing objects.
 
 .Transform
 [source,DataWeave,linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/xml
 ---
 concat: {aa: "a"} ++ {cc: "c"}
---------------------------------------------------------
+----
 
 .Output
 [source,xml,linenums]
---------------------------------------------------------
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <concat>
   <aa>a</aa>
   <cc>c</cc>
 </concat>
---------------------------------------------------------
+----
 
 The example above concatenates object {aa: a} and {cc: c} in a single one => {aa: a , cc: c}
 
@@ -687,7 +700,7 @@ You can evaluate if any value in an array matches a given condition:
 
 .Input
 [source,xml,linenums]
---------------------------------------------------------
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <order>
@@ -714,24 +727,24 @@ You can evaluate if any value in an array matches a given condition:
         null
     </order>
 </root>
---------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
------
+----
 %dw 1.0
 %output application/json
 ---
 ContainsRequestedItem: payload.root.*order.*items contains "3"
------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "ContainsRequestedItem": true
 }
---------------------------------------------------------
+----
 
 
 === using Contains on a String
@@ -744,60 +757,60 @@ You can also use contains to evaluate a substring from a larger string:
 
 .Input
 [source,xml,linenums]
---------------------------------------------------------
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
   <mystring>some string</mystring>
 </root>
---------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
------
+----
 %dw 1.0
 %output application/json
 ---
 ContainsString: payload.root.mystring contains "me"
------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "ContainsString": true
 }
---------------------------------------------------------
+----
 
 Instead of searching for a literal substring, you can also match it agains a regular expression:
 
 
 .Input
 [source,xml,linenums]
---------------------------------------------------------
+----
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
   <mystring>A very long string</mystring>
 </root>
---------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
------
+----
 %dw 1.0
 %output application/json
 ---
 ContainsString: payload.root.mystring contains /s[t|p]ring/`
 
 [
------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "ContainsString": true
 }
---------------------------------------------------------
+----
 
 == AS (Type Coercion)
 
@@ -815,7 +828,7 @@ Date and number format schemas are based on Java link:https://docs.oracle.com/ja
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -824,17 +837,17 @@ Date and number format schemas are based on Java link:https://docs.oracle.com/ja
   b: now as :string {format: "yyyy-MM-dd"},
   c: true as :string
 }
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------
+----
 {
   "a": "1",
   "b": "2015-07-07",
   "c": "true"
 }
------
+----
 
 === Coerce to number
 .(':string', ':type')
@@ -845,25 +858,25 @@ Any format pattern accepted by link:https://docs.oracle.com/javase/8/docs/api/ja
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   a: "1" as :number
 }
-----------------------------------------------------------------------
+----
 
 .Output
 [source, json,linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   "a": 1
 }
-----------------------------------------------------------------------
+----
 
 ==== Coerce a date to number
 .(':time', ':type')
@@ -872,7 +885,7 @@ When coercing a date to a number, there is an extra parameter you can add – 'u
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -880,16 +893,16 @@ When coercing a date to a number, there is an extra parameter you can add – 'u
   mydate1: |2005-06-02T15:10:16Z| as :number {unit: "seconds"},
   mydate2: |2005-06-02T15:10:16Z| as :number {unit: "milliseconds"}
 }
-----------------------------------------------------------------------
+----
 
 .Output
 [source, json,linenums]
-----------------------------------------------------------------------
+----
 {
   "mydate1": 1117725016,
   "mydate2": 1117725016000
 }
-----------------------------------------------------------------------
+----
 
 [NOTE]
 Only the values 'seconds' and 'milliseconds' are valid for using in the 'unit' parameter.
@@ -930,14 +943,14 @@ You can coerce your input into a custom object type of whatever class you want.
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   payload as :object {class : "soa.sfabs.SOAResponseInfoType\$ServiceInfo"}
 }
-----------------------------------------------------------------------
+----
 
 [NOTE]
 Keep in mind that if the class name contains any '$' characters, they must be escaped with a backslash (\).
@@ -951,28 +964,28 @@ Returns the type of a provided element (eg: '":string"' , '":number"' )
 
 .Input
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "mystring":"a string"
 }
-----------------------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 isString: typeOf payload.mystring
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "isString": ":string"
 }
-----------------------------------------------------------------------
+----
 
 
 == Flatten
@@ -982,26 +995,26 @@ If you have an array of arrays, this function can flatten it into a single simpl
 
 .Input
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 [
    [3,5],
    [9,5],
    [154,0.3]
 ]
-----------------------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 flatten payload
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 [
   3,
   5,
@@ -1010,7 +1023,7 @@ flatten payload
   154,
   0.3
 ]
-----------------------------------------------------------------------
+----
 
 == Size Of
 .(':array')/(':string')/(':object')
@@ -1019,7 +1032,7 @@ Returns the number of elements in an array (or anything that can be converted to
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ----
@@ -1029,17 +1042,17 @@ Returns the number of elements in an array (or anything that can be converted to
   objectSize: sizeOf {a:1,b:2}
 }
 
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "arraySize": 3,
   "textSize": 8,
   "objectSize": 2
 }
------------------------------------------------------------------
+----
 
 == Array Push
 .(:array', ':any')
@@ -1048,20 +1061,20 @@ Pushes a new element to the end of an array.
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 aa: [0, 1, 2] + 5
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "aa": [0, 1, 2, 5]
 }
-----------------------------------------------------------------------
+----
 
 == Array Remove
 .(':array', ':any')
@@ -1070,7 +1083,7 @@ Removes an element from an array when it matches the specified value. If multipl
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1078,16 +1091,16 @@ Removes an element from an array when it matches the specified value. If multipl
   a: [0, 1, 1, 2] - 1,
   b: [{a: "a"}] - {a: "a"}
 }
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "a": [0,2],
   "b": []
 }
-----------------------------------------------------------------------
+----
 
 == Array Remove All
 .(':array', ':array')
@@ -1096,20 +1109,20 @@ Removes a set of elements from an array when an element in the base array matche
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 a: [0, 1, 1, 2] -- [1,2]
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "a": [0],
 }
-----------------------------------------------------------------------
+----
 
 
 == Array Average
@@ -1120,7 +1133,7 @@ Creates an average of all the values in an array and outputs a single number. Th
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1128,16 +1141,16 @@ Creates an average of all the values in an array and outputs a single number. Th
   a: avg [1..1000],
   b: avg [1, 2, 3]
 }
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "a": 500.5,
   "b": 2.0
 }
-----------------------------------------------------------------------
+----
 
 
 
@@ -1151,56 +1164,56 @@ Unless specified, the accumulator by default takes the first value of the array.
 
 .Tranfrom
 [source,DataWeave, linenums]
---------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 sum: [0, 1, 2, 3, 4, 5] reduce $$ + $
---------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------------------
+----
 {
   "sum": 15
 }
---------------------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 concat: ["a", "b", "c", "d"] reduce $$ ++ $
---------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------------------
+----
 {
   "concat": "abcd"
 }
---------------------------------------------------------------------
+----
 
 In some cases, you may want to not use the first element of the array as an accumulator. To set the accumulator to be something else, you must define this in a lambda.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 concat: ["a", "b", "c", "d"] reduce ((val, acc = "z") -> acc ++ val)
---------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------------------
+----
 {
   "concat": "zabcd"
 }
---------------------------------------------------------------------
+----
 
 
 == Join By
@@ -1211,20 +1224,20 @@ Merges an array into a single string value, using the provided string as a separ
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 aa: ["a","b","c"] joinBy "-"
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "aa": "a-b-c"
 }
-----------------------------------------------------------------------
+----
 
 == Split By
 
@@ -1234,20 +1247,20 @@ Performs the opposite operation as Join By. It splits a string into an array of 
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 split: "a-b-c" splitBy "-"
-----------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------------
+----
 {
   "split": ["a","b","c"]
 }
-----------------------------------------------------------------------
+----
 
 == Order By
 
@@ -1258,16 +1271,16 @@ If these parameters are not named, the index is defined by default as *$$* and t
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 orderByLetter: [{ letter: "d" }, { letter: "e" }, { letter: "c" }, { letter: "a" }, { letter: "b" }] orderBy $.letter
---------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------------------
+----
 {
   "orderByLetter": [
     {
@@ -1287,7 +1300,7 @@ orderByLetter: [{ letter: "d" }, { letter: "e" }, { letter: "c" }, { letter: "a"
     }
   ]
 }
---------------------------------------------------------------------
+----
 
 [TIP]
 ====
@@ -1295,18 +1308,18 @@ The *orderBy* function doesn't have an option to order in descending order inste
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 orderDescending: ([3,8,1] orderBy $)[-1..0]
---------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------------------
+----
 { "orderDescending": [8,3,1] }
---------------------------------------------------------------------
+----
 
 ====
 
@@ -1321,7 +1334,7 @@ If these parameters are not named, the index is defined by default as *$$* and t
 
 .Input
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "langs": [
     {
@@ -1338,20 +1351,20 @@ If these parameters are not named, the index is defined by default as *$$* and t
     }
   ]
 }
------------------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 "language": payload.langs groupBy $.language
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "language": {
     "Scala": [
@@ -1363,7 +1376,7 @@ If these parameters are not named, the index is defined by default as *$$* and t
       ]
   }
 }
------------------------------------------------------------------
+----
 
 == Distinct By
 
@@ -1375,7 +1388,7 @@ If these parameters are not defined, the index is defined by default as $$ and t
 
 .Input
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "title": "XQuery Kick Start",
   "author": [
@@ -1390,11 +1403,11 @@ If these parameters are not defined, the index is defined by default as $$ and t
   ],
   "year":"2000"
 }
------------------------------------------------------------------
+----
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1406,11 +1419,11 @@ If these parameters are not defined, the index is defined by default as $$ and t
       authors: payload.author distinctBy $
     }
 }
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "book": {
     "title": "XQuery Kick Start",
@@ -1424,7 +1437,7 @@ If these parameters are not defined, the index is defined by default as $$ and t
     ]
   }
 }
------------------------------------------------------------------
+----
 
 == Zip Arrays
 
@@ -1435,7 +1448,7 @@ Given two arrays, it pairs indexes together to create a third array where each e
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1444,11 +1457,11 @@ Given two arrays, it pairs indexes together to create a third array where each e
   b: [0, 1, 2, 3] zip "a",
   c: [0, 1, 2, 3] zip ["a", "b"]
 }
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "a": [
     [0,"a"],
@@ -1467,7 +1480,7 @@ Given two arrays, it pairs indexes together to create a third array where each e
     [1,"b"]
   ]
 }
-------------------------------------------------------------------
+----
 
 Note that in example b, since only one element was provided in the second array, it was matched with every element of the first array. Also note that in exaple c, since the second array was shorter than the first, the output was only as long as the shortest of the two.
 
@@ -1479,7 +1492,7 @@ Performs the opposite function of <<zip arrays>>, that is: given a single array 
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1488,11 +1501,11 @@ Performs the opposite function of <<zip arrays>>, that is: given a single array 
   b: unzip [ [0,"a"], [1,"a"], [2,"a"], [3,"a"]],
   c: unzip [ [0,"a"], [1,"a","foo"], [2], [3,"a"]]
 }
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
    "a":[
       [0, 1, 2, 3],
@@ -1506,7 +1519,7 @@ Performs the opposite function of <<zip arrays>>, that is: given a single array 
       [0,1,2,3]
     ]
 }
-------------------------------------------------------------------
+----
 
 Note even though example b can be considered the inverse function to the example b in <<zip array>>, the result is not analogous, since it returns an array of repeated elemetns instead of a single element. Also note that in example c, since the number of elements in each component of the original array is not consistent, the output only creates as many full arrays as it can, in this case just one.
 
@@ -1519,20 +1532,20 @@ Replaces a section of a string for another, in accordance to a regular expressio
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 b: "admin123" replace /(\d+)/ with "ID"
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "b": "adminID"
 }
-------------------------------------------------------------------
+----
 
 == Matches
 
@@ -1542,20 +1555,20 @@ Matches a string against a regular expression, and returns *true* or *false*.
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 b: "admin123" matches /(\d+)/
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "b": false
 }
-------------------------------------------------------------------
+----
 
 == Starts With
 
@@ -1565,7 +1578,7 @@ Returns true or false depending on if a string starts with a provided substring.
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1573,16 +1586,16 @@ Returns true or false depending on if a string starts with a provided substring.
   a: "Mariano" startsWith "Mar",
   b: "Mariano" startsWith "Em"
 }
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "a": true,
   "b": false
 }
-------------------------------------------------------------------
+----
 
 
 == Ends With
@@ -1593,7 +1606,7 @@ Returns true or false depending on if a string ends with a provided substring.
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1601,16 +1614,16 @@ Returns true or false depending on if a string ends with a provided substring.
   a: "Mariano" endsWith "no",
   b: "Mariano" endsWith "to"
 }
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "a": true,
   "b": false
 }
-------------------------------------------------------------------
+----
 
 
 
@@ -1622,7 +1635,7 @@ Given a string, it returns the index position within the string at which a match
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1631,18 +1644,18 @@ Given a string, it returns the index position within the string at which a match
   b: "aabccdbce" find "a",
   c: "aabccdbce" find "bc"
 }
-------------------------------------------------------------------
+----
 
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "a": [[0,0,2,3]],
   "b": [0,1],
   "c": [2,6]
 }
-------------------------------------------------------------------
+----
 
 
 == Match
@@ -1653,16 +1666,16 @@ Match a string against a regular expression. Match returns an array that contain
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
   hello: "anniepoint@mulesoft.com" match /([a-z]*)@([a-z]*).com/
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "hello": [
     "anniepoint@mulesoft.com",
@@ -1670,7 +1683,7 @@ Match a string against a regular expression. Match returns an array that contain
     "mulesoft"
   ]
 }
-------------------------------------------------------------------
+----
 
 In the example above, we see that the search regular expression describes an email address. It contains two capture groups, what's before and what's after the @. The result is an array of three elements: the first is the whole email address, the second matches one of the capture groups, the third matches the other one.
 
@@ -1683,16 +1696,16 @@ Returns an array with all of the matches in the given string. Each match is retu
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
   hello: "anniepoint@mulesoft.com,max@mulesoft.com" scan /([a-z]*)@([a-z]*).com/
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "hello": [
     [
@@ -1707,7 +1720,7 @@ Returns an array with all of the matches in the given string. Each match is retu
     ]
   ]
 }
-------------------------------------------------------------------
+----
 
 In the example above, we see that the search regular expression describes an email address. It contains two capture groups, what's before and what's after the @. The result is an array with two matches, as there are two email addresses in the input string. Each of these matches is an array of three elements, the first is the whole email address, the second matches one of the capture groups, the third matches the other one.
 
@@ -1717,7 +1730,7 @@ Evaluates if two values are similar, regardless of their type. For example, the 
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1727,18 +1740,18 @@ Evaluates if two values are similar, regardless of their type. For example, the 
     c: "true" == true,
     d: "true" ~= true
 }
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-------------------------------------------------------------------
+----
 {
   "a": false,
   "b": true,
   "c": false,
   "d": true
 }
-------------------------------------------------------------------
+----
 
 
 == Upper
@@ -1748,22 +1761,22 @@ Returns the provided string in uppercase characters.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   name: upper "mulesoft"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "name": MULESOFT
 }
---------------------------------------------------------
+----
 
 
 == Lower
@@ -1773,22 +1786,22 @@ Returns the provided string in lowercase characters.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   name: lower "MULESOFT"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "name": mulesoft
 }
---------------------------------------------------------
+----
 
 
 == Camelize
@@ -1798,7 +1811,7 @@ Returns the provided string in camel case.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1807,17 +1820,17 @@ Returns the provided string in camel case.
   b: camelize "customer_first_name",
   c: camelize "customer name"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "customer",
   "b": "customerFirstName",
   "c": "customer name"
 }
---------------------------------------------------------
+----
 
 == Capitalize
 .(':string')
@@ -1826,7 +1839,7 @@ Returns the provided string with every word starting with a capital letter and n
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1835,17 +1848,17 @@ Returns the provided string with every word starting with a capital letter and n
   b: capitalize "customer_first_name",
   c: capitalize "customer NAME"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "Customer",
   "b": "Customer First Name",
   "c": "Customer Name"
 }
---------------------------------------------------------
+----
 
 == Dasherize
 .(':string')
@@ -1854,7 +1867,7 @@ Returns the provided string with every word separated by a dash.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1863,17 +1876,17 @@ Returns the provided string with every word separated by a dash.
   b: dasherize "customer_first_name",
   c: dasherize "customer NAME"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "customer",
   "b": "customer-first-name",
   "c": "customer-name"
 }
---------------------------------------------------------
+----
 
 == Underscore
 .(':string')
@@ -1882,7 +1895,7 @@ Returns the provided string with every word separated by an underscore.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1891,17 +1904,17 @@ Returns the provided string with every word separated by an underscore.
   b: underscore "customer-first-name",
   c: underscore "customer NAME"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "customer",
   "b": "customer_first_name",
   "c": "customer_NAME"
 }
---------------------------------------------------------
+----
 
 
 
@@ -1912,7 +1925,7 @@ Returns the provided string transformed into its plural form.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1921,17 +1934,17 @@ Returns the provided string transformed into its plural form.
   b: pluralize "wife",
   c: pluralize "foot"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "boxes",
   "b": "wives",
   "c": "feet"
 }
---------------------------------------------------------
+----
 
 == Singularize
 .(':string')
@@ -1940,7 +1953,7 @@ Returns the provided string transformed into its singular form.
 
 .Transform
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -1949,17 +1962,17 @@ Returns the provided string transformed into its singular form.
   b: singularize "wives",
   c: singularize "feet"
 }
---------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "box",
   "b": "wife",
   "c": "foot"
 }
---------------------------------------------------------
+----
 
 == Trim
 .(':string')
@@ -1968,22 +1981,22 @@ Removes any excess spaces at the start and end of a string.
 
 .Transform
 [source,DataWeave, linenums]
-------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 {
   "a": trim "   my long text     "
 }
-------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "my long text"
 }
---------------------------------------------------------
+----
 
 
 == Ordinalize
@@ -1992,7 +2005,7 @@ Removes any excess spaces at the start and end of a string.
 Returns the provided numbers set as ordinals.
 
 [source,DataWeave, linenums]
---------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2001,16 +2014,16 @@ Returns the provided numbers set as ordinals.
   b: ordinalize 8,
   c: ordinalize 103
 }
---------------------------------------------------------
+----
 
 [source,json,linenums]
---------------------------------------------------------
+----
 {
   "a": "1st",
   "b": "8th",
   "c": "103rd"
 }
---------------------------------------------------------
+----
 
 == Basic Math Operations
 
@@ -2019,48 +2032,48 @@ Returns the provided numbers set as ordinals.
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/xml
 ---
 plus : 2 + 2.5
-----------------------------------------------------------
+----
 
 === Minus
 .(':number', ':number')
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/xml
 ---
 minus : 2.5 - 2
-----------------------------------------------------------
+----
 
 === Multiply
 .(':number', ':number')
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/xml
 ---
 multiply : 2.5 * 2
-----------------------------------------------------------
+----
 
 === Division
 .(':number', ':number')
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/xml
 ---
 division : 10 / 2
-----------------------------------------------------------
+----
 
 == Max
 
@@ -2070,7 +2083,7 @@ Returns the highest number in an array or object.
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2079,7 +2092,7 @@ Returns the highest number in an array or object.
   b: max [1, 2, 3],
   d: max [1.5, 2.5, 3.5]
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2099,7 +2112,7 @@ Returns the lowest number in an array or object.
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2108,7 +2121,7 @@ Returns the lowest number in an array or object.
   b: min [1, 2, 3],
   d: min [1.5, 2.5, 3.5]
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2128,7 +2141,7 @@ Rounds the value of a number to the nearest integer
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2137,7 +2150,7 @@ Rounds the value of a number to the nearest integer
   b: round 4.6,
   c: round 3.5
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2157,7 +2170,7 @@ Returns the square root of the provided number
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2166,7 +2179,7 @@ Returns the square root of the provided number
   b: sqrt 25,
   c: sqrt 100
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2186,7 +2199,7 @@ Returns the result of the first number to the power of the second one
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2195,7 +2208,7 @@ Returns the result of the first number to the power of the second one
   b: 3 pow 2,
   c: 7 pow 3
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2246,7 +2259,7 @@ Rounds a number downwards, returning the first full number below than the one pr
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2255,7 +2268,7 @@ Rounds a number downwards, returning the first full number below than the one pr
   b: floor 2.2,
   c: floor 3
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2275,7 +2288,7 @@ Returns the absolute value of a number,
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2285,7 +2298,7 @@ Returns the absolute value of a number,
   c: abs -3.4,
   d: abs 3
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2306,7 +2319,7 @@ Returns the remainder after division of the first number by the second one
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2315,7 +2328,7 @@ Returns the remainder after division of the first number by the second one
   b: 4 mod 2,
   c: 2.2 mod 2
 }
-----------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
@@ -2339,7 +2352,7 @@ You can extract a particular time unit from any date related type as shown below
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2358,11 +2371,11 @@ You can extract a particular time unit from any date related type as shown below
   l: |2003-10-01T23:57:59Z|.dayOfYear,
   m: |P3Y2M10D|.years
 }
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "a": 1,
   "b": 10,
@@ -2378,7 +2391,7 @@ You can extract a particular time unit from any date related type as shown below
   "l": 274,
   "m": 3
 }
------------------------------------------------------------------
+----
 
 === Now
 
@@ -2386,7 +2399,7 @@ Returns a time stamp.
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2395,17 +2408,17 @@ Returns a time stamp.
   b: now.day,
   c: now.minutes
 }
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "a": "2015-12-04T18:15:04.091Z",
   "b": 4,
   "c": 15
 }
------------------------------------------------------------------
+----
 
 [TIP]
 See link:/mule-user-guide/v/3.8-m1/dataweave-types#accessors[Accessors] for a list of possible selectors to use here.
@@ -2419,20 +2432,20 @@ Shift a date time to the specified timezone.
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 a: |2014-01-01T14:00-03:00| >> |-08:00|
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "a": "2014-01-01T09:00-08:00"
 }
------------------------------------------------------------------
+----
 
 === Append Time
 
@@ -2443,7 +2456,7 @@ You can append a date to a time (or localtime) object so as to provide a more pr
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2452,16 +2465,16 @@ You can append a date to a time (or localtime) object so as to provide a more pr
   b: |2003-10-01| ++ |23:57:59Z|
 }
 
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
     "a": "2003-10-01T23:57:59",
     "b": "2003-10-01T23:57:59Z"
 }
------------------------------------------------------------------
+----
 
 
 Note that the order in which the two objects are appended is irrelevant, so logically a ':date' + ':time'  will result in the same as a '#:time' + ':date'.
@@ -2475,20 +2488,20 @@ Appends a time zone to a date type value.
 
 .Transform
 [source,DataWeave, linenums]
------------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 a: |2003-10-01T23:57:59| ++ |-03:00|
------------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
------------------------------------------------------------------
+----
 {
   "a": "2003-10-01T23:57:59-03:00"
 }
------------------------------------------------------------------
+----
 
 
 === Adding a Period of Time
@@ -2499,20 +2512,20 @@ Add or subtract a period of time from a given date or time type object.
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
 a: |2003-10-01T23:57:59Z| + |P1Y|
-----------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------
+----
 {
   "a": "2004-10-01T23:57:59Z"
 }
-----------------------------------------------------------------
+----
 
 === Subtracting a Period of Time
 
@@ -2522,7 +2535,7 @@ The same logically applies to subtracting time periods from a date or time type 
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2530,16 +2543,16 @@ The same logically applies to subtracting time periods from a date or time type 
   a: |2003-10-01| - |P1Y|,
   b: |2003-10-01T23:57:59Z| - |P1Y|
 }
-----------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------
+----
 {
   "a": "2002-10-01",
   "b": "2002-10-01T23:57:59Z"
 }
-----------------------------------------------------------------
+----
 
 Note that when a subtraction operation includes a time object and a period, the order in which both elements are placed is indiferent since it would be impossible to subtract a date from a period, so `|2003-10-01| - |P1Y|` returns the same as `|P1Y| - |2003-10-01|`.
 
@@ -2552,7 +2565,7 @@ When subtracting one date or time type object from another, what we logically ge
 
 .Transform
 [source,DataWeave, linenums]
-----------------------------------------------------------------
+----
 %dw 1.0
 %output application/json
 ---
@@ -2560,22 +2573,40 @@ When subtracting one date or time type object from another, what we logically ge
   a: |23:59:56-03:00| - |22:59:56-00:00|,
   b: |2003-10-01| - |2002-09-23|
 }
-----------------------------------------------------------------
+----
 
 .Output
 [source,json,linenums]
-----------------------------------------------------------------
+----
 {
   "a": "PT-4H",
   "b": "P-1Y-8D"
 }
-----------------------------------------------------------------
+----
 
 === Date Coercion
 .(':any', ':type')
 
 You can change the format of a date to fit another standard, see <<coerce to date>>.
 
+
+== Operator Precedence Table
+
+
+[cols="30a,60a,10a",options="header"]
+|===
+|Operator                          |Description             | Level
+|usng, all unary operators         |All link:https://en.wikipedia.org/wiki/Unary_operation[unary operators]     | 1
+|As                              |Type Coercion expression     | 2
+|* /                               |Multiplicative          | 3
+|+ - >>                            |Additive                | 4
+|>= <= < >  is                   |Relational / Type Comparison | 5
+|!= ~= ==                          |Equality evaluators    | 6
+|<<AND>>                              |Conditional And         | 7
+|<<OR>>                                |Conditional OR          | 8
+|<<Default>>, <<Match>>, <<Matches>>             |Default Value / Pattern Matching / Binary Operators | 9
+|<<When or Otherwise>>, <<Unless or Otherwise>>             |Conditional Expressions | 10
+|===
 
 
 == Next Steps

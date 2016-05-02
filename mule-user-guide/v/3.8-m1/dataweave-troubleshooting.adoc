@@ -2,45 +2,46 @@
 
 image:dw-logo.png[dw]
 
+This document lists common error messages, what these mean and how to resolve them.
+
 == Cannot coerce :binary to :object
 
-It means that DataWeave is trying to transform a binary value to object.
+It means that DataWeave is trying to transform a binary value to an object, which isn't allowed.
 
-*Cause*: One possible case is that data weave read the content as binary as it was a InputStream or Byte array and the mime type was not set.
-And in this scenario DataWeave defaults to Java reader. You should see a Info log with something like :
+*Cause*: One possible case is that DataWeave is reading the content as binary as it was an 'InputStream' or 'Byte array' and its *mime type* is not set.
+In this scenario DataWeave defaults to Java reader. If you look at the Info log it would display something like this:
 
- "MimeType was not resolved '*/*' delegating to Java."
+----
+MimeType was not resolved '*/*' delegating to Java.
+----
 
-*Solution* : Validate that the mimeType is set.
-For example verify that if you data source has a mime-type field it was set or if the value was set through a set-payload or set-variable the mime-type property was defined
+*Solution* : Validate that the *mimeType* is set.
+For example verify that if your data source has a `mime-type` field, its value is set, or if the value is set through a set-payload or set-variable component, then the `mime-type` property was defined in it.
 
 == Cannot coerce :string to :object
 
-It means that DataWeave is trying to transform a string value to object.
+It means that DataWeave is trying to transform a string value to type object.
 
-*Cause*: Same as :binary issue this may be a mime-type problem.
+*Cause*: Same as <<Cannot coerce :binary to :object>>, this may be a mime-type problem.
 
-*Cause*: If the value is an XML this may be caused by an empty tag. By default XML reader reads
+*Cause*: If the value is an XML, this may be caused by an empty tag. By default the XML reader reads
 
-Let's use an example
+Take the following example:
 
 .Input
-
 [source,xml]
 ----
 <user></user>
 ----
 
 .Transform
-
 [source,groovy]
 ----
 payload.user.name
 ----
 
-This script will fail with *Cannot coerce :string to :object*
+The above script fails with the error *Cannot coerce :string to :object*
 
-*Reason*: As you can see the input xml is an empty xml tag so the expression *payload.user* returns an empty string
-and then DataWeave tries to apply the name selector over a string.
+*Reason*: As you can see the input xml is an empty xml tag, so the expression *payload.user* returns an empty string. Then DataWeave tries to apply the 'name' selector over a string, which raises an exception.
 
-*Solution*: Xml reader has a configuration property named nullValueOn. This property can be set to "blank" or "empty" and it will fix this issue.
+*Solution*: The XML reader has a configuration property named 'nullValueOn'. This property can be set to "blank" or "empty", which can fix this issue. To set this property see link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#reader-configuration[Reader Configuration].
