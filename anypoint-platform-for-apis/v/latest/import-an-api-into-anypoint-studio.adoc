@@ -9,6 +9,12 @@ To create a Studio project for the example T-Shirt API on Anypoint Platform, you
 * link:/api-quick-start/create-an-api[An API in Anypoint Platform]
 * link:/api-quick-start/create-a-proxy-for-an-api[A proxy] for the inbound endpoint of the API
 
+[TIP]
+--
+This tutorial showcases the basic usage of Studio for working with an API deployed in Anypoint Platform. +
+If this is your first time using Studio, we also recommend you to take a look at our link:mule-fundamentals/v/3.8-m1/basic-studio-tutorial[Basic Studio Tutorial] for a more detailed explanation of each tool and view within Studio.
+--
+
 == Create a Project Based on a RAML
 
 To create a Mule project in Studio based on an existing RAML API:
@@ -40,7 +46,16 @@ image:walk-browse-api-mgr2.png[walk-browse-api-mgr2]
 +
 The `t-shirt.xml` file appears in the `src/main/app` folder of the Package Explorer. The `api-main` flow appears at the top of the canvas and contains the link:/anypoint-platform-for-apis/apikit-basic-anatomy[APIkit Router]. Below the main flow, are the other flows defined by the RAML--one for each resource/method pairing defined within the RAML spec. Do not rename these flows.
 +
+[TIP]
+--
+Take a moment to see all the default views that are loaded once the SOAP application is imported.
+
 image:studio6-project-open.png[studio6-project-open]
+
+If you are familiar with link:mule-fundamentals/v/3.8-m1/anypoint-studio-essentials#the-visual-editor[Anypoint Studio's visual editor], you notice a new view loaded next to the Mule Palette.
+
+This is the link:/anypoint-platform-for-apis/api-sync-reference[API Sync] view, which allows you to synchronize your changes with Anypoint Platform and to download all updates from the Anypoint Platform to your Studio instance. This feature is covered link:/anypoint-platform-for-apis/sync-your-api-with-anypoint-platform[later in this tutorial].
+--
 +
 The project creation process also adds a link:/mule-user-guide/v/3.7/reference-exception-strategy[Reference Exception Strategy] to handle all possible errors.
 +

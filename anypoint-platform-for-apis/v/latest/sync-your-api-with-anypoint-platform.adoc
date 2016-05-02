@@ -1,10 +1,12 @@
-= API Sync
+= Sync Your API Using API Sync
 
 To synchronize the project and Anypoint Platform after any changes to the project in Studio or to the API in Anypoint Platform, use the API Sync panel:
 
 image:walk-sync-anypoint.png[walk-sync-anypoint]
 
-The panel includes controls to upload and download changes, compare the API in Studio and the API on Anypoint Platform, and more.
+Simply select your `raml` file and click the _Upload_ button to submit your chances to Anypoint Platform.
+
+To learn more about this in detail, check our link:anypoint-platform-for-apis/api-sync-reference[API sync reference page].
 
 == Download this Example
 
