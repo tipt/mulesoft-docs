@@ -77,4 +77,4 @@ If this happens, click on *Force GET* to see the results.
 
 == Next
 
-. Leanr how to link:/api-quick-start/create-an-automatic-munit-test[create an automatic MUnit test for your imported application]
+. Learn how to link:/api-quick-start/create-an-automatic-munit-test[create an automatic MUnit test for your imported application]
