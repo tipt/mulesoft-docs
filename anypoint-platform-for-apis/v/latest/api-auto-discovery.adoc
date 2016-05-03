@@ -11,8 +11,8 @@ If an API is not registered on Anypoint Platform, you can create the API on Anyp
 
 [NOTE]
 --
-In Mule 3.8 Runtime and older, API Gateway is unified into the runtime. +
-References to API gateway configurations are kept as a support for older versions.
+In Mule 3.8 and older, API Gateway is unified into the runtime. +
+References to API gateway configurations in this page are kept as a support for older versions.
 --
 
 [tabs]
