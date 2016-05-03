@@ -99,7 +99,7 @@ If other elements in your Mule flow expose metadata about their input and output
 * *you can configure the elements themselves* so that they expose this information. Do this by editing their *Metadata* tab. For example, you can configure an HTTP connector and assign it a JSON sample file so that this sample's structure is exposed as metadata that your Transform Message component can read.
 * *you can manually specify it directly in the input or output section of your Transform Message component*
 
-For defining the Output structure, you also have a third option if you plan to create your transform entirely via <<the DataWeave text editor>>:
+For defining the Output structure, you also have a third option if you plan to create your transform entirely via the <<The DataWeave Text Editor, text editor section>> :
 
 * *you can skip specifying the definition* and directly set an output type in the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[output directive] of your DataWeave code
 
@@ -107,6 +107,10 @@ For defining the Output structure, you also have a third option if you plan to c
 === Defining Metadata via the UI
 
 If the metadata definition is missing for the input or output, a notification on the corresponding section of the Graphical UI will advise you to provide it, click the *Define Metadata* link. Otherwise, at any time you can also right-click on the root of the corresponding section of the Graphical Ui and select *Set Metadata* to access the same options.
+
+[TIP]
+This same menu can also be accessed by opening the <<The Preview Section, preview section>>, which will display a shortcut to set this up in case it's still not configured.
+
 
 The metadata classes that you have previously defined in the current Mule project will be displayed for you to select one if appropriate:
 
@@ -348,9 +352,12 @@ Once you have defined the input structure, you can create a sample populated wit
 
 This sample data is used together with your DataWeave code to produce a sample output in <<the preview section>>, which gets updated in real time as you make changes.
 
-You can also access this tab by right clicking on the root of the input section and selecting *Edit Sample Data*.
+You can access this tab by right clicking on the root of the input section and selecting *Edit Sample Data*.
 
 image:dataweave-edit-sample-data.png[sample data]
+
+[TIP]
+This same menu can also be accessed by opening the <<The Preview Section, preview section>>, which will display a shortcut to set this up in case it's still not provided.
 
 [NOTE]
 When the input is of types JSON, XML, CSV or flat file, the sample input contains plain code in the corresponding format. When the input is of type POJO or DataWeave, the sample input is written in DataWeave for more simplicity. In these cases the sample DataWeave code is merely a way to display the sample data, not a transformation in itself.
@@ -378,6 +385,13 @@ image:dw_buttons.png[buttons]
 This section presents a sample output, built by taking the sample input you provide and transforming it through the DataWeave transform. As you make changes in the DataWeave code, notice how the output data structure changes.  If your transformer has <<handling multiple outputs, multiple outputs>>, the *Preview* section will display the one corresponding to the currently selected transform.
 
 image:dw-sample-preview.png[preview]
+
+If no sample is provided yet, this section features a shortcut that you can click to open the <<provide input sample data,*Edit Sample*>> window and provide an input sample to construct the preview.
+
+image:dw-create-sample-shortcut.png[shortuct]
+
+If you still haven't set up the metadata structure for your input, when clicking on this shortcut you will be first prompted to set up the structure via the <<Defining Input and Output Structure>> window.
+
 
 == Viewing Errors
 
