@@ -8,11 +8,11 @@ API Sync View is a feature integrated in Anypoint Studio that allows you to seam
 
 == How to Show It
 
-The API Sync View shows by default with Studio 6.0 and older next to the Mule Palette:
+The API Sync View shows by default with Studio 6.0 and newer next to the Mule Palette:
 
 image:api-sync-view.png[api-sync-view]
 
-If you chose to close this view, you can bring it back up by going to *Window*, *Show view*, and *Other*. +
+If you choose to close this view, you can bring it back up by going to *Window*, *Show view*, and *Other*. +
 Inside the *APIKit Views* Folder, you can find the *API Sync* view.
 
 You can also find this view using the _Quick Access_ bar. Locate your quick access bar in the top right of your Studio window, next to your Perspectives, and type _API Sync_. The view should appear labeled as _Views_:
@@ -59,8 +59,14 @@ image:api-sync-menu.png[api-sync-menu]
 image:view-changes.png[view-changes]
 +
 This view, compares the local version of the file with the remote version. You can use the buttons located in the top right corner for this view to navigate through each difference or change.
-. The _Refresh_ button checks the status between your API definition in Studio and your API definition in Anypoint Platform.
-. The _Connect to API manager_ button
+. The _Refresh_ button checks the status between your API definition in Studio and your API definition in Anypoint Platform. If there are changes in Anypoint Platform, it updates the local version.
+. The _Connect to API manager_ button allows you to connect to the Anypoint Platform account of the owner of the API.
++
+This feature is useful when having more than one user configured in your Anypoint Studio. +
+If one user syncs one API, and then another user logs in using his/her Anypoint Platform credentials, the API synced first shows a `[Not Connected]` label next to its name, indicating that this API does not belong to the current user. +
+By clicking the _Connect to API manager_ button, Studio prompts for your credentials. If they belong to the owner of the API, it connects to the selected resource.
++
+image:api-sync-not-connected.png[api-sync-not-connected]
 
 [CAUTION]
 --
