@@ -92,4 +92,4 @@ Do the same with the _Assert Equals Message Processor_ in your `get:/orders/stat
 
 == Next
 
-link:api-quick-start/sync-your-api-with-anypoint-platform[Sync your API with Anypoint Platform] using API Sync
+link:/anypoint-platform-for-apis/sync-your-api-with-anypoint-platform[Sync your API with Anypoint Platform] using API Sync
