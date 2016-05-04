@@ -1,7 +1,10 @@
 = Create an API
 :keywords: api, define, creator, create, raml
 
-In this section, you create a RESTful API for a web service. The web service handles t-shirt orders and order tracking when combined with a database and user interface, which is not covered.
+In this section, you start by creating a RESTful API for a web service that handles t-shirt orders and order tracking with an hypothetical database. +
+The point of the whole tutorial is to show how to integrate your Mule application to a SOAP service by consuming a SOAP API.
+
+In this part, you focus on designing a REST API by writing a RAML definition to match your SOAP service WSDL:
 
 == Prerequisites
 
