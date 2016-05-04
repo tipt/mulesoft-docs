@@ -65,7 +65,7 @@
 **** link:/anypoint-platform-for-apis/api-gateway-101[API Gateway 101]
 **** link:/anypoint-platform-for-apis/localhost-behavior-on-the-api-gateway[Localhost Behavior on the API Gateway]
 **** link:/anypoint-platform-for-apis/configuring-proxy-access-to-the-anypoint-platform-for-apis[Configuring Proxy Access to the Anypoint Platform for APIs]
-** link:/anypoint-platform-for-apis/api-quick-start[API Quick Start]
+** link:/anypoint-platform-for-apis/api-quick-start[Anypoint Studio for APIs]
 *** link:/anypoint-platform-for-apis/create-an-api[Create an API]
 *** link:/anypoint-platform-for-apis/create-a-proxy-for-an-api[Create a Proxy for an API]
 *** link:/anypoint-platform-for-apis/import-an-api-into-anypoint-studio[Import an API into Anypoint Studio]
