@@ -1,13 +1,10 @@
-= Enhance an API Using Anypoint Studio
+= Update an API Using Anypoint Studio
 
-This section covers how to enhance the T-Shirt API you created earlier in Anypoint Platform. You will add the following enhancements to the API:
-
-* Consume a WSDL web service
-* Error checking
+This section covers how to update your legacy SOAP application and integrate it to the T-Shirt API you created earlier in Anypoint Platform.
 
 == Consume a Web Service
 
-This section covers how to enhance the RAML API to replace a legacy SOAP-based service. The operations in WSDL of the legacy service align with the RAML resources of your API in the Studio project.
+This section covers how to integrate the RAML API to consume the original SOAP-based service. The operations in WSDL of the legacy service align with the RAML resources of your API in the Studio project.
 
 To consume a web service:
 
@@ -23,7 +20,7 @@ This is a regular good practice to keep consistency along your application confi
 The `mule-app.properties` file opens.
 . Add the following line, and then save the change:
 +
-`http.port=8081`
+`http.port=8081` +
 `http.host=0.0.0.0`
 +
 . In the *get:/products:api-config* flow, delete *Set Payload*. Select the *Set Payload* element, and click *Delete* on the context menu.
@@ -155,4 +152,4 @@ Use the following Dataweave expressions for the respective flows:
 
 == Next
 
-Learn link:/api-quick-start/test-an-api-using-munit[how to create an MUnit test for your newly enhanced API using MUnit]
+Now that your application can interact with your SOAP legacy project, let's apply one more change to your RAML file and link:/anypoint-platform-for-apis/sync-your-api-with-anypoint-platform.[synchronize your updated project with Anypoint Platform using API Sync].

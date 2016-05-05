@@ -1,7 +1,8 @@
 #%RAML 0.8
-title: T-Shirt Ordering Service
+title: T-Shirt Ordering Service2
 version: 1.0.development
-baseUri: http://t-shirt.com/api
+#baseUri: http://www.telhill.com
+baseUri: http://mocksvc.mulesoft.com/mocks/86cff479-ca5d-47f8-89b1-6dcba0ee3523
 /products:
   displayName: Products
   get:
@@ -98,6 +99,14 @@ baseUri: http://t-shirt.com/api
               }
             }
           }
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "orderId": "4321"
+              }          
   /status:
     displayName: Status
     get:

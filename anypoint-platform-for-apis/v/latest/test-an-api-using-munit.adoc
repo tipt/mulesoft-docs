@@ -3,7 +3,7 @@
 
 == Enhance Your Existing Test
 
-This tutorials assumes that you link:/api-quick-start/create-an-automatic-munit-test[generated an automatic MUnit test] when you imported your API into Anypoint Studio.
+This tutorials assumes that you link:/anypoint-platform-for-apis/create-an-automatic-munit-test[generated an automatic MUnit test] when you imported your API into Anypoint Studio.
 
 Since now your application consumes the data from a web service, the payloads that this test asserts change to match the results served by the Web Service.
 
@@ -90,6 +90,6 @@ Do the same with the _Assert Equals Message Processor_ in your `get:/orders/stat
 
 * Use the same MEL expression to assert the payload against the expected one: `#[getResource('postTestSample.json').asString()]`.
 
-== Next
+== Download this Example
 
-link:/anypoint-platform-for-apis/sync-your-api-with-anypoint-platform[Sync your API with Anypoint Platform] using API Sync
+You can download link:_attachments/my-raml-implementation.zip[a Mule archive] of this project. In Studio, click *File* > *Import*, select *Anypoint Studio generated Deployable Archive (zip)* and import your downloaded zip file.

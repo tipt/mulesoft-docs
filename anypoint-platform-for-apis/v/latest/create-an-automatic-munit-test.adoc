@@ -2,7 +2,7 @@
 
 == Overview
 
-Following the example developed in link:/api-quick-start/import-an-api-into-anypoint-studio[the previous article], this tutorial focuses on giving you an easy walkthrough to develop a *unit test* for said application.
+Following the example developed in link:/anypoint-platform-for-apis/import-an-api-into-anypoint-studio[the previous article], this tutorial focuses on giving you an easy walkthrough to develop a *unit test* for said application.
 
 A _unit test_ consists of verifying that a single _unit of code_ works as expected. +
 In this particular example, we focus on verifying the statuses and payloads returned by your APIKit router configuration following your `file.raml` specs. +
@@ -85,4 +85,4 @@ image:test-suite-result.png[test-suite-result]
 
 == Next
 
-. Enhance the API to link:/api-quick-start/enhance-an-api-using-anypoint-studio[consume a SOAP Web Service].
+. Now that you tested your REST-based application, integrate it application to link:/anypoint-platform-for-apis/update-an-api-using-anypoint-studio[consume the legacy SOAP Web Service].

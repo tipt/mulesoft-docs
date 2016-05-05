@@ -29,12 +29,12 @@ image:studio-project.png[studio-project]
 . Click *Finish*.
 . link:_attachments/placeholder.raml[Download the placeholder.raml] that defines the API.
 +
-The link:/api-quick-start/create-an-api-from-an-existing-raml#create-the-raml[step-by-step procedure for creating this RAML] is described later.
+The link:/anypoint-platform-for-apis/create-an-api-from-an-existing-raml#create-the-raml[step-by-step procedure for creating this RAML] is described later.
 . Drag the `placeholder.raml` from your file system to `/src/main/resources` in the Package Explorer.
 +
 image:studio-explorer.png[studio-explorer]
 +
-Other ways an API can link:/api-quick-start/create-an-api-from-an-existing-raml#access-the-raml-file[access the RAML] are described later.
+Other ways an API can link:/anypoint-platform-for-apis/create-an-api-from-an-existing-raml#access-the-raml-file[access the RAML] are described later.
 +
 . From the Mule Palette, drag an *HTTP* connector onto the canvas.
 +

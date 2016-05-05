@@ -6,8 +6,8 @@ Using Anypoint Studio, you can enhance, change, mock, and link:\[test an API] th
 
 To create a Studio project for the example T-Shirt API on Anypoint Platform, you first need to set up the following things:
 
-* link:/api-quick-start/create-an-api[An API in Anypoint Platform]
-* link:/api-quick-start/create-a-proxy-for-an-api[A proxy] for the inbound endpoint of the API
+* link:/anypoint-platform-for-apis/create-an-api[An API in Anypoint Platform]
+* link:/anypoint-platform-for-apis/create-a-proxy-for-an-api[A proxy] for the inbound endpoint of the API
 
 [TIP]
 --
@@ -77,4 +77,4 @@ If this happens, click on *Force GET* to see the results.
 
 == Next
 
-. Learn how to link:/api-quick-start/create-an-automatic-munit-test[create an automatic MUnit test for your imported application]
+. Learn how to link:/anypoint-platform-for-apis/create-an-automatic-munit-test[create an automatic MUnit test for your imported application]

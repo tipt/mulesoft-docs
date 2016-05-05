@@ -4,7 +4,7 @@
 In this section, you start by creating a RESTful API for a web service that handles t-shirt orders and order tracking with an hypothetical database. +
 The point of the whole tutorial is to show how to integrate your Mule application to a SOAP service by consuming a SOAP API.
 
-In this part, you focus on designing a REST API by writing a RAML definition to match your SOAP service WSDL:
+In this part, you focus on designing a REST API by writing a RAML definition to match your SOAP service's WSDL.
 
 == Prerequisites
 
@@ -39,7 +39,30 @@ The T-Shirt Ordering Service appears that includes the API Definition, which you
 
 image:api-definition.png[api-definition]
 
-== Define the API
+== Build a RAML File for an Existing API
+
+We are assuming that the original t-shirt service is based in this link:http://tshirt-service.cloudhub.io/?wsdl[WSDL definition]. +
+The WSDL for the *T-shirt API* lists a set of operations that can be called. The operations act upon a resource:
+
+[cols="50a,50a",options="header"]
+|===
+|Operation |Assigned SOAP resource
+| Show all inventory | `ListInventory`
+| Place a T-Shirt order | `OrderTshirt`
+| Track an existing T-Shirt order | `TrackOrder`
+|===
+
+We need to create resources in the RAML to match the operations in the WSDL:
+
+[cols="33a,33a,33a",options="header"]
+|===
+|Operation |Assigned SOAP resource | RAML resource
+| Show all inventory | `ListInventory` | `products`
+| Place a T-Shirt order | `OrderTshirt` | `orders`
+| Track an existing T-Shirt order | `TrackOrder` | `status`
+|===
+
+== Define the API in the API Designer
 
 In this procedure, you define the logic of the API in link:http://raml.org[RESTful API Modeling Language (RAML)]. Using link:/#using-api-designer[API Designer] API Designer, a RAML editor, helps in the following ways:
 
@@ -114,6 +137,7 @@ baseUri: http://server/api
 +
 . Below each method, include an indented description followed by responses. Responses consist of a map of the HTTP status codes that the API returns on success. The descriptions, responses, and examples are:
 +
+[[define-methods]]
 ----
 ...
 /products:
@@ -143,36 +167,7 @@ baseUri: http://server/api
   displayName: orders
   post:
     description: Places a new T-Shirt order
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              {
-                "orderId": "4321"
-              }
-      500:
-        body:
-          application/json:
-            example: |
-              {
-                "errorMessage": "The order couldn't be entered."
-              }
 ----
-
-== Build a RAML File for an Existing API
-
-A typical use case is taking the link:http://tshirt-service.cloudhub.io/?wsdl[WSDL definition] of an existing SOAP API and building a RAML file around it in a legacy modernization project to move from SOAP to REST. The WSDL for the link:http://tshirt-service.cloudhub.io/?wsdl[T-shirt API] lists a set of operations that can be called. The operations act upon a resource:
-
-* `ListInventory`
-* `OrderTshirt`
-* `TrackOrder`
-
-Operations in the WSDL correspond to the resources in the RAML, which you created earlier:
-
-* `products`
-* `orders`
-* order `status`
 
 == Use the Mocking Service
 
@@ -209,13 +204,13 @@ The following examples appear in Body:
 ]
 ----
 
-= Enhance the T-Shirt API
+= Complement the T-Shirt API
 
 The procedure in this section adds the following things:
 
 * A schema
 * A status resource
-* Query parameters for querying the `status` resource using the requester email <<doesn't work>>
+* Query parameters for querying the `status` resource using the requester email and the order ID.
 
 To ensure that `POST` requests sent to the *`/orders`* resource are valid, enforce a structure by using a schema. The schema and incoming requests are compared. A match ensures validity.
 
@@ -325,4 +320,4 @@ link:_attachments/t-shirt.raml[Download the entire RAML].
 
 == Next
 
-Go to link:/api-quick-start/create-a-proxy-for-an-api[Create a Proxy].
+Go to link:/anypoint-platform-for-apis/create-a-proxy-for-an-api[Create a Proxy].

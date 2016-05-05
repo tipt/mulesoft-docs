@@ -1,17 +1,102 @@
-= Sync Your API Using API Sync
+= Update your API Definition and Sync it With Anypoint Platform
 
-To synchronize the project and Anypoint Platform after any changes to the project in Studio or to the API in Anypoint Platform, use the API Sync panel:
+The RAML file you link:/anypoint-platform-for-apis/create-an-api#define-the-api-in-the-api-designer[defined] earlier in this tutorial lacks a proper response definition for your `/orders` resource. Remember this matches the `OrderTshirt` resource for posting a new order, so let's create a proper response.
 
-image:walk-sync-anypoint.png[walk-sync-anypoint]
+Edit your API definition locally and push your updates to your Anypoint Platform.
 
-Simply select your `raml` file and click the _Upload_ button to submit your chances to Anypoint Platform.
+== Edit Your RAML File using The RAML Editor
 
+Navigate to your `t-shirt.raml` file in your `Package Explorer`, double-click in it to open the file in your link:/anypoint-platform-for-apis/apikit-beyond-the-basics#working-with-the-raml-editor[RAML Editor].
+
+Locate your `/orders:`` resource definition, and right after the defined schema for the `post:` resource:
+
+[source,raml,linenums]
+----
+schema: |
+  {
+    "type": "object",
+    "$schema": "http://json-schema.org/draft-03/schema",
+    "id": "http://jsonschema.net",
+    "required": true,
+    "properties": {
+      "address1": {
+          "type": "string",
+          "id": "http://jsonschema.net/address1",
+          "required": true
+      },
+      "address2": {
+          "type": "string",
+          "id": "http://jsonschema.net/address2",
+          "required": true
+      },
+      "city": {
+          "type": "string",
+          "id": "http://jsonschema.net/city",
+          "required": true
+      },
+      "country": {
+          "type": "string",
+          "id": "http://jsonschema.net/country",
+          "required": true
+      },
+      "email": {
+          "type": "string",
+          "format": "email",
+          "id": "http://jsonschema.net/email",
+          "required": true
+      },
+      "name": {
+          "type": "string",
+          "id": "http://jsonschema.net/name",
+          "required": true
+      },
+      "size": {
+          "type": "string",
+          "enum": ["S", "M", "L", "XL", "XXL"],
+          "id": "http://jsonschema.net/size",
+          "required": true
+      },
+      "stateOrProvince": {
+          "type": "string",
+          "id": "http://jsonschema.net/stateOrProvince",
+          "required": true
+      },
+      "postalCode": {
+        "type": "string",
+        "id": "http://jsonschema.net/postalCode",
+        "required": true
+      }
+    }
+  }
+----
+
+Paste the expected response definition for a succesful POST request:
+
+[source,raml,linenums]
+----
+responses:
+200:
+body:
+  application/json:
+    example: |
+      {
+        "orderId": "4321"
+      }
+----
+
+Download an updated RAML file from link:/anypoint-platform-for-apis/_attachements/t-shirt-updated.raml[here].
+
+== Synchronize your Updated RAML File With Anypoint Platform
+
+Notice that your API Sync view now allows you to upload your changes through the _Upload_ button:
+
+image:api-sync-view-raml-update.png[api-sync-view-raml-update]
+
+Simply select your `raml` file and click the _Upload_ button to submit your chances to Anypoint Platform. +
 To learn more about this in detail, check our link:anypoint-platform-for-apis/api-sync-reference[API sync reference page].
 
-== Download this Example
-
-You can download link:_attachments/my-raml-implementation.zip[a Mule archive] of this project. In Studio, click *File* > *Import*, select *Anypoint Studio generated Deployable Archive (zip)* and import your downloaded zip file.
 
 == Next
 
-Finally learn how to link:/api-quick-start/create-an-api-from-an-existing-raml[create an API for an existing RAML].
+Now that your application was updated to interact with a SOAP based web service and you set an expected response code, your automatically generated unit tests need to be manually updated.
+earn link:/anypoint-platform-for-apis/test-an-api-using-munit[how to create an MUnit test for your updated application using MUnit].
