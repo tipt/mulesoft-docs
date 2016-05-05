@@ -42,17 +42,9 @@ The function has the following attributes:
 |===
 |Attributes |Description
 |DataWeave Expression |The actual DataWeave expression to carry out
-|Type?	|
-|Reader Properties ?	|
-
-
-
-
-
-
-
-
-
+|Output Type	| The type of the output of the transform
+|Reader Properties	| For inputs such as CSV, sometimes some properties are needed to know how to parse the input, see link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#reader-configuration[Reader Configuration]
+|Writer Properties	| For inputs such as CSV, sometimes some properties are needed to compose the output, see ink:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[Output Directive]
 
 |===
 
@@ -69,19 +61,18 @@ The DataWeave expression that you write in this function must be enclosed in "qu
 
 [source,code]
 ----
-
-
+split('payload','application/json')
 ----
 
 That same expression could be added inside a link:/mule-user-guide/v/3.8-m1/foreach[Foreach Scope] in the *Collection* field, to use this expression to parse the payload into a separate set of messages to process individually:
 
 [source,code]
 ----
-<foreach collection="              " doc:name="For Each">
-
-
-
-</foreach>
+<flow name="myFlow">
+    <foreach collection="split('payload','application/json')" doc:name="For Each">
+        <logger message="[#payload]" level="INFO" doc:name="Logger"/>
+    </foreach>
+</flow>
 ----
 
 
@@ -99,8 +90,8 @@ The function has the following attributes:
 |Attributes |Description
 |DataWeave Expression |The actual DataWeave expression to carry out
 |Output Type	| The type of the output of the transform
-|Reader Properties	| For inputs such as CSV, sometimes some properties are needed to know how to parse the input, see <<Reader Configuration>>
-|Writer Properties	| For inputs such as CSV, sometimes some properties are needed to compose the output
+|Reader Properties	| For inputs such as CSV, sometimes some properties are needed to know how to parse the input, see link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#reader-configuration[Reader Configuration]
+|Writer Properties	| For inputs such as CSV, sometimes some properties are needed to compose the output, see ink:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[Output Directive]
 |===
 
 

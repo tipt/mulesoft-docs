@@ -1723,6 +1723,86 @@ Returns an array with all of the matches in the given string. Each match is retu
 
 In the example above, we see that the search regular expression describes an email address. It contains two capture groups, what's before and what's after the @. The result is an array with two matches, as there are two email addresses in the input string. Each of these matches is an array of three elements, the first is the whole email address, the second matches one of the capture groups, the third matches the other one.
 
+== Read
+
+.(':string', ':type')
+
+The read operator can process data that is in the input but not being parsed, for example if it's in a CDATA object or being treated as a literal string. The first argument takes the string that must be read, the second is the format in which it's written.
+
+.Input
+[source,xml,linenums]
+----
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+    <xmlblock><![CDATA[<foo>bar</foo>]]></xmlblock>
+</root>
+----
+
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+output: read(payload.root.xmlblock, "application/xml").foo
+----
+
+.Output
+[source,xml,linenums]
+----
+<?xml version='1.0' encoding='UTF-8'?>
+<output>bar</output>
+----
+
+In the example above, what was in the CDATA element isn't parsed by the DataWeave reader by default, that's why the *read* operator must be used to interpret it.
+
+== Write
+
+.(':string', ':type', :object)
+
+The write operator can compose data into any given format, irregardless of what the transformation is doing at a larger scale. The result is then treated as a string literal within the rest of the output. You could for example include a CSV field within one element of an XML output.
+
+The first argument points to the element that must be written, the second is the format in which to write it. A third optional argument lists wrirter configuration properties. See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[Output Directive] and its sub-sections for a full list of available configuration options for each different format.
+
+.Input
+[source,xml,linenums]
+----
+
+
+
+
+
+----
+
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/xml
+---
+{
+ output: write(payload, "application/xml")
+}
+----
+
+.Output
+[source,xml,linenums]
+----
+<?xml version='1.0' encoding='UTF-8'?>
+
+
+
+
+----
+
+
+
+
+
+
+
 == Similar
 
 Evaluates if two values are similar, regardless of their type. For example, the string "1234" and the number 1234 aren't equal, but they are recognized as similar.
@@ -2603,7 +2683,7 @@ You can change the format of a date to fit another standard, see <<coerce to dat
 |!= ~= ==                          |Equality evaluators    | 6
 |<<AND>>                              |Conditional And         | 7
 |<<OR>>                                |Conditional OR          | 8
-|<<Default>>, <<Match>>, <<Matches>>             |Default Value / Pattern Matching / Binary Operators | 9
+|<<Default>>, <<Match>>, <<Matches>>, <<Map>>, <<Map Object>>, <<Group By>>, <<Filter>>             |Default Value / Pattern Matching / Binary Operators | 9
 |<<When or Otherwise>>, <<Unless or Otherwise>>             |Conditional Expressions | 10
 |===
 
