@@ -1,7 +1,7 @@
 = Test an Enanced API Using MUnit
 :keywords: tests, qa, quality assurance, verify, functional testing, unit testing, stress testing
 
-== Enhance Your Existing Test
+== Update Your Existing Test
 
 This tutorials assumes that you link:/anypoint-platform-for-apis/create-an-automatic-munit-test[generated an automatic MUnit test] when you imported your API into Anypoint Studio.
 
@@ -45,7 +45,7 @@ Run the t-shirt application from Studio and use the APIKit console to mock a GET
 ]
 ----
 
-Save this raw JSON response as `getTestSample.json` in your classpath under */src/test/resources*:
+Save this raw JSON response as `getInventory.json` in your classpath under */src/test/resources*:
 
 image:savejsonresponse.png[savejsonresponse]
 
@@ -67,7 +67,7 @@ image:assert-payload-equals-update-expected-payload.png[assert-payload-equals-up
 ....
 [source,xml,linenums]
 ----
-<munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('getTestSample.json').asString()]" actualValue="#[paylaod]" doc:name="Assert Equals"/>
+<munit:assert-on-equals message="The response payload is not correct!" expectedValue="#[getResource('getInventory.json').asString()]" actualValue="#[paylaod]" doc:name="Assert Equals"/>
 ----
 ....
 ------
@@ -79,17 +79,17 @@ The file referenced in the `getResource()` expression needs to be in your classp
 
 Do the same with the _Assert Equals Message Processor_ in your `get:/orders/status:t-shirt-config-200-application/json-FlowTest` flow.
 
-* Simulate an empty *POST* request with the query parameters `email` and `orderId` using the APIKit console rendered when you run your application
+* Simulate an empty *GET* request with the query parameters `email` and `orderId` using the APIKit console rendered when you run your application
 
-* Save the generated raw response in your classpath under */src/test/resources* (name it `postTestSample.json`)
+* Save the generated raw response in your classpath under */src/test/resources* (name it `getOrderStatus.json`)
 
 [source,json,linenums]
 ----
 {"orderId":"2244","status":null,"size":"S"}
 ----
 
-* Use the same MEL expression to assert the payload against the expected one: `#[getResource('postTestSample.json').asString()]`.
+* Use the same MEL expression to assert the payload against the expected one: `#[getResource('getOrderStatus.json').asString()]`.
 
 == Download this Example
 
-You can download link:_attachments/my-raml-implementation.zip[a Mule archive] of this project. In Studio, click *File* > *Import*, select *Anypoint Studio generated Deployable Archive (zip)* and import your downloaded zip file.
+You can download link:_attachments/t-shirt.zip[a Mule archive] of this project. In Studio, click *File* > *Import*, select *Anypoint Studio generated Deployable Archive (zip)* and import your downloaded zip file.

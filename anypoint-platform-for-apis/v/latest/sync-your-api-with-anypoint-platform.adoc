@@ -95,6 +95,7 @@ image:api-sync-view-raml-update.png[api-sync-view-raml-update]
 Simply select your `raml` file and click the _Upload_ button to submit your chances to Anypoint Platform. +
 To learn more about this in detail, check our link:anypoint-platform-for-apis/api-sync-reference[API sync reference page].
 
+You can also navigate to your API Designer to check how the updates were pushed.
 
 == Next
 

@@ -123,16 +123,18 @@ Use the following Dataweave expressions for the respective flows:
 %output application/xml
 %namespace ns0 http://mulesoft.org/tshirt-service
 ---
-{ns0#OrderTshirt:
+{
+ns0#OrderTshirt: {
   size: payload.size,
   email: payload.email,
   name: payload.name,
   address1: payload.address1,
   address2: payload.address2,
   city: payload.city,
-  stateOrProince: payload.stateOrProvince,
+  stateOrProvince: payload.stateOrProvince,
   postalCode: payload.postalCode,
   country: payload.country
+	}
 }
 ----
 +
