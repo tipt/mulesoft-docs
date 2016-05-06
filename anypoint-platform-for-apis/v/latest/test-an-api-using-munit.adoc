@@ -92,4 +92,5 @@ Do the same with the _Assert Equals Message Processor_ in your `get:/orders/stat
 
 == Download this Example
 
-You can download link:_attachments/t-shirt.zip[a Mule archive] of this project. In Studio, click *File* > *Import*, select *Anypoint Studio generated Deployable Archive (zip)* and import your downloaded zip file.
+You can download link:_attachments/t-shirt.zip[a Mule archive] of this whole project. +
+Once you downloaded to your machine, from Studio, click *File* > *Import*, select *Anypoint Studio generated Deployable Archive (zip)* and import your downloaded zip file.
