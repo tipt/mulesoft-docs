@@ -1569,10 +1569,9 @@ You can reference any *Property* (System or Spring) that exists in the server wh
 
 == See Also
 
-
+* link:/mule-user-guide/v/3.8-m1/dataweave-quickstart[DataWeave quickstart guide]
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
-* link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]
 * link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
 * link:http://forums.mulesoft.com[MuleSoft's Forums]
 * link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[MuleSoft Support]

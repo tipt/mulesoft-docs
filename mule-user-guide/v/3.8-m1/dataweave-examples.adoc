@@ -3,7 +3,7 @@
 
 *_Enterprise_*
 
-Below are a series of advanced examples using link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language]. For a more basic and closely guided step by step series of exercises that take you through how to use this feature via the Anypoint Studio UI, see link:/mule-user-guide/v/3.8-m1/dataweave-tutorials[DataWeave tutorials].
+Below are a series of advanced examples using link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language]. For a more basic and closely guided step by step series of exercises that take you through how to use this feature via the Anypoint Studio UI, see link:/mule-user-guide/v/3.8-m1/dataweave-quickstart[DataWeave quickstart guide].
 
 == Using the Map Operator
 

@@ -463,7 +463,7 @@ DataWeave supports streaming a large payload. No configuration is necessary in t
 
 == See Also
 
-* link:/mule-user-guide/v/3.8-m1/dataweave-tutorial[DataWeave Tutorial]
+* link:/mule-user-guide/v/3.8-m1/dataweave-quickstart[DataWeave quickstart guide]
 * View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
 * link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
