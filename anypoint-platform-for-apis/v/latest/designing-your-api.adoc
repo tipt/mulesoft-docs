@@ -1,7 +1,7 @@
 = Designing Your API
 :keywords: api, designer, console, raml, apikit
 
-*API Designer* is the Anypoint Platform for APIs custom environment specifically dedicated to designing and writing an API definition in link:http://raml.org/[RAML]. The API definition that you create here can be consumed by link:/anypoint-platform-for-apis/building-your-api[APIkit] (as well as other RAML interpreting frameworks such as Osprey, JAXRS-Codegen, etc) to build out your API.
+*API Designer* is the Anypoint Platform for APIs custom environment specifically dedicated to designing and writing an API definition in link:http://raml.org/[RAML]. The API definition that you create here can be consumed by link:/anypoint-platform-for-apis/apikit[APIkit] (as well as other RAML interpreting frameworks such as Osprey, JAXRS-Codegen, etc) to build out your API.
 
 The Designer is automatically paired with the API Console, allowing you to watch your API take shape as you write it. Using the Mocking Service you can even perform live calls to get a feel for how well its information architecture works before there's anything running behind it.
 
