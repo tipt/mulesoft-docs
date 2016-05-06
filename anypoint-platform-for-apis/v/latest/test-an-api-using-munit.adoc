@@ -1,4 +1,4 @@
-= Test an Enanced API Using MUnit
+= Update Your Existing MUnit Test
 :keywords: tests, qa, quality assurance, verify, functional testing, unit testing, stress testing
 
 == Update Your Existing Test

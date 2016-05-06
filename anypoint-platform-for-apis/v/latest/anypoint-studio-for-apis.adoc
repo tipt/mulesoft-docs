@@ -1,0 +1,21 @@
+= Build Powerful Applications Using Anypoint Studio
+:keywords: api, apikit, raml, studio, anypoint studio
+
+In the New Enterprise, Application Programming Interfaces (APIs) play a key role in synchronizing and streamlining communication between applications. Building a good API eco-system in an enterprise requires tools, helpful constraints, and guidelines to enforce good design practices and maximize the productivity of time spent coding. RAML, Anypoint Studio and APIkit can help developers code faster, test efficiently, and provide documentation for end-users.
+
+*RESTful API Modeling Language (http://raml.org/[RAML])* works to define RESTful APIs. Leveraging YAML and JSON, RAML is exceptionally lightweight, encouraging the organic emergence of elegant API patterns. Use RAML – and its link:http://raml.org/projects.html[intuitive tooling] – to design and write your API interface, then import the interface file into Studio to build out your API with APIkit. 
+
+*APIkit* is an *open-source*, declarative toolkit specially created to facilitate REST and SOAP API implementation. As a simple framework that caters to API-first development, APIkit enforces good API implementation practices. Rather than spending weeks or months building an API, you can use this toolkit to develop, document, and test an API within a few days or even hours. 
+
+*Anypoint Studio* is an integration development environment that offers powerful tools to design, test, deploy and update APIs in an easy-to-use visual editor. It also provides a powerful XML editor to manipulate your code directly. +
+This tutorial focuses on the API oriented tools that Studio provides. For a more complex use of all Studio potential start with the link:/mule-fundamentals/v/3.8-m1/anypoint-studio-essentials[Anypoint Studio Essentials].
+
+
+== Get Started with Anypoint Studio for APIs.
+
+In this section, you can find:
+
+* An link:/anypoint-platform-for-apis/modernize-an-api-using-studio[easy walkthrough] to modernize an old SOAP based web service into a functional REST-based application.
+* A reference page for link:/anypoint-platform-for-apis/apikit[APIKit] along with an link:/anypoint-platform-for-apis/apikit-tutorial[APIKit tutorial].
+* References to Anypoint Studio API Tools such as link:/anypoint-platform-for-apis/api-sync-reference[API Sync].
+* Guidelines to link:/anypoint-platform-for-apis/deploying-your-api-or-proxy[deploy your Mule application from Studio].
