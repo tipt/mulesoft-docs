@@ -1763,16 +1763,23 @@ In the example above, what was in the CDATA element isn't parsed by the DataWeav
 
 The write operator can compose data into any given format, irregardless of what the transformation is doing at a larger scale. The result is then treated as a string literal within the rest of the output. You could for example include a CSV field within one element of an XML output.
 
-The first argument points to the element that must be written, the second is the format in which to write it. A third optional argument lists wrirter configuration properties. See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[Output Directive] and its sub-sections for a full list of available configuration options for each different format.
+The first argument points to the element that must be written, the second is the format in which to write it. A third optional argument lists writer configuration properties. See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[Output Directive] and its sub-sections for a full list of available configuration options for each different format.
 
 .Input
-[source,xml,linenums]
+[source,json,linenums]
 ----
-
-
-
-
-
+"Name": "Mr White",
+"Email": "white@mulesoft.com",
+"Id": "1234",
+"Title": "Chief Java Prophet"
+},
+{
+"Name": "Mr Orange",
+"Email": "orange@mulesoft.com",
+"Id": "4567",
+"Title": "Integration Ninja"
+}
+]
 ----
 
 
@@ -1783,22 +1790,19 @@ The first argument points to the element that must be written, the second is the
 %output application/xml
 ---
 {
- output: write(payload, "application/xml")
+ output: write(payload, "application/csv", {"separator" : "|"})
 }
 ----
 
 .Output
 [source,xml,linenums]
 ----
-<?xml version='1.0' encoding='UTF-8'?>
-
-
-
-
+<?xml version='1.0' encoding='US-ASCII'?>
+<output>Name|Email|Id|Title
+Mr White|white@mulesoft.com|1234|Chief Java Prophet
+Mr Orange|orange@mulesoft.com|4567|Integration Ninja
+</output>
 ----
-
-
-
 
 
 

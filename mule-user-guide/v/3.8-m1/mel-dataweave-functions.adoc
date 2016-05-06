@@ -59,6 +59,8 @@ The `split()` function runs an expression written in DataWeave language and ret
 [NOTE]
 The DataWeave expression that you write in this function must be enclosed in "quotation marks". It must also return a single array.
 
+Below is the most basic DW expression you can write, but you could also put any other DW expression as long as it returns an iterable list.
+
 [source,code]
 ----
 split('payload','application/json')
@@ -74,11 +76,6 @@ That same expression could be added inside a link:/mule-user-guide/v/3.8-m1/fore
     </foreach>
 </flow>
 ----
-
-
-
-
-
 
 
 
