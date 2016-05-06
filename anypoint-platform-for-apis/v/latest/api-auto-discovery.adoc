@@ -18,7 +18,7 @@ References to API gateway configurations in this page are kept as a support for 
 
 [tabs]
 ------
-[tab,title="Current Version"]
+[tab,title="Mule Runtime"]
 ....
 === Mule Runtime 3.8 and Newer versions
 

@@ -51,7 +51,7 @@ Your APIkit project or proxy application should be saved as a deployable zip fil
 
 If your organization has On Premises Auto-Deploy enabled, and you have already configured your API Gateway for Auto-deployment, then you can also deploy your applications on premises link:/runtime-manager/managing-servers[via the Anypoint Runtime Manager Console].
 
-
+////
 === Deploying to API Gateway
 
 [tabs]
@@ -229,6 +229,7 @@ If you plan to expose your API through SSL, then there are a couple of link:/run
 
 ....
 ------
+////
 
 === Deploying to Mule ESB
 
