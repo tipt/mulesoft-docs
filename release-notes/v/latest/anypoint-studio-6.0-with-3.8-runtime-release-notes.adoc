@@ -153,6 +153,35 @@ Nothing was deprecated in this release.
 
 === New Features
 
+==== Unified! Single Runtime, APIKit Bundled within Studio and Updated New Project Wizard
+
+Previously, building an API within Studio required installation of API Gateway runtime. Now, Mule 3.8 has become an unified single runtime for both integration and APIs.  Previously, APIKit was updated as a separate plugin. Now, it has become a default component bundled into Studio. We also have integrated SOAP Kit into APIKit. As a result of these unification efforts, we now have an updated New Project Wizard, that simplifies user experience, bridges API Designer and Studio, and reduces complexity by decreasing number of runtime and plugin versions.
+
+image::anypoint-studio-6.0-with-3.8-runtime-release-notes-9b46a.png[]
+
+==== Seamless API Design-to-Implementation Experience
+
+Now you can seamlessly pull, push and compare between Studio and API Designer with API Sync View.
+
+image::anypoint-studio-6.0-with-3.8-runtime-release-notes-5aa45.png[]
+
+==== Support to Flat Files in DataWeave
+
+DataWeave now supports flat files, allowing to parse files that have hierarchical structures in a text delimited or fixed length form.
+
+image::anypoint-studio-6.0-with-3.8-runtime-release-notes-a88e9.png[]
+
+==== Improved Debugging and Error Messages
+
+The debugger now shows more detailed data for some connectors, such as HTTP and Database, making it easier to debug. The Mule 3.8 runtime also includes improved error messages, which allow you to clearly see where the error is coming from and click to navigate to that point in the flow.
+
+image::anypoint-studio-6.0-with-3.8-runtime-release-notes-357c0.png[]
+
+And a lot more:
+* Support for RAML 1.0
+* Support for reading and writing fixed width and other flat files using DataWeave (copybook support still Beta, reference doc).
+* Support to browse for WSDLs in the exchange when configuring the Web Services Consumer.
+
 
 === Bug Fixes
 
