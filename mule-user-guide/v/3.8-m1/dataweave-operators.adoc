@@ -819,6 +819,9 @@ Coerce the given value to the specified type.
 [TIP]
 DataWeave by default attempts to convert the type of a value before failing, so using this operator to convert is sometimes not required but still recommended.
 
+[NOTE]
+Check the link:/mule-user-guide/v/3.8-m1/dataweave-types#type-coercion-table[type coercion table] to see what conversions between what types are allowed in DataWeave.
+
 === Coerce to string
 .(':any', ':type')
 

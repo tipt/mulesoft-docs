@@ -598,6 +598,9 @@ In Anypoint Studio, you can define several more values, like separators, quote c
 Below is an index that includes all of the different operators in DataWeave, sorted by the types of the parameters it accepts.
 Each operator displays what type is accepted on each of its arguments, not all arguments are required.
 
+[TIP]
+When you provide an operator with properties that don't match the expected types, DataWeave automatically <<Type Coercion Table, attempts to coerce>> the provided property to the required type.
+
 === Operations Performed on any Type
 
 [width="100%",cols="50,50",options="header",]
@@ -761,6 +764,64 @@ Each operator displays what type is accepted on each of its arguments, not all a
 | link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[+] |(':localdatetime', ':period')
 | link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[-] |(':localdatetime', ':period')
 |===
+
+
+== Type Coercion Table
+
+In DataWeave, types can be coerced from one type to other using the link:/mule-user-guide/v/3.8-m1/dataweave-operators#as[AS Operator].
+This table shows the possible combinations and the properties from the schema that are used in the transformation.
+
+[TIP]
+When you <<DataWeave Operators Sorted by Type, provide an operator>> with properties that don't match the expected types, DataWeave automatically attempts to coerce the provided property to the required type.
+
+|====
+|Source                          |Target                  | Property
+|:object                         |:array                  |   (1)
+|:range                          |:array                  |
+|:number                         |:binary                 |
+|:string                         |:binary                 |
+|:string                         |:boolean                |
+|:number                         |:datetime               | unit
+|:localdatetime                  |:datetime               |
+|:string                         |:datetime               | format / locale
+|:datetime                       |:localdate              |
+|:localdatetime                  |:localdate              |
+|:string                         |:localdate              | format / locale
+|:datetime                       |:localdatetime          |
+|:string                         |:localdatetime          | format / locale
+|:datetime                       |:localtime              |
+|:localdatetime                  |:localtime              |
+|:time                           |:localtime              |
+|:string                         |:localtime              | format / locale
+|:datetime                       |:number                 | unit
+|:string                         |:number                 | format / locale
+|:array                          |:object                 |
+|:string                         |:period                 |
+|:string                         |:regex                  |
+|:datetime                       |:string                 | format / locale
+|:localdatetime                  |:string                 | format / locale
+|:localtime                      |:string                 | format / locale
+|:localdate                      |:string                 | format / locale
+|:timetype                       |:string                 | format / locale
+|:period                         |:string                 |
+|:timezone                       |:string                 |
+|:number                         |:string                 | format / locale
+|:boolean                        |:string                 |
+|:range                          |:string                 | (2)
+|:type                           |:string                 |
+|:trait                          |:string                 |
+|:datetime                       |:time                   |
+|:localdatetime                  |:time                   |
+|:localtime                      |:time                   |
+|:string                         |:time                   | format
+|:datetime                       |:timezone               |
+|:time                           |:timezone               |
+|:string                         |:timezone               |
+|====
+
+
+(1) Returns and array with all the values of the object.
+(2) Returns a string with all the values of the range using "," as the separator
 
 
 == Next Steps
