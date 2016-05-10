@@ -6,9 +6,7 @@
 image:dw-logo.png[dw]
 
 
-Jump-start your skills for connecting anything to anything by learning how to use the powerful DataWeave data transformation tool.
-
-Using the Transform Message component on Anypoint Studio to leverage DataWeave language, you can easily connect services that deal with very different data types and structures. In this example you will connect a service that sends XML order requests to another that expects JSON inputs with different field names and arrangement by using nothing but the drag and drop UI. You will also group and filter the output of another request by using simple DataWeave syntax to carry out complex data transformations.
+Using the Transform Message component on Anypoint Studio to leverage DataWeave language, you can powerfully expand your ability to connect anything to anything, regardless of the data type or structure. In this example you will connect a service that sends XML order requests to another that expects JSON inputs with different field names and data structure by using nothing but a simple drag and drop UI. Then you will dive deep into the more advanced features of the DataWeave language and process the output of anther request to carry out dynamic transformations that group and filter its contents.
 
 This quick start guide introduces key features of DataWeave, including:
 
