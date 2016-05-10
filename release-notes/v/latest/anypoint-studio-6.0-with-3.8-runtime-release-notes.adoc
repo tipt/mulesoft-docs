@@ -29,13 +29,80 @@ Versions: TBD
 
 == What's New
 
+As APIs become more central to Anypoint Platform, we have focused this release to improve Studio’s capability and usability around API use cases. This new release enables developers to implement both APIs and mule integration applications in one unified runtime, and to complete full API design-to-implement lifecycle all in one IDE, with seamless integration between Studio and Anypoint Platform. Prior to this release, there were separate design environments (API Designer and Studio), separate runtimes (API Gateway and Mule runtime), and multiple plugins (APIKit for SOAP and others).
+
+With Studio 6.0.0 and Mule 3.8, users can:
+
+* Conduct API design-to-implementation  inside Studio, including defining, building, testing, registering to API Manager, deploying and consuming APIs:
+** Implement REST and SOAP APIs  with enhanced New Project wizard and APIKit fully integrated into Studio out-of-the-box
+** Browse for WSDLs and RAMLs in Exchange to consume APIs in HTTP and WS
+** Seamlessly navigate between API design and implementation by synchronizing (pull, push, compare) between API Designer and Studio inside Studio 6.0.0
+* Use one unified runtime for both integration mule applications and APIs managed by API Platform
+* Start using RAML 1.0 (launched May 2016) to create / edit API definitions inside Studio with an embedded editor that can help you create, modify, validate and suggest.
+
+In addition to these API-related functionalities, Studio 6.0 / Mule 3.8 shows our efforts towards improving debugging experience within Studio:
+* More detailed data for debugging some connectors, such as HTTP and Database
+* Improved error messages, which allow you to clearly see where the error is coming from and click to navigate to that point in the flow
+
+Other features include:
+
+Mule 3.8 features:
+
+* Support for non-blocking to JMS outbound request response endpoint
+* Mule Cluster Improvements Quorum and JDBC MapStore Persistence
+* Configurable BatchJobInstance id
+* Configurable Batch block size
+* Custom log4j2 config locations.
+* Domain descriptor for loader overrides and redeployment control
+* Timezone attribute in Quartz connector and scheduler module
+* Query timeout to DB connector operations
+* New known_hosts validation to SFTP Transport
+
+DataWeave:
+
+* Support for reading and writing fixed-width and other flat files using DataWeave
+* Support for COBOL copybook
+* Migration tool for DataMapper to DataWeave now supports fixed-width files
+
+MUnit
+
+* Multiple suite run
+* MUnit nested folders
+* Ability to create coverage reports from inside Studio
+* Support autocompletion for MUnit’s MEL functions
+* Metadata support to MUnit message processors
+
+SAP R/3 Business Suite Connector v3.0.0:
+
+* Support of MEL expressions to define JCo Client Extended Properties.
+* Enhancement of DataSense to display additional information. For Functions and BAPIs, it is now possible to identify tables and structures, optional and required fields, the 'real' data type  associated with them (such as Char, Number), their length and a description. For IDocs, segments are also clearly labeled.
+////
+TO DO Add Link to the release Notes
+////
+
 
 == Hardware and Software System Requirements
+
+* For most use cases, Anypoint Studio with the 3.8 Runtime does not change hardware or software requirements.
+* MuleSoft recommends a minimum of 4GB RAM on a developer workstation. As applications become complex, consider adding more RAM.
+* This version of Anypoint Studio requires Java 7 or Java 8.
+
+[NOTE]
+--
+If you are installing Anypoint Studio on a Mac computer with OS X that has no Java installed, the OS may require that you first download and install link:http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase6-419409.html[JDK 1.6]. Install JDK 1.6 first and then install JDK 1.7.
+--
+
+[NOTE]
+--
+If you are running McAfee VirusScan on your Windows OS, Eclipse-based Anypoint Studio may experience negative performance impacts. McAfee has suggested the following remedy link:https://kc.mcafee.com/corporate/index?page=content&id=KB58727[options].
+--
+
 
 [[migration]]
 == Migration Guide
 
-This version is a Beta, there is no migration from a GA version to a Beta.
+From the previous versions of Studio 5.1.0, 5.1.1, 5.2.0, 5.2.1, 5.3.0, 5.4.1, 5.4.2 and 5.4.3, there is no special migration needed, but when opening a previous Workspace with projects that were created with Studio 5.1.0 or older, and which has metadata stored in disk, Studio asks you to perform an update to all the projects so that the New Metadata Manager can handle the types and to show the types in your project.
+
 
 [TIP]
 ====
@@ -50,11 +117,36 @@ Then specify the location of your old version of Anypoint Studio in your local d
 
 == Known Issues
 
+* API Designer and Studio’s new API sync feature sometimes do not work properly when the RAML file is too long (e.g. 4,000+ lines)
+* OData APIKit extension beta does not support RAML 1.0 and the new APIKit integrated within Studio 6.0. For customers using OData extension, please stay with Studio 5.4. We plan for GA of OData implementation feature with Studio in the next few release.
+* DataSense currently does not support RAML 1.0 types.
+* Suggester for RAML 1.0 does not support RAML types and RAML files without header.
+* MUnit RAML-to-Test autogeneration feature does not support RAML 1.0. We are actively working to evolve the feature.
+* Cloudhub and Exchange not available when using TLS 1.1 or 1.2 under OSX Yosemite.
+* Embedded API Console has the following known issues:
+* When running an MUnit test over Windows without admin right,  you may find a "could not load library jansi" error. This is due to jar file that log4j uses that tries to use this dll library and if it can not find it then it tries to create it under java.io.tmpdir system property. If the user do not have write permissions to that directory which Windows always returns as `C:\Windows` it will fail.
++
+The workaround is to overwrite that property in the lunch configuration: `Djava.io.tmpdir=D:\Users\myUserName` or run Studio as an Administrator
+* Studio 6.0 does not support the following Mule 3.8 features:
+** RecordVars and record payload should be editable in a commit block.
+** Object Store support gaps around Idempotent Redelivery Policy, Aggregators and DevKit token manage
 
 == Support
 
-* link:http://forums.mulesoft.com/[MuleSoft’s Forum]
-*  link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[MuleSoft Support]
+* Refer to Mulesoft Documentations
+** API-related: Building APIs in Studio User Guide
+*** link:/anypoint-platform-for-apis/api-sync-reference[API Sync View]
+*** Implementing a
+**** link:/anypoint-platform-for-apis/apikit-tutorial#creating-a-new-project[REST]
+**** link:/anypoint-platform-for-apis/apikit-for-soap#creating-a-new-project[SOAP]
+**** link:/anypoint-platform-for-apis/creating-an-odata-api-with-apikit#installing-and-using-the-apikit-odata-extension[OData API]
+*** link:/anypoint-platform-for-apis/create-an-automatic-munit-test#automatically-create-a-test-suite[Testing an API using MUnit]
+** DataWeave flat file
+** Improved DataWeave docs
+
+* Access link:http://forums.mulesoft.com/[MuleSoft’s Forum] to pose questions and get help from Mule’s broad community of users.
+* To access MuleSoft’s expert support team link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[subscribe to Mule ESB Enterprise] and log in to MuleSoft’s link:http://www.mulesoft.com/support-login[Customer Portal].
+
 
 == Deprecated in this Release
 
