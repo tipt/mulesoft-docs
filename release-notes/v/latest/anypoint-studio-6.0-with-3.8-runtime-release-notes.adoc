@@ -136,10 +136,7 @@ The workaround is to overwrite that property in the lunch configuration: `Djava.
 * Refer to Mulesoft Documentations
 ** API-related: Building APIs in Studio User Guide
 *** link:/anypoint-platform-for-apis/api-sync-reference[API Sync View]
-*** Implementing a
-**** link:/anypoint-platform-for-apis/apikit-tutorial#creating-a-new-project[REST]
-**** link:/anypoint-platform-for-apis/apikit-for-soap#creating-a-new-project[SOAP]
-**** link:/anypoint-platform-for-apis/creating-an-odata-api-with-apikit#installing-and-using-the-apikit-odata-extension[OData API]
+*** Implementing a link:/anypoint-platform-for-apis/apikit-tutorial#creating-a-new-project[REST API] / link:/anypoint-platform-for-apis/apikit-for-soap#creating-a-new-project[SOAP API] / link:/anypoint-platform-for-apis/creating-an-odata-api-with-apikit#installing-and-using-the-apikit-odata-extension[OData API]
 *** link:/anypoint-platform-for-apis/create-an-automatic-munit-test#automatically-create-a-test-suite[Testing an API using MUnit]
 ** DataWeave flat file
 ** Improved DataWeave docs
