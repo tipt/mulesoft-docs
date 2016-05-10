@@ -1004,7 +1004,7 @@ See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#flow-variable
 
 
 .Intput 1 - Payload
-[source; json]
+[source, json, linenums]
 ----
 [
   {
@@ -1080,7 +1080,7 @@ See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#flow-variable
 ----
 
 .Input 3 FlowVariable filterParamenter
-[source; json]
+[source, json, linenums]
 ----
 {
   "publishedAfter": 2004
@@ -1859,7 +1859,7 @@ Note that for this example to work, on the payload input you must set the reader
 
 
 .Input - Payload
-[source,xml]
+[source,xml, linenums]
 ------------------------------------------------------------
 <sfdc_users>
     <sfdc_user>
@@ -1880,7 +1880,7 @@ Note that for this example to work, on the payload input you must set the reader
 ------------------------------------------------------------
 
 .Input - flowVariable mapping
-[source,json]
+[source,json, linenums]
 ------------------------------------------------------------
 [
   {
