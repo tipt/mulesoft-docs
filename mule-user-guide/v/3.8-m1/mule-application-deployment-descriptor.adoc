@@ -55,12 +55,12 @@ For details on classloading in MuleMule, including a diagram of the Mule classlo
 
 == Deployment Descriptor in a Domain
 
-Just as in Applications, you can add a `mule-deploy.properties` in the `src/main/app` folder of link:/mule-user-guide/v/3.7/shared-resources[a domain project]. This deployment descriptor file only supports the following properties:
+Just as in Applications, you can add a `mule-deploy.properties` in the `src/main/domain` folder of link:/mule-user-guide/v/3.7/shared-resources[a domain project]. This deployment descriptor file only supports the following properties:
 
 
 [width="100%",cols="34%,33%,33%",options="header",]
 |===
 |Name |Description |Default
-|redeployment.enabled |Allows explicitly disabling application hot-redeployment - configuration 'master' file will not be monitored for changes. Dropping a new version of the application archive in the `$MULE_HOME/apps` will still redeploy the application. Any values other than `true, yes, on` are treated as `false` and disable the config change monitor. |Enabled by default
-|loader.override |Overrides default class loading. The property value is specified as a comma-separated list of classes, packages, or both. Blocking can also be specified by preceding the classes or packages in the list with a - (dash/minus sign). If a class is specified in the blocking list, its lookup is performed within the application or plugin only, and not in Mule. For further details, see link:/mule-user-guide/v/3.8-m1/classloader-control-in-mule[Classloader Control in Mule]. |Empty by default
+|redeployment.enabled |Allows explicitly disabling domain hot-redeployment - configuration 'master' file will not be monitored for changes. Dropping a new version of the domain archive in the `$MULE_HOME/apps` will still redeploy the domain. Any values other than `true, yes, on` are treated as `false` and disable the config change monitor. |Enabled by default
+|loader.override |Overrides default class loading. The property value is specified as a comma-separated list of classes, packages, or both. Blocking can also be specified by preceding the classes or packages in the list with a - (dash/minus sign). If a class is specified in the blocking list, its lookup is performed within the domain or plugin only, and not in Mule. For further details, see link:/mule-user-guide/v/3.8-m1/classloader-control-in-mule[Classloader Control in Mule]. |Empty by default
 |===
