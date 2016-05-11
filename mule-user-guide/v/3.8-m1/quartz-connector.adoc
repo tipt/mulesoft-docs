@@ -3,10 +3,11 @@
 
 
 
-image:quartz-connector-icon.png[[quartz connector icon]]
+image:quartz-connector-icon.png[[quartz connector icon]
 
 [TIP]
-When scheduling tasks, it's recommended that you instead resort to the link:https://developer.mulesoft.com/docs/display/current/Poll+Reference[Poll Scope]
+When scheduling tasks, it's recommended that you instead resort to the
+link:/mule-user-guide/v/3.8-m1/poll-reference[Poll Scope Reference]
 
 The Quartz Connector supports the scheduling of programmatic events, both inside and outside your Mule flow. Through a quartz endpoint, you can trigger flows that don't depend on receiving any external input to execute at scheduled times.
 
