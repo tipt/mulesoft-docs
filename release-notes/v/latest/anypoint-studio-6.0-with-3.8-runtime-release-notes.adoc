@@ -29,53 +29,31 @@ Versions: TBD
 
 == What's New
 
-As APIs become more central to Anypoint Platform, we have focused this release to improve Studio’s capability and usability around API use cases. This new release enables developers to implement both APIs and mule integration applications in one unified runtime, and to complete full API design-to-implement lifecycle all in one IDE, with seamless integration between Studio and Anypoint Platform. Prior to this release, there were separate design environments (API Designer and Studio), separate runtimes (API Gateway and Mule runtime), and multiple plugins (APIKit for SOAP and others).
+This release incorporates major improvements around Studio’s support for the API development lifecycle, incorporating more seamless integration between Studio and API Designer, expanding support for APIkit, and supporting a unified runtime for API Gateways and Mule. These capabilities include:
 
-With Studio 6.0.0 and Mule 3.8, users can:
+* Seamlessly navigate between API designer and Studio by synchronizing (pull, push, compare) your APIs
+* Ability to register your APIs in API Manager from within Studio
+* The ability to select an API from API Manager to implement from within Studio
+* Support for SOAP APIs in APIkit
+* An enhanced New Project wizard which supports both REST and SOAP API implementation
+* Browse for WSDLs and RAMLs in Exchange to consume APIs in HTTP and WS Consumer
+* An early access version of RAML 1.0 to create / edit API definitions and implement flows using APIkit
 
-* Conduct API design-to-implementation  inside Studio, including defining, building, testing, registering to API Manager, deploying and consuming APIs:
-** Implement REST and SOAP APIs  with enhanced New Project wizard and APIKit fully integrated into Studio out-of-the-box
-** Browse for WSDLs and RAMLs in Exchange to consume APIs in HTTP and WS
-** Seamlessly navigate between API design and implementation by synchronizing (pull, push, compare) between API Designer and Studio inside Studio 6.0.0
-* Use one unified runtime for both integration mule applications and APIs managed by API Platform
-* Start using RAML 1.0 (launched May 2016) to create / edit API definitions inside Studio with an embedded editor that can help you create, modify, validate and suggest.
-
-In addition to these API-related functionalities, Studio 6.0 / Mule 3.8 shows our efforts towards improving debugging experience within Studio:
+In addition to these API-related functionalities, Studio also includes many other improvements:
 * More detailed data for debugging some connectors, such as HTTP and Database
 * Improved error messages, which allow you to clearly see where the error is coming from and click to navigate to that point in the flow
-
-Other features include:
-
-Mule 3.8 features:
-
-* Support for non-blocking to JMS outbound request response endpoint
-* Mule Cluster Improvements Quorum and JDBC MapStore Persistence
-* Configurable BatchJobInstance id
-* Configurable Batch block size
-* Custom log4j2 config locations.
-* Domain descriptor for loader overrides and redeployment control
-* Timezone attribute in Quartz connector and scheduler module
-* Query timeout to DB connector operations
-* New known_hosts validation to SFTP Transport
-
-DataWeave:
-
-* Support for reading and writing fixed-width and other flat files using DataWeave
-* Support for COBOL copybook
-* Migration tool for DataMapper to DataWeave now supports fixed-width files
-
-MUnit
-
-* Multiple suite run
-* MUnit nested folders
-* Ability to create coverage reports from inside Studio
-* Support autocompletion for MUnit’s MEL functions
+* DataWeave now includes supports for new file formats, allowing you to read and write fixed-width and other flat files using DataWeave. The structure of these files can be easily defined via a new Flat File Definition file format. You can also import COBOL Copybook files into this schema format using Studio (Early Access). Finally, if you have previous DataMapper transformations, you can use the migration tool to convert them to DataWeave transformations now.
+* MUnit run multiple suites
+* MUnit allows nested folders for tests
+* Create MUnit coverage reports from inside Studio
+* Autocompletion support for MUnit’s MEL functions
 * Metadata support to MUnit message processors
+* SAP R/3 Business Suite Connector v3.0.0:
+** Support of MEL expressions to define JCo Client Extended Properties.
+** Enhancement of DataSense to display additional information. For Functions and BAPIs, it is now possible to identify tables and structures, optional and required fields, the 'real' data type  associated with them (such as Char, Number), their length and a description. For IDocs, segments are also clearly labeled.
 
-SAP R/3 Business Suite Connector v3.0.0:
+This release also features support for all the new capabilities in Mule 3.8, which are found in the Mule 3.8 release notes.
 
-* Support of MEL expressions to define JCo Client Extended Properties.
-* Enhancement of DataSense to display additional information. For Functions and BAPIs, it is now possible to identify tables and structures, optional and required fields, the 'real' data type  associated with them (such as Char, Number), their length and a description. For IDocs, segments are also clearly labeled.
 ////
 TO DO Add Link to the release Notes
 ////
@@ -118,11 +96,11 @@ Then specify the location of your old version of Anypoint Studio in your local d
 == Known Issues
 
 * API Designer and Studio’s new API sync feature sometimes do not work properly when the RAML file is too long (e.g. 4,000+ lines)
-* OData APIKit extension beta does not support RAML 1.0 and the new APIKit integrated within Studio 6.0. For customers using OData extension, please stay with Studio 5.4. We plan for GA of OData implementation feature with Studio in the next few release.
+* OData APIKit extension beta does not support RAML 1.0 and the new APIKit integrated within Studio 6.0. For customers using OData extension, please stay with Studio 5.4. We will be releasing an update soon with support for OData.
 * DataSense currently does not support RAML 1.0 types.
 * Suggester for RAML 1.0 does not support RAML types and RAML files without header.
 * MUnit RAML-to-Test autogeneration feature does not support RAML 1.0. We are actively working to evolve the feature.
-* Cloudhub and Exchange not available when using TLS 1.1 or 1.2 under OSX Yosemite.
+* Cloudhub and Exchange are not available when using TLS 1.1 or 1.2 under OSX Yosemite.
 * Embedded API Console has the following known issues:
 * When running an MUnit test over Windows without admin right,  you may find a "could not load library jansi" error. This is due to jar file that log4j uses that tries to use this dll library and if it can not find it then it tries to create it under java.io.tmpdir system property. If the user do not have write permissions to that directory which Windows always returns as `C:\Windows` it will fail.
 +
