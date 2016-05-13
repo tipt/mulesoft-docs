@@ -1,12 +1,13 @@
 = DataWeave Flatfile Schemas
 :keywords: b2b, edi, schema, dataweave, yaml, language, reference
 
-link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] allows you to process several different types of data. For most of these types, you can link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#defining-input-and-output-structure[import a schema] that describes the input structure in order to have access to valuable metadata at design time. DataWeave uses a YAML format called FFD (for Flat File Definition) to represent flat file schemas. The FFD format is very flexible to support a range of use cases, but is based around the concepts of elements, composites, segments and structures.
+link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] allows you to process several different link:/mule-user-guide/v/3.8-m1/dataweave-formats[types of data]. For most of these types, you can link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#defining-input-and-output-structure[import a schema] that describes the input structure in order to have access to valuable metadata at design time. DataWeave uses a YAML format called FFD (for Flat File Definition) to represent flat file schemas. The FFD format is very flexible to support a range of use cases, but is based around the concepts of elements, composites, segments and structures.
 
-* *element* - an element is a basic data item, which has an associated type and fixed width, along with formatting options for how the data value is read and written
-* *composite* - a group of elements and/or composites which are used together
-* *segment* - a line of data, made up of any number of elements and/or composites which may be repeated
-* *structure* - a hierarchical organization of segments, which requires that the segments have unique identifier codes as part of their data
+* *element* - an element is a basic data item, which has an associated type and fixed width, along with formatting options for how the data value is read and written.
+* *composite* - (optional) a group of elements. It can also include other child composites.
+* *segment* - a line of data, made up of any number of elements and/or composites which may be repeated.
+* *group* - (optional) several segments grouped together. It can also include other child groups.
+* *structure* - a hierarchical organization of segments, which requires that the segments have unique identifier codes as part of their data.
 
 If you are only working with one type of record, you only need to have a segment definition for that record type in your FFD. If you're working with multiple types of records in the same transform, you'll need to use a structure definition that controls how these different records are combined.
 
