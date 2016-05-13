@@ -1,8 +1,15 @@
 = Update your API Definition and Sync it With Anypoint Platform
 
-The RAML file you link:/anypoint-platform-for-apis/create-an-api#define-the-api-in-the-api-designer[defined] earlier in this tutorial lacks a proper response definition for your `/orders` resource. Remember this matches the `OrderTshirt` resource for posting a new order, so let's create a proper response.
+When you update a RAML file from Anypoint Studio, the *API Sync* view allows you to synchronize those changes to your API version hosted in Anypoint Platform.
 
-Edit your API definition locally and push your updates to your Anypoint Platform.
+== Prerequesites
+
+To illustrate this quickstart, we are assuming you implemented the link:/quickstarts-and-tutorials/implement-and-test[`t-shirt.api` project in Studio].
+
+[NOTE]
+--
+In order for API Sync to work, you need to edit an API in Studio that was imported from the Anypoint Platform.
+--
 
 == Edit Your RAML File using The RAML Editor
 
@@ -84,8 +91,6 @@ body:
       }
 ----
 
-Download an updated RAML file from link:/anypoint-platform-for-apis/_attachements/t-shirt-updated.raml[here].
-
 == Synchronize your Updated RAML File With Anypoint Platform
 
 Notice that your API Sync view now allows you to upload your changes through the _Upload_ button:
@@ -96,8 +101,3 @@ Simply select your `raml` file and click the _Upload_ button to submit your chan
 To learn more about this in detail, check our link:/anypoint-platform-for-apis/api-sync-reference[API sync reference page].
 
 You can also navigate to your API Designer to check how the updates were pushed.
-
-== Next
-
-Now that your application was updated to interact with a SOAP based web service and you set an expected response code, your automatically generated unit tests need to be manually updated.
-earn link:/anypoint-platform-for-apis/test-an-api-using-munit[how to create an MUnit test for your updated application using MUnit].

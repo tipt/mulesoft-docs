@@ -1,21 +1,96 @@
-= Generate an MUnit Test Suite Based on a RAML
+= Implement and Testing an API
 
-== Overview
+Using Anypoint Studio, you can enhance, change, mock, and link:\[test an API] that you create in Anypoint Platform. In Studio, you can also create a new API or a new version of an API based on a existing API in Anypoint Platform.
 
-Following the example developed in link:/anypoint-platform-for-apis/import-an-api-into-anypoint-studio[the previous article], this tutorial focuses on giving you an easy walkthrough to develop a *unit test* for said application.
+You can also create unit tests for your applications and even synchronize your work in Studio with Anypoint Platform.
+
+== Prerequisites
+
+To create a Studio project for the example T-Shirt API on Anypoint Platform, you first need to set up the following things:
+
+* link:/anypoint-platform-for-apis/create-an-api[An API in Anypoint Platform]
+* link:/anypoint-platform-for-apis/create-a-proxy-for-an-api[A proxy] for the inbound endpoint of the API
+
+[TIP]
+--
+This tutorial showcases the basic usage of Studio for working with an API deployed in Anypoint Platform. +
+If this is your first time using Studio, we also recommend you to take a look at our link:/mule-fundamentals/v/3.8-m1/basic-studio-tutorial[Basic Studio Tutorial] for a more detailed explanation of each tool and view within Studio.
+--
+
+== Create a Project Based on a RAML
+
+To create a Mule project in Studio based on an existing RAML API:
+
+. Click *File* > *New* > *Mule Project* to create a project, and set the field values in the new project wizard:
++
+* Type an arbitrary name for the project, for example `t-shirt`.
+* Select a Mule Server, for example Mule Server 3.8.0 EE.
+* Check *Add APIkit components*.
+* In API Definition, click the browse ... button, and select *Anypoint Platform*.
++
+image:walk-new-proj.png[walk-new-proj]
++
+The Browse API Manager for APIs dialog appears.
++
+. Click *Add Credentials*.
++
+The *Anypoint Platform Sign In* dialog appears.
++
+image:walk-browse-api-mgr.png[walk-browse-api-mgr]
++
+. Enter your user name and password, and click *Sign In*.
++
+The names and versions of your APIs in your Anypoint Platform organization, for example the *Enterprises* organization appear. If you belong to multiple organizations, use the drop-down located above the list of APIs to select your APIs in other organizations.
++
+image:walk-browse-api-mgr2.png[walk-browse-api-mgr2]
++
+. Select the API you want to use in Studio, *T-Shirt Ordering Service* in this example. Click *OK*. Click *Finish*.
++
+The `t-shirt.xml` file appears in the `src/main/app` folder of the Package Explorer. The `api-main` flow appears at the top of the canvas and contains the link:/anypoint-platform-for-apis/apikit-basic-anatomy[APIkit Router]. Below the main flow, are the other flows defined by the RAML--one for each resource/method pairing defined within the RAML spec. Do not rename these flows.
++
+[TIP]
+--
+Take a moment to see all the default views that are loaded once the SOAP application is imported.
+
+image:studio6-project-open.png[studio6-project-open]
+
+If you are familiar with link:/mule-fundamentals/v/3.8-m1/anypoint-studio-essentials#the-visual-editor[Anypoint Studio's visual editor], you notice a new view loaded next to the Mule Palette.
+
+This is the link:/anypoint-platform-for-apis/api-sync-reference[API Sync] view, which allows you to synchronize your changes with Anypoint Platform and to download all updates from the Anypoint Platform to your Studio instance. This feature is covered link:/anypoint-platform-for-apis/sync-your-api-with-anypoint-platform[later in this tutorial].
+--
++
+The project creation process also adds a link:/mule-user-guide/v/3.7/reference-exception-strategy[Reference Exception Strategy] to handle all possible errors.
++
+. Select *Run project t-shirt* from the context menu.
++
+The Console below the canvas shows the output of building and deploying the project. The APIkit Consoles tab contains a mockup of the API operations identical to the mockup you used earlier in the API Designer.
+
+image:apikit-console-resources.png[apikit-console-resources]
+
+Use the mocking service and enter the email address and an orderId as a query parameter to retrieve a particular order. +
+
+In response, you receive a status 200: success!
+
+[NOTE]
+--
+The regular expression used to define the pattern of each query parameter might cause the APIKit to flag those fields as _Invalid pattern_. +
+If this happens, click on *Force GET* to see the results.
+--
+
+== Create an MUnit Test
 
 A _unit test_ consists of verifying that a single _unit of code_ works as expected. +
 In this particular example, we focus on verifying the statuses and payloads returned by your APIKit router configuration following your `file.raml` specs. +
 The purpose of running unit tests is making sure that the core functions of your application behave as you intend them to behave and return the values that you expect them to return. +
 Later on, you can choose to automate each test to run before you deploy the application so you can make sure that all core functionalities in your project comply with your design.
 
-To do this, we employ link:/munit/v/1.2.0/index[MUnit], a _Mule application testing framework_ that allows you to build automated tests for your integrations and APIs. +
+To do this, we employ link:/munit/v/1.2.0/[MUnit], a _Mule application testing framework_ that allows you to build automated tests for your integrations and APIs. +
 For this example, we are using an integrated automatic test creator to build the necessary tests for a RAML-based application.  +
-Keep in mind that MUnit provides a full suite of integration and unit test capabilities. To learn more about its components and how to integrate MUnit with your continuous deployment environment, check the link:/munit/v/1.2.0/index[MUnit documentation].
+Keep in mind that MUnit provides a full suite of integration and unit test capabilities. To learn more about its components and how to integrate MUnit with your continuous deployment environment, check the link:/munit/v/1.2.0/[MUnit documentation].
 
 == Install MUnit
 
-link:/munit/v/1.2.0/index[MUnit] is fully integrated with Anypoint Studio, allowing you to design your tests the same way you would design a Mule application in Studio. +
+link:/munit/v/1.2.0/[MUnit] is fully integrated with Anypoint Studio, allowing you to design your tests the same way you would design a Mule application in Studio. +
 To use it, you first need to install it in your current Studio version. +
 
 Go to `Help` / `Install New Software...` and click the `Add...` button. +
@@ -82,7 +157,3 @@ image:run-test-suite.png[run-test-suite]
 
 The result of every test is shown in the *MUnit view* in Anypoint Studio: +
 image:test-suite-result.png[test-suite-result]
-
-== Next
-
-. Now that you tested your REST-based application, integrate it application to link:/anypoint-platform-for-apis/update-an-api-using-anypoint-studio[consume the legacy SOAP Web Service].

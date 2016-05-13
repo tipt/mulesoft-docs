@@ -3,7 +3,8 @@
 
 * link:/quickstarts-and-tutorials/[Quickstarts and Tutorials]
 ** link:/quickstarts-and-tutorials/quickstarts[Quickstarts]
-*** link:/quickstarts-and-tutorials/create-an-api[Designing an API]
-*** link:/quickstarts-and-tutorials/[Implementing and Testing an API]
+*** link:/quickstarts-and-tutorials/design-an-api[Designing an API]
+*** link:/quickstarts-and-tutorials/implement-and-test[Implementing and Testing an API]
+*** link:/quickstarts-and-tutorials/sync-api-apisync[Syncing an API]
 ** link:/quickstarts-and-tutorials/tutorials[Tutorials]
-*** link:/quickstarts-and-tutorials/[Modernizing a Legacy SOAP API]
+*** link:/quickstarts-and-tutorials/modernize-an-api-studio[Modernizing a Legacy SOAP API]

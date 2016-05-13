@@ -1,7 +1,7 @@
-= Create an API
+= Designing an API
 :keywords: api, define, creator, create, raml
 
-In this part, you focus on designing a REST API by writing a RAML definition to match your SOAP service's WSDL.
+In this part, you focus on designing a REST API by writing a RAML definition to match a SOAP service's WSDL.
 
 == Prerequisites
 
@@ -313,8 +313,3 @@ queryParameters:
 ----
 
 link:_attachments/t-shirt.raml[Download the entire RAML].
-
-
-== Next
-
-Go to link:/anypoint-platform-for-apis/create-a-proxy-for-an-api[Create a Proxy].

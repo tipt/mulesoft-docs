@@ -1,6 +1,6 @@
 = Update an API Using Anypoint Studio
 
-This section covers how to update your legacy SOAP application and integrate it to the T-Shirt API you created earlier in Anypoint Platform.
+This section covers how to update a legacy SOAP application and integrate it to a T-Shirt REST API created in Anypoint Platform.
 
 == Consume a Web Service
 
@@ -151,7 +151,3 @@ ns0#OrderTshirt: {
 ----
 +
 . Save your project.
-
-== Next
-
-Now that your application can interact with your SOAP legacy project, let's apply one more change to your RAML file and link:/anypoint-platform-for-apis/sync-your-api-with-anypoint-platform.[synchronize your updated project with Anypoint Platform using API Sync].
