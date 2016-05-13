@@ -6,4 +6,4 @@ The instructions detailed in this section are meant to show the specific usage o
 
 Find below:
 
-* How to link/quickstarts-and-tutorials/modernize-an-api-studio[Update a REST-based Mule application to consume a SOAP web service].
+* How to link:/quickstarts-and-tutorials/modernize-an-api-studio[Update a REST-based Mule application to consume a SOAP web service].
