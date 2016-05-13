@@ -1,10 +1,217 @@
-= DataWeave Types
+= DataWeave Value Types
 :keywords: studio, anypoint, esb, transform, transformer, format, aggregate, rename, split, filter convert, xml, json, csv, pojo, java object, metadata, dataweave, data weave, datamapper, dwl, dfl, dw, output structure, input structure, map, mapping
 
 image:dw-logo.png[dw]
 
-The link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] language functions essentially as a template engine that describes an output structure through the use of elements that may be of various different types. This document covers the different types of objects you can use to construct your output.
+The link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] language functions essentially as a template engine that describes an output structure through the use of elements that may be of various different types.
 
+This document covers the different types of objects you can use to construct your output.
+
+
+
+
+
+== Array
+*Type* => ':array'
+
+Arrays are represented as a sequences of *value* expressions.
+
+[source,DataWeave]
+--------------------------------------------------------------------
+[ 1, 2 + 2, 3 * 3, $x ]
+--------------------------------------------------------------------
+
+*Array Literal*
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+---
+[ "My", "three", "words" ]
+----
+
+=== Conditional Elements
+
+Arrays can define conditional *values* based on a condition.
+Wrap the value expression between parenthesis and use the *when* keyword with the condition.
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+---
+[(1) when true, (2) when false]
+----
+
+.Output
+[source,json,linenums]
+----
+[1]
+----
+
+== Object
+
+*Type* => ':object'
+
+Objects are represented as a collection of *key*: *value* pairs.
+
+. Object: { 'Key' : Value }
+. Key : 'Qualified Name' 'Attributes'
+. Qualified Name: 'namespace prefix#name' where the 'namespace prefix#' part is optional
+. Name: String that represents the name.
+. Attributes: @('Qualified Name'= *value*,...)
+
+[TIP]
+Strings must be double quoted to be recognized as strings.
+
+=== Single Value Objects
+
+If an Object has only one key:value pair, the enclosing curly brackets { } are not required:
+
+.Example
+
+[source,DataWeave,linenums]
+---------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+name: "Annie"
+---------------------------------------------------------
+
+=== Conditional Elements
+
+Objects can define conditional *key*: *value* pairs based on a conditional expression.
+Wrap the key:value expression between parenthesis and use the *when* keyword with the condition.
+
+[source,DataWeave,linenums]
+---------------------------------------------------------
+%dw 1.0
+%output application/xml
+---
+file: {
+  name: "transform",
+  (extension: "zip") when payload.fileSystem?
+}
+---------------------------------------------------------
+
+This example outputs an additional field called "extension" only when the fileSystem property is present in payload (this field may contain any value, not just "true").
+
+[source,xml,linenums]
+--------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<file>
+  <name>transform</name>
+  <extension>zip</extension>
+</file>
+--------------------------------------------------------
+
+If absent:
+
+[source,xml,linenums]
+--------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<file>
+  <name>transform</name>
+</file>
+--------------------------------------------------------
+
+=== Dynamic Elements
+
+Dynamic elements allow you to add the result of an expression as key:value pairs of an object.
+
+.Transform
+[source,DataWeave,linenums]
+--------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+{
+  a: "a",
+  (["b","c","d"] map {'$': $})
+}
+--------------------------------------------------------
+
+.Output
+[source,json,linenums]
+--------------------------------------------------------
+{
+  "a": "a",
+  "b": "b",
+  "c": "c",
+  "d": "d"
+}
+--------------------------------------------------------
+=== Dynamic keys
+
+In order to set an a key via an expression, the expression should be wrapped in parenthesis.
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/json
+---
+{name: 'Data Weave'} mapObject {(upper $$ as :string) : $}
+----
+
+.Output
+[source,json,linenums]
+----
+{
+  "NAME": "Data Weave"
+}
+----
+
+=== Conditional Attributes
+
+Attributes can be conditional based on a given condition.
+Wrap the key:value expression in parenthesis and use the *when* keyword with the condition.
+
+.Transform
+[source,DataWeave,linenums]
+----
+%dw 1.0
+%output application/xml
+---
+name @((company: "Acme") when false, (transform: "Anything") when true): "DataWeave"
+----
+
+.Output
+[source,xml,linenums]
+----
+<?xml version='1.0' encoding='US-ASCII'?>
+<name transform="Anything">DataWeave</name>
+----
+
+=== Dynamic Attributes
+
+Dynamic attributes allow you to add the result of an expression as key:value pairs of the attributes set.
+
+.Input
+[source,json,linenums]
+----
+{
+  "company": "Mule",
+  "product": "DataWeave"
+}
+----
+
+.Transform
+[source,dataweave,linenums]
+----
+%dw 1.0
+%output application/xml
+---
+tranformation @((payload)): "Transform from anything to anything"
+----
+
+.Output
+[source,xml,linenums]
+----
+<?xml version='1.0' encoding='US-ASCII'?>
+<tranformation company="Mule" product="DataWeave">Transform from anything to anything</tranformation>
+----
 
 
 == String
@@ -47,34 +254,6 @@ String interpolation allows you to embed variables or expressions directly in a 
 }
 --------------------------------------------------------
 
-=== Selectors
-
-==== Index selector
-
-Selects the character at a given position using "[]".
-
-. If the index is bigger or equals to 0, it starts counting from the beginning.
-. If the index is negative, it starts counting from the end.
-
-.Transform
-[source,DataWeave, linenums]
---------------------------------------------------------
-%dw 1.0
-%output application/json
----
-{
-  name: "Emiliano"[0]
-}
---------------------------------------------------------
-
-.Output
-[source,json,linenums]
---------------------------------------------------------
-{
-  "name": "E"
-}
---------------------------------------------------------
-
 == Number
 
 *Type* => ':number'
@@ -87,103 +266,6 @@ There is no loss of precision in any operation, the engine always stores the dat
 *Type* => ':boolean'
 
 A boolean is defined by the keywords 'true' and 'false'.
-
-
-
-== Object
-
-*Type* => ':object'
-
-Objects are represented as a collection of key:value pairs.
-
-. Object: { 'Key' : Value }
-. Key : 'Qualified Name' @('Qualified Name'= Value,...)
-. Qualified Name: 'namespace prefix#name' where the 'namespace prefix#' part is optional
-. Name: String that represents the name.
-
-[TIP]
-Strings must be double quoted to be recognized as strings.
-
-
-=== Special Types of Objects
-
-==== Single Value Objects
-
-If an Object has only one key:value pair, the enclosing curly brackets { } are not required:
-
-.Example
-
-[source,DataWeave,linenums]
----------------------------------------------------------
-%dw 1.0
-%output application/xml
----
-name: "Annie"
----------------------------------------------------------
-
-==== Conditional Elements
-
-Objects can define conditional key:value pairs based on a conditional expression.
-
-[source,DataWeave,linenums]
----------------------------------------------------------
-%dw 1.0
-%output application/xml
----
-file: {
-  name: "transform",
-  (extension: "zip") when payload.fileSystem?
-}
----------------------------------------------------------
-
-This example outputs an additional field called "extension" only when the fileSystem property is present in payload (this field may contain any value, not just "true").
-
-[source,xml,linenums]
---------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
-<file>
-  <name>transform</name>
-  <extension>zip</extension>
-</file>
---------------------------------------------------------
-
-If absent:
-
-[source,xml,linenums]
---------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
-<file>
-  <name>transform</name>
-</file>
---------------------------------------------------------
-
-==== Dynamic Elements
-
-Dynamic elements allow you to add the result of an expression as key:value pairs of an object.
-
-.Transform
-[source,DataWeave,linenums]
---------------------------------------------------------
-%dw 1.0
-%output application/json
----
-{
-  a: "a",
-  (["b","c","d"] map {'$': $})
-}
---------------------------------------------------------
-
-.Output
-[source,json,linenums]
---------------------------------------------------------
-{
-  "a": "a",
-  "b": "b",
-  "c": "c",
-  "d": "d"
-}
---------------------------------------------------------
-
 
 
 == Dates
@@ -345,7 +427,7 @@ a: |23:59:56| + |PT9M|
 ----------------------------------------------------------------
 
 
-=== Accessors
+=== Date decomposition
 
 In order to access the different parts of the date, special selectors must be used.
 
@@ -475,69 +557,6 @@ To then assign an element as being of the custom type you defined, use the opera
 customer:payload.user as :user
 ----
 
-=== Defining Types as a Hint for Developers
-
-In Anypoint Studio, it's easy to view metadata that describes the input and output data of every building block you're using. When defining a custom type for a particular input or output of your transform, this is represented in the DataWeave transformer's metadata.
-Exposing metadata helps you understand what it is you're integrating to in order to build up the rest of a system, as it lets you know what you need to provide and what you can expect in advance.
-
-==== Java
-
-===== Class
-
-Java developers use the 'class' metadata key as hint for what class needs to be created and sent in.
-If this is not explicitly defined, DataWeave tries to infer from the context or it assigns it the default values:
-
-
- * java.util.HashMap for *objects*
- * java.util.ArrayList for *lists*
-
-.Transform
-[source,DataWeave, linenums]
------------------------------------------------------------------------
-%dw 1.0
-%type user = :object { class: "com.anypoint.df.pojo.User"}
-%output application/xml
----
-{
-  name : "Mariano",
-  age : 31
-} as :user
-
------------------------------------------------------------------------
-
-The above code defines your type as an instance of 'com.anypoint.df.pojo.User'.
-
-==== Xml
-
-===== CDATA
-
-Xml specifies a new type called *:cdata* that inherits from *:string*. Using this type outputs a CDATA structure.
-
-.Transform
-[source,DataWeave, linenums]
-----------------------------------------------------------------------
-%dw 1.0
-%output application/xml
----
-{
-  users:
-  {
-    user : "Mariano" as :cdata,
-    age : 31 as :cdata
-  }
-}
-----------------------------------------------------------------------
-
-.Output
-[source,xml,linenums]
-----------------------------------------------------------------------
-<?xml version="1.0" encoding="UTF-8"?>
-<users>
-  <user><![CDATA[Mariano]]></user>
-  <age><![CDATA[31]]></age>
-</users>
-----------------------------------------------------------------------
-
 
 === Defining Types For Type Coercion
 
@@ -593,7 +612,117 @@ books: payload.items.*item map
 In Anypoint Studio, you can define several more values, like separators, quote characters and escape characters. See link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio#configuring-the-csv-reader[Using DataWeave in Studio].
 
 
-== DataWeave Operators Sorted by Type
+
+== Function and Lambdas
+
+*type* -> :function
+
+In DataWeave, function and lambdas (anonymous functions) are first-class citizen and they can be used inside operators such as a map, mapObject, etc, and can even be assigned to a variable.
+When using lambdas within the body of a DataWeave file in conjunction with an operator such as link:/mule-user-guide/v/3.8-m1/dataweave-operators#map[map operator], its attributes can either be explicitly named or left anonymous, in which case they can be referenced as $, $$, etc.
+
+
+
+=== Assign to a var
+
+You can define a function as a variable with a link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#define-constant-directive[constant directive] through '%var'
+
+.Transport
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+%var toUser = (user) -> {firstName: user.givenName, lastName: user.sn}
+---
+{
+  "user" : toUser({ givenName : "Annie", sn : "Point" })
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  "user": {
+    "firstName": "Annie",
+    "lastName": "Point"
+  }
+}
+----
+
+=== Named attributes with an Operator
+
+This example uses a lambda with an attribute that's explicitly named as 'name'.
+
+.Input
+[source,DataWeave, linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+users: ["john", "peter", "matt"] map ((name) ->  upper name)
+---------------------------------------------------------------------
+
+.Transform
+[source,json,linenums]
+---------------------------------------------------------------------
+{
+  "users": ["JOHN","PETER","MATT"]
+}
+---------------------------------------------------------------------
+
+=== Anonymous attributes with an Operator
+
+This example uses a lambda with an attribute that's not explicitly named, and so is referred to by default as '$'.
+
+.Transform
+[source,DataWeave, linenums]
+---------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+users: ["john", "peter", "matt"] map  upper $
+---------------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+---------------------------------------------------------------------
+{
+  "users": ["JOHN","PETER","MATT"]
+}
+---------------------------------------------------------------------
+
+
+=== Declare using function directive
+
+You can declare functions in the Header and these can be invoked at any point in the Body, you can also declare functions anywhere in the body. You refer to them using the form *function-name()* passing an expression in between the parenthesis for each necessary argument. Each expression between the parenthesis is evaluated and the result is passed as an argument used in the execution of the function body.
+
+.Transform
+[source,DataWeave, linenums]
+----
+%dw 1.0
+%output application/json
+%function toUser(user){firstName: user.givenName, lastName: user.sn}
+---
+{
+  "user" : toUser({ givenName : "Annie", sn : "Point" })
+}
+----
+
+.Output
+[source, json,linenums]
+----
+{
+  "user": {
+    "firstName": "Annie",
+    "lastName": "Point"
+  }
+}
+----
+
+
+
+
+== Operators Sorted by Type
 
 Below is an index that includes all of the different operators in DataWeave, sorted by the types of the parameters it accepts.
 Each operator displays what type is accepted on each of its arguments, not all arguments are required.
@@ -612,7 +741,7 @@ When you provide an operator with properties that don't match the expected types
 |===
 
 
-=== Operations Performed on ':number')
+=== Operations Performed on ':number'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -632,7 +761,7 @@ When you provide an operator with properties that don't match the expected types
 |===
 
 
-=== Operations Performed on ':array')
+=== Operations Performed on ':array'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -659,7 +788,7 @@ When you provide an operator with properties that don't match the expected types
 | link:/mule-user-guide/v/3.8-m1/dataweave-operators#unzip-array[unzip] |(':array')
 |===
 
-=== Operations Performed on ':string')
+=== Operations Performed on ':string'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -689,7 +818,7 @@ When you provide an operator with properties that don't match the expected types
 | link:/mule-user-guide/v/3.8-m1/dataweave-operators#contains[contains] |(':string', ':regex')
 |===
 
-=== Operations Performed on ':object')
+=== Operations Performed on ':object'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -706,7 +835,7 @@ When you provide an operator with properties that don't match the expected types
 
 
 
-=== Operations Performed on ':datetime')
+=== Operations Performed on ':datetime'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -717,7 +846,7 @@ When you provide an operator with properties that don't match the expected types
 | link:/mule-user-guide/v/3.8-m1/dataweave-operators#subtracting-two-dates[-] |(':datetime', ':datetime')
 |===
 
-=== Operations Performed on ':date')
+=== Operations Performed on ':date'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -730,7 +859,7 @@ When you provide an operator with properties that don't match the expected types
 | link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[-] |(':date', ':period')
 |===
 
-=== Operations Performed on ':time')
+=== Operations Performed on ':time'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -742,7 +871,7 @@ When you provide an operator with properties that don't match the expected types
 |===
 
 
-=== Operations Performed on ':localtime')
+=== Operations Performed on ':localtime'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -754,7 +883,7 @@ When you provide an operator with properties that don't match the expected types
 | link:/mule-user-guide/v/3.8-m1/dataweave-operators#adding-a-period-of-time[-] |(':localtime', ':period')
 |===
 
-=== Operations Performed on ':localdatetime')
+=== Operations Performed on ':localdatetime'
 
 [width="100%",cols="50,50",options="header",]
 |===
@@ -828,7 +957,6 @@ When you <<DataWeave Operators Sorted by Type, provide an operator>> with proper
 
 * For a high level overview about the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
 * For a reference about all of the operators that are available for using, see link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
-* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 * View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
 
 
@@ -836,8 +964,9 @@ When you <<DataWeave Operators Sorted by Type, provide an operator>> with proper
 
 * link:/mule-user-guide/v/3.8-m1/dataweave-quickstart[DataWeave quickstart guide]
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
-* link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
+* link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats[DataWeave Formats]
+* link:/mule-user-guide/v/3.8-m1/dataweave-selectors[DataWeave Selectors]
+* link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
-* link:http://forums.mulesoft.com[MuleSoft's Forums]
-* link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[MuleSoft Support]
-* mailto:support@mulesoft.com[Contact MuleSoft]

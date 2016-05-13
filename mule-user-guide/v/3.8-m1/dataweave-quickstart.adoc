@@ -190,7 +190,7 @@ image::dataweave-quickstart-4abf1.png[]
 
 You can make the transform form the previous section a little more interesting by changing the literal expression that populates "size" into a conditional expression.
 
-See in the code below how the line that defines "size" has changed, it uses the link:/mule-user-guide/v/3.8-m1/dataweave-operators#unless-or-otherwise[Unless and Otherwise operators] to conditionally set the value to "M" unless the buyer's state is Texas, in which case makes the shirt size "XXL".
+See in the code below how the line that defines "size" has changed, it uses the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#unless-otherwise[Unless and Otherwise operators] to conditionally set the value to "M" unless the buyer's state is Texas, in which case makes the shirt size "XXL".
 
 
 [source, DataWeave, linenums]
@@ -399,7 +399,7 @@ shirts: payload map {
 The filter operator takes an array as an input validates each element in it against a condition. In this case, the array it takes is the resulting array created by the map operation, since the filter operation is only executed once the map operation is already compiled. Note that the condition uses the `$` selector to signal the element of the array that is currently being revised.
 
 [TIP]
-See the link:/mule-user-guide/v/3.8-m1/dataweave-operators#operator-precedence-table[Operator Precedence Table] to have a clear idea about when each operator is executed.
+See the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#precedence-table[Precedence Table] to have a clear idea about when each expression is compiled.
 
 
 If you open the *Preview* section, you can see what this transform would output, given the sample as an input. The output's array now contains one element less, which was the product that had 0 stock.
@@ -490,8 +490,9 @@ If you open the *Preview* section, you can see what this transform would output,
 * See more advanced examples in link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
 * link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
-* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
 * link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
-* link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats[DataWeave Formats]
+* link:/mule-user-guide/v/3.8-m1/dataweave-selectors[DataWeave Selectors]
 * link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
 * Migrate your old DataMapper components automatically using link:/mule-user-guide/v/3.8-m1/dataweave-migrator[DataWeave Migrator Tool]

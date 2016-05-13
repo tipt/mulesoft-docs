@@ -209,53 +209,29 @@ image:dw_reader_configuration_select.png[reader conf]
 </dw:input-payload>
 ----
 
-The properties you can configure depend on the type of your input, see the sections below.
 
-=== CSV
-
-In CSV you can assign any special character as the indicator for separating fields, toggling quotes, or escaping quotes. Make sure you know what special characters are being used in your input, so that DataWeave can interpret it correctly.
-
-image:edit_input_reader2.png[image]
-
-When defining an input of type CSV, there are a few optional reader parameters you can use to customize how the data will be parsed.
-
-* `header`: boolean that defines if the first line in the data contains headers. 'true' by default.
-* `separator`: character that separates fields, `','` by default
-* `quote`: character that defines quoted text, `" "` by default
-* `escape`: character that escapes quotes, `/` by default
-* `headerLineNumber`: the line number where the header is located. 0 by default.
-* `bodyStartLineNumber`: the line number where the actual body starts. 0 by default.
-* `ignoreEmptyLine`: boolean that defines if empty lines are ignored. 'true' by default.
-* `nullValueOn`: boolean that defines if a tag with empty or blank text should be read as null. 'none' by default.
-
-[NOTE]
-====
-When `header=true` you can then access the fields within the input anywhere by name. Ex: `in0.userName`.
-
-When `header=false` you must access the fields by index, referencing first the entry and then the field, Ex: `in0[107][2]`
-====
-
-You can set these propertes by either editing the XML code or via the UI:
+You can set these properties by either editing the XML code or via the UI:
 
 [tabs]
 ------
 [tab,title="Studio Visual Editor"]
 ....
 
-In Anypoint Studio, there are two ways to set this up. You can either set the parameters of the CSV input through the Transform Message component itself or by setting it up on the component of your Mule flow that actually brings this information in.
+In Anypoint Studio, there are two ways to set this up. You can either set the parameters of the input through the Transform Message component itself or by setting it up on the component of your Mule flow that actually brings this information in.
 
 On the Transform Message component, left-click on the element in the input structure and select *Reader Configuration*.
 
 image:dw_reader_configuration_select.png[reader]
 
-[TIP]
+[NOTE]
 This option won't be available if the type of the input doesn't allow for this kind of configuration. If the payload is of type `unknown`, you must change its type first.
+
 
 ....
 [tab,title="XML Editor"]
 ....
 
-In the XML editor, if you want to parse CSV inputs with custom modifiers, you must set these up as child elements of the DataWeave component, like in the example below:
+In the XML editor, if you want to parse inputs with custom modifiers, you must set these up as child elements of the DataWeave component, like in the example below:
 
 [source, xml, linenums]
 ----
@@ -265,78 +241,19 @@ In the XML editor, if you want to parse CSV inputs with custom modifiers, you mu
 </dw:input-payload>
 ----
 
-Refer to the list above for a full reference of all the available parameters.
 
-[source,xml,linenums]
-----
-	 <dw:transform-message metadata:id="33a08359-5085-47d3-aa5f-c7dd98bb9c61"
-	 			doc:name="Transform Message">
- 			<dw:input-payloa
- 			    <!-- Boolean that defines if the first line in the data contains headers -->
- 				<dw:reader-property name="header" value="false" />
- 				<!-- Character that separates fields, `','` by default -->
- 				<dw:reader-property name="separator" value="," />
- 				<!-- Character that defines quoted text, `" "` by default -->
- 				<dw:reader-property name="quote" value="&quot;" />
- 				<!-- Character that escapes quotes, `\` by default -->
- 				<dw:reader-property name="escape" value="\" />
- 			</dw:input-payload>
- 			<dw:set-payload>
-                <![CDATA[
-                    %dw 1.0
-                    %output application/java
-                    ---
-                    // Your transformation script goes here
-                ]]>
-            </dw:set-payload>
-     </dw:transform-message>
-----
+
 
 ....
 ------
 
+For a detailed reference of what properties can be set in the Reader Configuration of each format, see the corresponding *reader properties* section:
 
-=== Flat File
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats#csv[CSV]
 
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats#xml[XML]
 
-When defining an input of type Flat File, there are a few optional reader parameters you can add to the input directive to customize how the data will be parsed.
-
-* `SchemaPath`: Location in your local disk of the schema file used to parse your input
-* `StructureIdent`: In case the schema file defines multiple different structures, this field selects which to use
-
-You can set these propertes by either editing the XML code or via the UI:
-
-[tabs]
-------
-[tab,title="Studio Visual Editor"]
-....
-
-On the Transform Message component, left-click on the element in the input structure and select *Reader Configuration*.
-
-image:dw_reader_configuration_select.png[reader]
-
-[TIP]
-This option won't be available if the type of the input doesn't allow for this kind of configuration. If the payload is of type `unknown`, you must change its type first.
-
-....
-[tab,title="XML Editor"]
-....
-
-In the XML editor, if you want to parse flat-file inputs with custom modifiers, you must set these up as child elements of the DataWeave component, like in the example below:
-
-[source, xml, linenums]
-----
-<dw:input-payload mimeType="flat-file" >
-    <dw:reader-property name="SchemaPath" value="myschema.ffs"/>
-    <dw:reader-property name="StructureIdent" value="structure1"/>
-</dw:input-payload>
-----
-
-....
-------
-
-[TIP]
-See link:/mule-user-guide/v/3.8-m1/dataweave-flat-file-schemas[DataWeave Flat File Schemas] for instructions and examples on how to create the required schema.
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats#flat-file[Flat File]
 
 == Writer Configuration
 
@@ -344,7 +261,15 @@ Some output formats allow you to define a writer with specific properties that m
 
 These properties are simply written on the `%output` directive of your DataWeave code.
 
-See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[output directive] for details on this.
+For a detailed reference of what properties can be set in the Writer Configuration of each format, see the corresponding *reader properties* section:
+
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats#csv[CSV]
+
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats#xml[XML]
+
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats#json[JSON]
+
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats#flat-file[Flat File]
 
 == Providing Input Sample Data
 
@@ -469,5 +394,4 @@ DataWeave supports streaming a large payload. No configuration is necessary in t
 * link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
 * link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
 * link:/mule-user-guide/v/3.8-m1/dataweave-operators[DataWeave Operators]
-* link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
 * link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]

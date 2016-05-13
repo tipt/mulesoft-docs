@@ -8,16 +8,16 @@ In link:/mule-user-guide/v/3.8-m1/dataweave[DataWeave] you can carry out many di
 * For an introduction to the essentials of the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
 * For an introduction to types in DataWeave, see link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
 * For an index of all available operators, categorized by the types you need to supply as parameters, see link:/mule-user-guide/v/3.8-m1/dataweave-types#dataweave-operators-sorted-by-type[Operators by Type]
-* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-types#functions-and-lambdas[Functions and Lambdas]
 
 [TIP]
-Check the <<Operator Precedence Table>> to see the order in which operators are compiled.
+Check the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#precedence-table[Precedence Table] to see the order in which expressions are compiled.
 
 == Map
 
 === Using Map on an Array
 
-.(':array', ':function')
+.(':array', ':function')  => :array
 
 Returns an array that is the result of applying a transformation function (lambda) to each of the elements.
 The lambda is invoked with two parameters: *index* and the *value*.
@@ -71,7 +71,7 @@ users: ["john", "peter", "matt"] map ((firstName, position) -> position ++ ":" +
 
 === Using Map on an Object
 
-.(':object', ':function')
+.(':object', ':function')  => ':array'
 
 Returns an array with the values that result out of applying a transformation function (lambda) to each of the values in the object. The keys of the original object are all ignored by this operation and the object is treated as an array. To have access to the keys, you can use the operation *mapObject* instead.
 The lambda is invoked with two parameters: *index* and the *value*.
@@ -90,7 +90,7 @@ Check <<map object>> if what you want is to process both keys and values instead
 </prices>
 ----
 
-.Mapping
+.Transform
 [source,DataWeave,linenums]
 ----
 %dw 1.0
@@ -141,7 +141,7 @@ one of these directly uses the value, the other multiplies this value by a const
 
 The mapping below performs exactly the same transform, but it defines custom names for the properties of the operation, instead of using $ and $$. Here, `position` is defined as referring to the array index, and `money` to the value in that index.
 
-.Mapping
+.Transform
 [source,DataWeave,linenums]
 ----
 %dw 1.0
@@ -161,7 +161,7 @@ Note that when you use a parameter to populate one of the keys of your output, a
 
 == Map Object
 
-.(':object', ':function')
+.(':object', ':function')  => ':object'
 
 Similar to Map, but instead of processing only the values of an object, it processes both keys and values, and instead of returning an array with the results of processing these values through the lambda, it returns an object with the key:value pairs that result from processing both key and value of the object through the lambda.
 
@@ -178,7 +178,7 @@ If these parameters are not named, the key is defined by default as *$$* and the
 </prices>
 ----
 
-.Mapping
+.Transform
 [source,DataWeave,linenums]
 ----
 %dw 1.0
@@ -223,7 +223,7 @@ one of these is the original value, the other is the result of multiplying this 
 
 The mapping below performs exactly the same transform, but it defines custom names for the properties of the operation, instead of using $ and $$. Here, 'category' is defined as referring to the original key in the object, and 'money' to the value in that key.
 
-.Mapping
+.Transform
 [source,DataWeave,linenums]
 ----
 %dw 1.0
@@ -243,7 +243,7 @@ Note that when you use a parameter to populate one of the keys of your output, a
 
 == Pluck
 
-.(':object', ':function')
+.(':object', ':function')  => ':array'
 
 Pluck is useful for mapping an object into an array. Pluck is an alternate mapping mechanism to mapObject.
 Like mapObject, pluck executes a lambda over every key:value pair in its processed object,
@@ -297,7 +297,7 @@ result: {
 
 === Using Filter on an Array
 
-.(':array', ':function')
+.(':array', ':function') => ':array'
 
 Returns an array that only contains those that pass the criteria specified in the lambda. The lambda is invoked with two parameters: *index* and the *value*.
 If these parameters are not named, the index is defined by default as *$$* and the value as *$*.
@@ -324,12 +324,12 @@ If these parameters are not named, the index is defined by default as *$$* and t
 
 === Using Filter on an Object
 
-.(':object', ':function')
+.(':object', ':function')  => ':object'
 
 Returns an object with the key:value pairs that pass the acceptance criteria defined in the lambda.
 If these parameters are not named, the key is defined by default as *$$* and the value as *$*.
 
-.Mapping
+.Transform
 [source,DataWeave,linenums]
 ----
 %dw 1.0
@@ -354,7 +354,7 @@ filtered: {
 == Remove
 
 === Using Remove on an Array
-.(':array', ':name')
+.(':array', ':name')  => ':array'
 
 When running it on an array, it returns another array where the specified indexes are removed.
 
@@ -379,7 +379,7 @@ When running it on an array, it returns another array where the specified indexe
 
 
 === Using Remove on an Object
-.(':object', ':name')
+.(':object', ':name')  => ':object'
 
 When running it on an object, it returns another object where the specified keys are removed.
 
@@ -406,7 +406,7 @@ The above example removes the key value pair that contains the key 'aa' from {aa
 
 
 == Remove by Matching Key and Value
-.(':object', ':object')
+.(':object', ':object')  => ':object'
 
 Works just like <<using remove on an object, remove>> on objects, but only removes an element when there is a match of not just the key but of the key + value pair . It returns another object where the specified keys are removed.
 
@@ -433,83 +433,6 @@ myObject: {aa: "a", aa:"c", bb: "b"} -- { aa:"a"}
 The above example removes the key value pair that contains both the key 'aa' and value "a", but not the one that contains only a matching key but not value.
 
 
-== Default
-
-Assigns a default value in case no value is found in the input field.
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/json
----
-{
-    currency: payload.currency default "USD"
-}
-----
-
-
-== Random
-
-Assigns a random value between 0 and 1
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/json
----
-{
-  price: random * 1000
-}
-----
-
-
-
-== When or Otherwise
-
-The keyword *when* conditionally evaluates a part of your DataWeave code, depending on if an expression evaluates to true or to false. You can make a single line conditional, or enclose a whole section in curly brackets. In case the *when* expression evaluates to *false*, its corresponding part of the code is ignored, and the code that corresponds to the *otherwise* expression is executed.
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/json
----
-{
-  currency: "USD"
-} when payload.country == "USA"
-otherwise
-{
-      currency: "EUR"
-}
-----
-
-[TIP]
-Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
-
-== Unless or Otherwise
-
-The keyword *unless* conditionally evaluates a part of your DataWeave code, depending on if an expression evaluates to true or to false. You can make a single line conditional, or enclose a whole section in curly brackets. In case the *unless* expression evaluates to *true*, its corresponding part of the code is ignored, and the code that corresponds to the *otherwise* expression is executed.
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/json
----
-{
-  currency: "EUR"
-} unless payload.country == "USA"
-otherwise
-{
-      currency: "USD"
-}
-----
-
-[TIP]
-Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
-
 == AND
 
 The expression *and* (in lower case) can be used to link multiple conditions, its use means that all of the linked conditions must evaluate to true for the expression as a whole to evaluate to true.
@@ -532,7 +455,7 @@ otherwise
 In the example above, currency is "EUR", unless the payload has BOTH conditions met.
 
 [TIP]
-Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
+Check the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#precedence-table[Precedence Table] to see what expressions are compiled before or after this one.
 
 == OR
 
@@ -556,9 +479,10 @@ otherwise
 In the example above, currency is "EUR", only when one of the conditions evaluates to true.
 
 [TIP]
-Check the <<Operator Precedence Table>> to see what operators are compiled before or after this one.
+Check the link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#precedence-table[Precedence Table] to see what expressions are compiled before or after this one.
 
 == IS
+.(':any', condition)  => ':boolean'
 
 Evaluates if a condition validates to true and returns a boolean value. Conditions may include `and` and `or` operators.
 
@@ -612,7 +536,7 @@ ROOT: payload.root.*order mapObject (
 == Concat
 
 === Using Concat on an Array
-.(':array', ':array')
+.(':array', ':array') => ':array'
 
 
 When using arrays, it returns the resulting array of concatenating two existing arrays.
@@ -638,7 +562,7 @@ When using arrays, it returns the resulting array of concatenating two existing 
 
 === Using Concat on a String
 
-.(':string', ':string')
+.(':string', ':string') => ':string'
 
 Strings are treated as arrays of characters, so the operation works just the same with strings.
 
@@ -663,7 +587,7 @@ Strings are treated as arrays of characters, so the operation works just the sam
 
 === Using Concat on an Object
 
-(':object', ':object')
+.(':object', ':object') => ':object'
 
 Returns the resulting object of concatenating two existing objects.
 
@@ -693,7 +617,7 @@ The example above concatenates object {aa: a} and {cc: c} in a single one => {aa
 Evaluates if an array or list contains in at least one of its indexes a value that validateso true and returns a boolean value. You can search for a literal value, or match a regex too.
 
 === Using Contains on an Array
-.(':array', ':any')
+.(':array', ':any') => ':boolean'
 
 You can evaluate if any value in an array matches a given condition:
 
@@ -749,8 +673,8 @@ ContainsRequestedItem: payload.root.*order.*items contains "3"
 
 === using Contains on a String
 
-.(':string', ':string')
-.(':string', ':regex')
+.(':string', ':string') => ':boolean'
+.(':string', ':regex') => ':boolean'
 
 You can also use contains to evaluate a substring from a larger string:
 
@@ -823,7 +747,7 @@ DataWeave by default attempts to convert the type of a value before failing, so 
 Check the link:/mule-user-guide/v/3.8-m1/dataweave-types#type-coercion-table[type coercion table] to see what conversions between what types are allowed in DataWeave.
 
 === Coerce to string
-.(':any', ':type')
+.(':any', ':type') => ':string'
 
 Any simple types can be coerced to string. If formatting is required (such as for a number or date) the format schema property can be used.
 
@@ -853,7 +777,7 @@ Date and number format schemas are based on Java link:https://docs.oracle.com/ja
 ----
 
 === Coerce to number
-.(':string', ':type')
+.(':string', ':type') => ':number'
 
 A string can be coerced to number. If the given number has a specific format the schema property can be used.
 
@@ -882,7 +806,7 @@ Any format pattern accepted by link:https://docs.oracle.com/javase/8/docs/api/ja
 ----
 
 ==== Coerce a date to number
-.(':time', ':type')
+.(':time', ':type') => ':number'
 
 When coercing a date to a number, there is an extra parameter you can add – 'unit' – to specify what unit of time to use,
 
@@ -911,7 +835,7 @@ When coercing a date to a number, there is an extra parameter you can add – 'u
 Only the values 'seconds' and 'milliseconds' are valid for using in the 'unit' parameter.
 
 === Coerce to date
-.(':string', ':type')/(':number', ':type')
+.(':string', ':type')/(':number', ':type') => ':date'
 
 Date types can be coerced from string or number.
 
@@ -940,7 +864,7 @@ Any format pattern accepted by link:https://docs.oracle.com/javase/8/docs/api/ja
 
 
 === Coerce to Object
-.(':any', ':type')
+.(':any', ':type') => ':object'
 
 You can coerce your input into a custom object type of whatever class you want.
 
@@ -960,7 +884,7 @@ Keep in mind that if the class name contains any '$' characters, they must be es
 
 
 == Type Of
-.(':any')
+.(':any') => ':type'
 
 Returns the type of a provided element (eg: '":string"' , '":number"' )
 
@@ -992,7 +916,7 @@ isString: typeOf payload.mystring
 
 
 == Flatten
-.(':array')
+.(':array') => ':array'
 
 If you have an array of arrays, this function can flatten it into a single simple array.
 
@@ -1029,7 +953,7 @@ flatten payload
 ----
 
 == Size Of
-.(':array')/(':string')/(':object')
+.(':array')/(':string')/(':object') => ':number'
 
 Returns the number of elements in an array (or anything that can be converted to an array such as a string).
 
@@ -1057,7 +981,7 @@ Returns the number of elements in an array (or anything that can be converted to
 ----
 
 == Array Push
-.(:array', ':any')
+.(:array', ':any') => ':array'
 
 Pushes a new element to the end of an array.
 
@@ -1079,7 +1003,7 @@ aa: [0, 1, 2] + 5
 ----
 
 == Array Remove
-.(':array', ':any')
+.(':array', ':any') => ':array'
 
 Removes an element from an array when it matches the specified value. If multiple elements in the array match the value, they will all be removed.
 
@@ -1105,7 +1029,7 @@ Removes an element from an array when it matches the specified value. If multipl
 ----
 
 == Array Remove All
-.(':array', ':array')
+.(':array', ':array') => ':array'
 
 Removes a set of elements from an array when an element in the base array matches one of the values in the substracted array. If multiple elements in the array match a value, they will all be removed.
 
@@ -1128,7 +1052,7 @@ a: [0, 1, 1, 2] -- [1,2]
 
 
 == Array Average
-.(':array')
+.(':array') => ':number'
 
 Creates an average of all the values in an array and outputs a single number. The array must of course contain only numerical value in it.
 
@@ -1158,7 +1082,7 @@ Creates an average of all the values in an array and outputs a single number. Th
 
 == Reduce
 
-.(':array', ':function')
+.(':array', ':function') => ':any'
 
 Applies a reduction to the array. The lambda is invoked with two parameters:
 the accumulator (*$$*) and the value (*$*).
@@ -1220,7 +1144,7 @@ concat: ["a", "b", "c", "d"] reduce ((val, acc = "z") -> acc ++ val)
 
 == Join By
 
-.(':array', ':string')
+.(':array', ':string') => ':string'
 
 Merges an array into a single string value, using the provided string as a separator between elements.
 
@@ -1243,7 +1167,7 @@ aa: ["a","b","c"] joinBy "-"
 
 == Split By
 
-.(':string', ':string')/(':string', ':regex')
+.(':string', ':string')/(':string', ':regex') => ':array'
 
 Performs the opposite operation as Join By. It splits a string into an array of separate elements, looking for instances of the provided string and using it as a separator.
 
@@ -1266,7 +1190,7 @@ split: "a-b-c" splitBy "-"
 
 == Order By
 
-.(':array', ':function')/(':object', ':function')
+.(':array', ':function')/(':object', ':function') => ':array'/':object'
 
 Returns the provided array (or object) ordered according to the value returned by the lambda. The lambda is invoked with two parameters: *index* and the *value*.
 If these parameters are not named, the index is defined by default as *$$* and the value as *$*.
@@ -1328,7 +1252,7 @@ orderDescending: ([3,8,1] orderBy $)[-1..0]
 
 == Group By
 
-.(':array', ':function')
+.(':array', ':function') => ':object'
 
 Partitions an array into a Object that contains Arrays, according to the discriminator lambda you define.
 The lambda is invoked with two parameters: *index* and the *value*.
@@ -1382,7 +1306,7 @@ If these parameters are not named, the index is defined by default as *$$* and t
 
 == Distinct By
 
-.(':array', ':function')
+.(':array', ':function') => ':array'
 
 Returns only unique values from an array that may have duplicates.
 The lambda is invoked with two parameters: *index* and *value*.
@@ -1443,10 +1367,9 @@ If these parameters are not defined, the index is defined by default as $$ and t
 
 == Zip Arrays
 
-.(':array', ':array')
+.(':array', ':array') => ':array'
 
-Given two arrays, it pairs indexes together to create a third array where each element is in itself an array that contains the two matching elements of the original ones.
-
+Given two or more separate lists, the zip function can be used to merge them together into a single list of consecutive n-tuples.  Imagine two input lists each being one side of a zipper: similar to the interlocking teeth of a zipper, the zip function interdigitates each element from each input list, one element at a time.
 
 .Transform
 [source,DataWeave, linenums]
@@ -1486,9 +1409,55 @@ Given two arrays, it pairs indexes together to create a third array where each e
 
 Note that in example b, since only one element was provided in the second array, it was matched with every element of the first array. Also note that in exaple c, since the second array was shorter than the first, the output was only as long as the shortest of the two.
 
+
+Here is another example of the zip function with more than two input lists.
+
+.Input
+[source,json,linenums]
+----------------------------------------------------------------------
+{
+  "list1": ["a", "b", "c", "d"],
+  "list2": [1, 2, 3],
+  "list3": ["aa", "bb", "cc", "dd"],
+  "list4": [["a", "b", "c"], [1, 2, 3, 4], ["aa", "bb", "cc", "dd"]]
+}
+----------------------------------------------------------------------
+
+.Transform
+[source,DataWeave, linenums]
+----------------------------------------------------------------------
+%dw 1.0
+%output application/json
+---
+payload.list1 zip payload.list2 zip payload.list3
+----------------------------------------------------------------------
+
+.Output
+[source,json,linenums]
+----------------------------------------------------------------------
+[
+  [
+    "a",
+    1,
+    "aa"
+  ],
+  [
+    "b",
+    2,
+    "bb"
+  ],
+  [
+    "c",
+    3,
+    "cc"
+  ]
+]
+----------------------------------------------------------------------
+
+
 == Unzip Array
 
-.(':array')
+.(':array') => ':array'
 
 Performs the opposite function of <<zip arrays>>, that is: given a single array where each index contains an array with two elements, it outputs two separate arrays, each with one of the elements of the pair. This can also be scaled up, if the indexes in the provided array contain arrays with more than two elements, the output will contain as many arrays as there are elements for each index.
 
@@ -1528,7 +1497,7 @@ Note even though example b can be considered the inverse function to the example
 
 == Replace
 
-.(':string', ':regex', ':function')
+.(':string', ':regex', ':function') => ':string'
 
 Replaces a section of a string for another, in accordance to a regular expression, and returns a modified string.
 
@@ -1551,7 +1520,7 @@ b: "admin123" replace /(\d+)/ with "ID"
 
 == Matches
 
-.(':string', ':regex')
+.(':string', ':regex') => ':boolean'
 
 Matches a string against a regular expression, and returns *true* or *false*.
 
@@ -1574,7 +1543,7 @@ b: "admin123" matches /(\d+)/
 
 == Starts With
 
-.(':string', ':string')
+.(':string', ':string') => ':boolean'
 
 Returns true or false depending on if a string starts with a provided substring.
 
@@ -1602,7 +1571,7 @@ Returns true or false depending on if a string starts with a provided substring.
 
 == Ends With
 
-.(':string', ':string')
+.(':string', ':string') => ':boolean'
 
 Returns true or false depending on if a string ends with a provided substring.
 
@@ -1631,7 +1600,7 @@ Returns true or false depending on if a string ends with a provided substring.
 
 == Find
 
-.(':string', ':string')/.(':string', ':regex')
+.(':string', ':string')/.(':string', ':regex') => ':array'
 
 Given a string, it returns the index position within the string at which a match was matched. If found in multiple parts of the string, it returns an array with the various idex positions at which it was found. You can either look for a simple string or a regular expression.
 
@@ -1662,7 +1631,7 @@ Given a string, it returns the index position within the string at which a match
 
 == Match
 
-.(':string', ':regex')
+.(':string', ':regex') => ':string'
 
 Match a string against a regular expression. Match returns an array that contains the entire matching expression, followed by all of the capture groups that match the provided regex.
 
@@ -1692,7 +1661,7 @@ In the example above, we see that the search regular expression describes an ema
 
 == Scan
 
-.(':string', ':regex')
+.(':string', ':regex') => ':array'
 
 Returns an array with all of the matches in the given string. Each match is returned as an array that contains the complete match, as well as any capture groups there may be in your regular expression.
 
@@ -1726,91 +1695,8 @@ Returns an array with all of the matches in the given string. Each match is retu
 
 In the example above, we see that the search regular expression describes an email address. It contains two capture groups, what's before and what's after the @. The result is an array with two matches, as there are two email addresses in the input string. Each of these matches is an array of three elements, the first is the whole email address, the second matches one of the capture groups, the third matches the other one.
 
-== Read
-
-.(':string', ':type')
-
-The read operator can process data that is in the input but not being parsed, for example if it's in a CDATA object or being treated as a literal string. The first argument takes the string that must be read, the second is the format in which it's written.
-
-.Input
-[source,xml,linenums]
-----
-<?xml version='1.0' encoding='UTF-8'?>
-<root>
-    <xmlblock><![CDATA[<foo>bar</foo>]]></xmlblock>
-</root>
-----
-
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/xml
----
-output: read(payload.root.xmlblock, "application/xml").foo
-----
-
-.Output
-[source,xml,linenums]
-----
-<?xml version='1.0' encoding='UTF-8'?>
-<output>bar</output>
-----
-
-In the example above, what was in the CDATA element isn't parsed by the DataWeave reader by default, that's why the *read* operator must be used to interpret it.
-
-== Write
-
-.(':string', ':type', :object)
-
-The write operator can compose data into any given format, irregardless of what the transformation is doing at a larger scale. The result is then treated as a string literal within the rest of the output. You could for example include a CSV field within one element of an XML output.
-
-The first argument points to the element that must be written, the second is the format in which to write it. A third optional argument lists writer configuration properties. See link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction#output-directive[Output Directive] and its sub-sections for a full list of available configuration options for each different format.
-
-.Input
-[source,json,linenums]
-----
-"Name": "Mr White",
-"Email": "white@mulesoft.com",
-"Id": "1234",
-"Title": "Chief Java Prophet"
-},
-{
-"Name": "Mr Orange",
-"Email": "orange@mulesoft.com",
-"Id": "4567",
-"Title": "Integration Ninja"
-}
-]
-----
-
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/xml
----
-{
- output: write(payload, "application/csv", {"separator" : "|"})
-}
-----
-
-.Output
-[source,xml,linenums]
-----
-<?xml version='1.0' encoding='US-ASCII'?>
-<output>Name|Email|Id|Title
-Mr White|white@mulesoft.com|1234|Chief Java Prophet
-Mr Orange|orange@mulesoft.com|4567|Integration Ninja
-</output>
-----
-
-
-
-
 == Similar
+.(':any', ':any') => ':boolean'
 
 Evaluates if two values are similar, regardless of their type. For example, the string "1234" and the number 1234 aren't equal, but they are recognized as similar.
 
@@ -1841,7 +1727,7 @@ Evaluates if two values are similar, regardless of their type. For example, the 
 
 
 == Upper
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string in uppercase characters.
 
@@ -1866,7 +1752,7 @@ Returns the provided string in uppercase characters.
 
 
 == Lower
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string in lowercase characters.
 
@@ -1891,7 +1777,7 @@ Returns the provided string in lowercase characters.
 
 
 == Camelize
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string in camel case.
 
@@ -1919,7 +1805,7 @@ Returns the provided string in camel case.
 ----
 
 == Capitalize
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string with every word starting with a capital letter and no underscores.
 
@@ -1947,7 +1833,7 @@ Returns the provided string with every word starting with a capital letter and n
 ----
 
 == Dasherize
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string with every word separated by a dash.
 
@@ -1975,7 +1861,7 @@ Returns the provided string with every word separated by a dash.
 ----
 
 == Underscore
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string with every word separated by an underscore.
 
@@ -2005,7 +1891,7 @@ Returns the provided string with every word separated by an underscore.
 
 
 == Pluralize
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string transformed into its plural form.
 
@@ -2033,7 +1919,7 @@ Returns the provided string transformed into its plural form.
 ----
 
 == Singularize
-.(':string')
+.(':string') => ':string'
 
 Returns the provided string transformed into its singular form.
 
@@ -2061,7 +1947,7 @@ Returns the provided string transformed into its singular form.
 ----
 
 == Trim
-.(':string')
+.(':string') => ':string'
 
 Removes any excess spaces at the start and end of a string.
 
@@ -2086,7 +1972,7 @@ Removes any excess spaces at the start and end of a string.
 
 
 == Ordinalize
-.(':number')
+.(':number') => ':string'
 
 Returns the provided numbers set as ordinals.
 
@@ -2114,7 +2000,7 @@ Returns the provided numbers set as ordinals.
 == Basic Math Operations
 
 === Sum
-.(':number', ':number')
+.(':number', ':number') => ':number'
 
 .Transform
 [source,DataWeave, linenums]
@@ -2126,7 +2012,7 @@ plus : 2 + 2.5
 ----
 
 === Minus
-.(':number', ':number')
+.(':number', ':number') => ':number'
 
 .Transform
 [source,DataWeave, linenums]
@@ -2138,7 +2024,7 @@ minus : 2.5 - 2
 ----
 
 === Multiply
-.(':number', ':number')
+.(':number', ':number') => ':number'
 
 .Transform
 [source,DataWeave, linenums]
@@ -2150,7 +2036,7 @@ multiply : 2.5 * 2
 ----
 
 === Division
-.(':number', ':number')
+.(':number', ':number') => ':number'
 
 .Transform
 [source,DataWeave, linenums]
@@ -2163,7 +2049,7 @@ division : 10 / 2
 
 == Max
 
-.(':array')/(':object')
+.(':array')/(':object') => ':number'
 
 Returns the highest number in an array or object.
 
@@ -2192,7 +2078,7 @@ Returns the highest number in an array or object.
 
 == Min
 
-.(':array')/(':object')
+.(':array')/(':object') => ':number'
 
 Returns the lowest number in an array or object.
 
@@ -2221,7 +2107,7 @@ Returns the lowest number in an array or object.
 
 == Round
 
-.(':number')
+.(':number') => ':number'
 
 Rounds the value of a number to the nearest integer
 
@@ -2250,7 +2136,7 @@ Rounds the value of a number to the nearest integer
 
 == Sqrt
 
-.(':number')
+.(':number') => ':number'
 
 Returns the square root of the provided number
 
@@ -2279,7 +2165,7 @@ Returns the square root of the provided number
 
 == Pow
 
-.(':number', ':number')
+.(':number', ':number') => ':number'
 
 Returns the result of the first number to the power of the second one
 
@@ -2308,7 +2194,7 @@ Returns the result of the first number to the power of the second one
 
 == Ceil
 
-.(':number')
+.(':number') => ':number'
 
 Rounds a number upwards, returning the first full number above than the one provided.
 
@@ -2338,7 +2224,7 @@ Rounds a number upwards, returning the first full number above than the one prov
 
 == Floor
 
-.(':number')
+.(':number') => ':number'
 
 Rounds a number downwards, returning the first full number below than the one provided.
 
@@ -2368,7 +2254,7 @@ Rounds a number downwards, returning the first full number below than the one pr
 
 == Abs
 
-.(':number')
+.(':number') => ':number'
 
 Returns the absolute value of a number,
 
@@ -2399,7 +2285,7 @@ Returns the absolute value of a number,
 
 == Mod
 
-.(':number', ':number')
+.(':number', ':number') => ':number'
 
 Returns the remainder after division of the first number by the second one
 
@@ -2432,7 +2318,7 @@ There are several operators that deal with link:/mule-user-guide/v/3.8-m1/datawe
 
 === Get Time Unit
 
-.(':date')/(':time')/(':localtime')/(':datetime')/(':localdatetime')/(':period')
+.(':date')/(':time')/(':localtime')/(':datetime')/(':localdatetime')/(':period') => (':date')/(':time')/(':localtime')/(':period')
 
 You can extract a particular time unit from any date related type as shown below:
 
@@ -2479,40 +2365,11 @@ You can extract a particular time unit from any date related type as shown below
 }
 ----
 
-=== Now
-
-Returns a time stamp.
-
-.Transform
-[source,DataWeave, linenums]
-----
-%dw 1.0
-%output application/json
----
-{
-  a: now,
-  b: now.day,
-  c: now.minutes
-}
-----
-
-.Output
-[source,json,linenums]
-----
-{
-  "a": "2015-12-04T18:15:04.091Z",
-  "b": 4,
-  "c": 15
-}
-----
-
-[TIP]
-See link:/mule-user-guide/v/3.8-m1/dataweave-types#accessors[Accessors] for a list of possible selectors to use here.
 
 
 === Shift Time Zone
 
-.(':datetime', ':timezone')
+.(':datetime', ':timezone') => ':datetime'
 
 Shift a date time to the specified timezone.
 
@@ -2535,7 +2392,7 @@ a: |2014-01-01T14:00-03:00| >> |-08:00|
 
 === Append Time
 
-.(':date', ':time')/(':date', ':localtime')/(':time', ':date')/(':localtime', ':date')
+.(':date', ':time')/(':date', ':localtime')/(':time', ':date')/(':localtime', ':date') => (':localtime')/(':datetime')/(':localdatetime')
 
 You can append a date to a time (or localtime) object so as to provide a more precise value.
 
@@ -2568,7 +2425,7 @@ Note that the order in which the two objects are appended is irrelevant, so logi
 
 === Append Time Zone
 
-.(':datetime', ':timezone')/(':time', ':timezone')/(':localtime', ':timezone')/(':localdatetime', ':timezone')
+.(':datetime', ':timezone')/(':time', ':timezone')/(':localtime', ':timezone')/(':localdatetime', ':timezone') => (':localtime')/(':localdatetime')
 
 Appends a time zone to a date type value.
 
@@ -2592,7 +2449,7 @@ a: |2003-10-01T23:57:59| ++ |-03:00|
 
 === Adding a Period of Time
 
-.(':time', ':period')/(':datetime', ':period')/(':localtime', ':period')/(':localdatetime', ':period')
+.(':time', ':period')/(':datetime', ':period')/(':localtime', ':period')/(':localdatetime', ':period') => (':date')/(':time')/(':localtime')/(':datetime')/(':localdatetime')
 
 Add or subtract a period of time from a given date or time type object.
 
@@ -2615,7 +2472,7 @@ a: |2003-10-01T23:57:59Z| + |P1Y|
 
 === Subtracting a Period of Time
 
-.(':time', ':period')/(':datetime', ':period')/(':localtime', ':period')/(':localdatetime', ':period')
+.(':time', ':period')/(':datetime', ':period')/(':localtime', ':period')/(':localdatetime', ':period') => (':date')/(':time')/(':localtime')/(':datetime')/(':localdatetime')
 
 The same logically applies to subtracting time periods from a date or time type object.
 
@@ -2645,7 +2502,7 @@ Note that when a subtraction operation includes a time object and a period, the 
 
 === Subtracting two Dates
 
-.(':date', ':date')/(':datetime', ':datetime')/('#:time', ':time')/(':localtime', ':localtime')/(':localdatetime', ':localdatetime')
+.(':date', ':date')/(':datetime', ':datetime')/('#:time', ':time')/(':localtime', ':localtime')/(':localdatetime', ':localdatetime') => ':period'
 
 When subtracting one date or time type object from another, what we logically get is the difference between these times expressed as a time period.
 
@@ -2671,42 +2528,28 @@ When subtracting one date or time type object from another, what we logically ge
 ----
 
 === Date Coercion
-.(':any', ':type')
+.(':any', ':type') ':any'
 
 You can change the format of a date to fit another standard, see <<coerce to date>>.
 
-
-== Operator Precedence Table
-
-
-[cols="30a,60a,10a",options="header"]
-|===
-|Operator                          |Description             | Level
-|usng, all unary operators         |All link:https://en.wikipedia.org/wiki/Unary_operation[unary operators]     | 1
-|As                              |Type Coercion expression     | 2
-|* /                               |Multiplicative          | 3
-|+ - >>                            |Additive                | 4
-|>= <= < >  is                   |Relational / Type Comparison | 5
-|!= ~= ==                          |Equality evaluators    | 6
-|<<AND>>                              |Conditional And         | 7
-|<<OR>>                                |Conditional OR          | 8
-|<<Default>>, <<Match>>, <<Matches>>, <<Map>>, <<Map Object>>, <<Group By>>, <<Filter>>             |Default Value / Pattern Matching / Binary Operators | 9
-|<<When or Otherwise>>, <<Unless or Otherwise>>             |Conditional Expressions | 10
-|===
 
 
 == Next Steps
 
 * For a high level overview about the language, see link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
 * For a listing and details about all of the types you can use, see link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
-* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-functions-and-lambdas[DataWeave Functions and Lambdas]
+* For details on how to create and use your own functions, see link:/mule-user-guide/v/3.8-m1/dataweave-types#functions-and-lambdas[Functions and Lambdas]
 * View complete example projects that use DataWeave in the link:https://www.mulesoft.com/exchange#!/?filters=DataWeave&sortBy=rank[Anypoint Exchange]
 
 == See Also
 
 * link:/mule-user-guide/v/3.8-m1/dataweave-quickstart[DataWeave quickstart guide]
 * link:/mule-user-guide/v/3.8-m1/using-dataweave-in-studio[Using DataWeave in Studio]
-* link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
+* link:/mule-user-guide/v/3.8-m1/dataweave-language-introduction[DataWeave Language Introduction]
+* link:/mule-user-guide/v/3.8-m1/dataweave-types[DataWeave Types]
+* link:/mule-user-guide/v/3.8-m1/dataweave-formats[DataWeave Formats]
+* link:/mule-user-guide/v/3.8-m1/dataweave-selectors[DataWeave Selectors]
+* link:/mule-user-guide/v/3.8-m1/dataweave-examples[DataWeave Examples]
 * link:/mule-user-guide/v/3.8-m1/mel-dataweave-functions[MEL DataWeave Functions]
 * link:http://forums.mulesoft.com[MuleSoft's Forums]
 * link:https://www.mulesoft.com/support-and-services/mule-esb-support-license-subscription[MuleSoft Support]
