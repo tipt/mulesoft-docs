@@ -1,3 +1,11 @@
 = Quickstarts
 
-Pellentesque mattis lorem nunc, nec faucibus nibh lacinia et. Maecenas rutrum volutpat tellus quis rhoncus. Cras et nulla consectetur eros fermentum lacinia. Quisque gravida metus lobortis tellus dignissim pulvinar. Vivamus libero elit, blandit sed lorem pulvinar, vulputate tempus metus. Nunc quis nunc eu mauris placerat tristique. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce non lorem diam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec tempor orci suscipit elit finibus, ut vulputate massa ultrices. In hendrerit ante eget arcu pulvinar dictum. Mauris a arcu eu leo rhoncus cursus ac ac velit. Praesent mattis in dolor sit amet placerat.
+The _Quickstarts_ section shows a comprehensive quick tour through broader topics tying together different products from the Anypoint Platform in a procedural fashion.
+
+Its main focus is to show how all products can complement each other and help you develop your own application network.
+
+Here you can learn:
+
+* How to link:/quickstarts-and-tutorials/design-an-api[design an API]
+* How to link:/quickstarts-and-tutorials/implement-and-test[implement an API in Studio and create a unit test]
+* Modify an API description in Studio and link:/quickstarts-and-tutorials/sync-api-apisync[sync your changes in Anypoint Platform] 
