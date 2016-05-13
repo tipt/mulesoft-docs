@@ -1,3 +1,9 @@
 = Tutorials
 
-Vivamus vitae mauris vitae diam aliquam viverra. Phasellus euismod mollis est, eget ultrices massa placerat et. Fusce velit nisl, euismod dictum vulputate vitae, vehicula vitae risus. Nulla facilisi. Mauris mattis ultrices mauris, eu egestas turpis commodo eget. Praesent sit amet erat urna. Praesent tincidunt nibh eget lobortis posuere. Proin volutpat ipsum nulla, lacinia suscipit massa finibus eu. Vestibulum quis purus ut nisi gravida scelerisque finibus non ligula. Morbi vestibulum arcu at sagittis imperdiet. Duis vestibulum ut enim ut venenatis. Cras viverra dolor velit, sed semper elit mollis nec. Suspendisse lacus lorem, malesuada ut ex in, venenatis cursus ex.
+In this section you can find tutorials for complex and specific tasks.
+
+The instructions detailed in this section are meant to show the specific usage of a technology in order to accomplish a clear outcome.
+
+Find below:
+
+* How to link/quickstarts-and-tutorials/modernize-an-api-studio[Update a REST-based Mule application to consume a SOAP web service].
