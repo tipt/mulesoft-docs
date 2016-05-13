@@ -44,8 +44,8 @@ In addition to these API-related functionalities, Studio also includes many othe
 * Improved error messages, which allow you to clearly see where the error is coming from and click to navigate to that point in the flow
 * DataWeave now includes supports for new file formats, allowing you to read and write fixed-width and other flat files using DataWeave. The structure of these files can be easily defined via a new Flat File Definition file format. You can also import COBOL Copybook files into this schema format using Studio (Early Access). Finally, if you have previous DataMapper transformations, you can use the migration tool to convert them to DataWeave transformations now.
 * MUnit run multiple suites
-* MUnit allows nested folders for tests
-* Create MUnit coverage reports from inside Studio
+* MUnit allows link:/munit/v/1.2.0/using-munit-in-anypoint-studio#running-a-tests-inside-a-folder[nested folders for tests]
+* Create MUnit link:/munit/v/1.2.0/munit-maven-support#coverage[coverage reports from inside Studio]
 * Autocompletion support for MUnit’s MEL functions
 * Metadata support to MUnit message processors
 * SAP R/3 Business Suite Connector v3.0.0:
@@ -115,7 +115,7 @@ The workaround is to overwrite that property in the lunch configuration: `Djava.
 ** API-related: Building APIs in Studio User Guide
 *** link:/anypoint-platform-for-apis/api-sync-reference[API Sync View]
 *** Implementing a link:/anypoint-platform-for-apis/apikit-tutorial#creating-a-new-project[REST API] / link:/anypoint-platform-for-apis/apikit-for-soap#creating-a-new-project[SOAP API] / link:/anypoint-platform-for-apis/creating-an-odata-api-with-apikit#installing-and-using-the-apikit-odata-extension[OData API] (_Beta_)
-*** link:/anypoint-platform-for-apis/create-an-automatic-munit-test#automatically-create-a-test-suite[Testing an API using MUnit]
+*** link:/quickstarts-and-tutorials/implement-and-test#automatically-create-a-test-suite[Testing an API using MUnit]
 ** link:/mule-user-guide/v/3.8/dataweave-flat-file-schemas[DataWeave flat file]
 ** link:/mule-user-guide/v/3.8/dataweave[Improved DataWeave docs].
 
