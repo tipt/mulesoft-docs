@@ -1,10 +1,13 @@
 = Quickstarts and Tutorials
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam vitae aliquam urna. Etiam dignissim, risus eu consequat aliquam, ante libero dapibus purus, vel sagittis eros erat sed turpis. Ut et libero efficitur, pellentesque nulla vel, cursus lacus. Aliquam erat volutpat. Vestibulum pharetra enim nisi, sit amet mollis mauris sagittis ac. Integer nec ex risus. Quisque risus ante, molestie nec fringilla sit amet, semper vel elit. Integer pretium, libero non tincidunt placerat, est neque pulvinar mauris, sit amet tempor nibh ipsum id odio.
+Welcome to the _Quickstart and Tutorial_ section for Mulesoft technologies.
 
-Nunc commodo odio et nisl varius, vel pretium turpis egestas. Aenean vehicula tortor vitae enim bibendum feugiat. Praesent placerat magna lorem. Aenean libero elit, venenatis vel ullamcorper id, consequat non urna. Sed volutpat sem a rutrum facilisis. Aliquam sed lacus pharetra, elementum metus eget, maximus odio. Nunc vel lectus vehicula, porta mauris eu, cursus arcu. Pellentesque a sem semper, tristique erat ut, vestibulum ligula. Sed lacinia sodales malesuada. Aenean vitae sodales ipsum.
+Here you can find Quickstart guides to walk you through a high level explanation of common use cases and scenarios, showcasing how each product in the Anypoint Platform interact with each other and complement an *application network*.
 
-* Sed eu dolor id nisl auctor suscipit quis a justo.
-* Ut vel urna in leo elementum pellentesque sit amet ut magna.
-* Morbi lobortis est non placerat eleifend.
-* Mauris ac mi pharetra, interdum massa quis, congue diam.
+You can also find tutorials to serve as a reference for specific cases such as link:/quickstarts-and-tutorials/modernize-an-api-studio[modernizing a SOAP API].
+
+
+Follow our:
+
+* link:/quickstarts-and-tutorials/quickstarts[Quickstarts]
+* link:/quickstarts-and-tutorials/tutorials[Tutorials]
